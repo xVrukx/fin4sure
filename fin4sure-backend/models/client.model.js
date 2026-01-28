@@ -3,11 +3,12 @@ import mongoose from "mongoose";
 const clientSchema = new mongoose.Schema(
     {
         name : {type : String, required : true},
-        role : {type : String, default : "client"},
+        // role : {type : String, default : "client"},
         email : {type : String, required : true, unique : true},
         number : {type : String, required : true, unique : true},
-        pan_card : {type : String, default : "Not provided"},
+        pan_card : {type : String, default : "Not provided", unique : true},
         product : {type : String, default : "not provided"},
+        password:{type : String, required : true},
         broker_id : {type : String, default : "self"}
     },
     {
