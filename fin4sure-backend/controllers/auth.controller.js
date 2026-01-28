@@ -18,12 +18,12 @@ const otp_data = {}
 // singup handeler
 const signUpHandler = async (req,res) => {
     const {name,email,number,password,role} = req.body;
-    if ( !name.trim()||~email.trim()||!password.trim()||!role.trim()||!number.tim()) {
+    if ( !name.trim()|| email.trim()||!password.trim()||!role.trim()||!number.tim()) {
         return console.log({"signup_handeler log" : "one of the fields were not provided during body extraction"});  
     }
-    const client = Client.find({number,email});
-    const broker = Broker.find({number,email});
-    const admin = Admin.find({number,email});
+    const client = Client.find({$or:[{number : number}, {email : email}]});
+    const broker = Broker.find({$or:[{number : number}, {email : email}]});
+    const admin = Admin.find({$or:[{number : number}, {email : email}]});
     
     if (client||broker||admin) {
         return console.log({"sigup_handeler log":"user already exist"});
@@ -38,7 +38,7 @@ const signUpHandler = async (req,res) => {
             break;
         case "broker":
             const newBroker = new Broker({name,email,password,number});
-            newClient.save()
+            newBroker.save()
             res.json(url)
             break;
     
@@ -134,3 +134,19 @@ export const verifyOTP = async (req, res) => {
     console.log({"verifyotp log" : "number verified by otp succesfully"});
     res.json(url)
 }
+
+export const loginHandler = async (req,res) => {
+    const {email,password} = req.body;
+    if(!email||!password){
+        return console.log({"login_handler":"any one or all of the creadential not provided"});
+    }
+    const admin = Admin.find({email,password});
+    const client = Client.find({email,password});
+    const broker = Broker.find({email,password});
+
+    if(!admin||!client||!broker){
+        return console.log({"login_handler":"credential are incorrect, "});
+    }
+
+}
+
