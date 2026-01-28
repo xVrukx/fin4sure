@@ -1,15 +1,26 @@
-import express from "express"
+// ----------------------------------------------------------------------------------------------------------------------
+// imports
+import express from "express";
 import Admin from "../models/admin.model.js"
 import Broker from "../models/broker.model.js"
 import Client from "../models/client.model.js"
+// ----------------------------------------------------------------------------------------------------------------------
 
+
+// ----------------------------------------------------------------------------------------------------------------------
+// global variables
+const url = "/login"
+const otp_data = {}
+// ----------------------------------------------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------------------------------------------
+// singup handeler
 const signUpHandler = async (req,res) => {
     const {name,email,number,password,role} = req.body;
     if ( !name.trim()||~email.trim()||!password.trim()||!role.trim()||!number.tim()) {
         return console.log({"signup_handeler log" : "one of the fields were not provided during body extraction"});  
     }
-    
-    const url = "/login"
     const client = Client.find({number,email});
     const broker = Broker.find({number,email});
     const admin = Admin.find({number,email});
@@ -36,13 +47,19 @@ const signUpHandler = async (req,res) => {
     }
     
 }
+// ----------------------------------------------------------------------------------------------------------------------
 
-const otp_data = {}
 
+// ----------------------------------------------------------------------------------------------------------------------
+// otpgenerater
 const generateOTP = () => {
  return Math.floor(1000 + Math.random()*9000).toString();
 }
+// ----------------------------------------------------------------------------------------------------------------------
 
+
+// ----------------------------------------------------------------------------------------------------------------------
+// otpsender
 export const SendOTP = async (req, res) => {
   try {
     const { number } = req.body;
@@ -106,5 +123,14 @@ export const SendOTP = async (req, res) => {
 };
 
 export const verifyOTP = async (req, res) => {
-    
+    const {number, otp} = req.body;
+    if(!number || !otp) {
+      return console.log({"sendotp" : "no valid number or otp or both provided"});
+    };
+    console.log({"verifyotp log" : "valid otp and number provided"});
+    if(otp_data[number] !== otp){
+      return console.log({"verifyotp log" : "otp is incorrect please provide a valid otp"});
+    };
+    console.log({"verifyotp log" : "number verified by otp succesfully"});
+    res.json(url)
 }
