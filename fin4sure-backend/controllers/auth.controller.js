@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------------------------------------------------
 // imports
-import express from "express";
+
 import Admin from "../models/admin.model.js"
 import Broker from "../models/broker.model.js"
 import Client from "../models/client.model.js"
@@ -183,20 +183,24 @@ export const loginHandler = async (req, res) => {
       return res.status(400).json({ message: "Email and password required" });
     }
 
+    //  using let variable to override the user
     let user = await Admin.findOne({ email });
     let role = "admin";
+    let url = "https://admin";
 
     if (!user) {
       user = await Broker.findOne({ email });
       role = "broker";
+      url = "https://broker";
     }
 
-    if (!user) {
+    else if (!user) {
       user = await Client.findOne({ email });
       role = "client";
+      url = "https://client";
     }
 
-    if (!user) {
+    else if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -209,7 +213,7 @@ export const loginHandler = async (req, res) => {
     return res.json({
       success: true,
       role,
-      redirect: role === "admin" ? "/admin" : "/",
+      redirect: url,
     });
   } catch (err) {
     console.error("Login error:", err);
