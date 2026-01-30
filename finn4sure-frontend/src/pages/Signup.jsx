@@ -1,187 +1,301 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 export default function Signup() {
-  const { login } = useAuth();
   const navigate = useNavigate();
 
+  // ---------------- FORM STATES ----------------
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [number, setnumber] = useState("");
-  const [recivedotp, setrecivedotp] = useState("");
+  const [number, setNumber] = useState("");
+  const [receivedOtp, setReceivedOtp] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [refBy, setRefBy] = useState("self"); // referral default
+  const [brokerId, setBrokerId] = useState(""); // if refBy is broker
 
-  // otpsender
-  const sendOTP = async(number) => {
-    const res = await fetch("http://localhost:5000/auth/sendOTP",{
-      method : "POST",
-      headers : {"content-Type" : "application/json"},
-      body : JSON.stringify({number})
-    })
-    if(!res.ok){
-      return res.json({message : "error occore while sending otp"})
+  // ---------------- UI STATES ----------------
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(""); // form-wide error
+  const [otpError, setOtpError] = useState(""); // OTP-specific error
+
+  // ---------------- OTP TIMER ----------------
+  const [resendTimer, setResendTimer] = useState(60);
+  const [canResend, setCanResend] = useState(false);
+
+  const API_BASE = "http://localhost:5000/api/auth";
+
+  // ---------------- RESEND TIMER LOGIC ----------------
+  useEffect(() => {
+    let timer;
+
+    if (otpSent && resendTimer > 0) {
+      timer = setInterval(() => setResendTimer((prev) => prev - 1), 1000);
     }
-    return res.status(200).json({message : "OTP was sent sucessfully"})
-  }
 
-  const VerifyOTP = async() => {
-    const res = await fetch("http://localhost:5000/auth/VerifyOTP",{
-      method : "POST",
-      headers : {"content/Type" : "application/json"},
-      body : JSON.stringify({recivedotp, number})
-    })
-    if(!res.ok){
-      return await res.status(402).json({message : "error occored while verifying user"})
+    if (resendTimer === 0) {
+      setCanResend(true);
+      clearInterval(timer);
     }
-    return res.status(200).json({message : "user verified"})
-  }
 
-  const FormSender = async() => {
-    const res = await fetch("http://localhost:5000/auth/signup",{
-      method : "POST",
-      headers : {"content-Type" : "application/json"},
-      body : JSON.stringify({
-        name : fullName, email : email,
-        number : number, password : password,
-        role : "client"
-      })
-    })
-    if(!res.ok){
-      return res.status(402).json({message : "error occored while sending the data back to the server"})
+    return () => clearInterval(timer);
+  }, [otpSent, resendTimer]);
+
+  // ---------------- SEND OTP ----------------
+  const sendOTP = async () => {
+    if (number.length !== 10) {
+      setError("Enter a valid 10-digit mobile number");
+      return;
     }
-    return res.status(200).json({message : "user singuped successfully"})
-  }
-  // function handleSubmit(e) {
-  //   e.preventDefault();
 
-  //   if (!fullName.trim() || !email.trim() || !number.trim() || !password.trim()) {
-  //     setError("All fields are required.");
-  //     return;
-  //   }
+    try {
+      setError("");
+      setLoading(true);
+      setOtpError("");
 
-  //   if (number.length !== 10) {
-  //     setError("Please enter a valid 10-digit number number.");
-  //     return;
-  //   }
+      const res = await fetch(`${API_BASE}/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ number }),
+      });
 
-  //   setError("");
+      const data = await res.json();
 
-  //   // Mock signup → auto login
-  //   login({
-  //     name: fullName,
-  //     email,
-  //   });
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to send OTP");
+      }
 
-  //   navigate("/apply");
-  // }
+      setOtpSent(true);
+      setResendTimer(60);
+      setCanResend(false);
+    } catch (err) {
+      setError(err.message || "Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---------------- VERIFY OTP ----------------
+  const verifyOTP = async () => {
+    if (receivedOtp.length !== 4) {
+      setOtpError("OTP must be 4 digits");
+      return;
+    }
+
+    try {
+      setOtpError("");
+      setLoading(true);
+
+      const res = await fetch(`${API_BASE}/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ number, otp: receivedOtp }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setOtpError(data.message || "OTP verification failed");
+        return;
+      }
+
+      setOtpVerified(true);
+    } catch (err) {
+      setOtpError(err.message || "Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---------------- SIGNUP ----------------
+  const submitForm = async () => {
+    if (!otpVerified) {
+      setError("Please verify OTP before signup");
+      return;
+    }
+
+    try {
+      setError("");
+      setLoading(true);
+
+      const payload = {
+        name: fullName,
+        email,
+        number,
+        password,
+        role: "client",
+        broker_id:
+          refBy === "self" || !brokerId.trim() ? "self" : brokerId.trim(),
+      };
+
+      const res = await fetch(`${API_BASE}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Signup failed");
+      }
+
+      navigate("/login");
+    } catch (err) {
+      setError(err.message || "Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen flex items-center">
       <div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
-          Create your{" "}
-          <span className="text-blue-700">Finn4sure</span> account
+          Create your <span className="text-blue-700">Finn4sure</span> account
         </h1>
 
         <p className="mt-2 text-sm text-slate-600">
           Sign up to start your loan application journey.
         </p>
 
-        <div className="mt-6 space-y-5">
-          {error && (
-            <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-              Full Name
-            </label>
+        <div className="mt-6 space-y-5">
+          {/* NAME */}
+          <input
+            type="text"
+            placeholder="Your full name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          {/* EMAIL */}
+          <input
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          {/* PASSWORD */}
+          <input
+            type="password"
+            placeholder="Create a password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          {/* MOBILE NUMBER */}
+          <input
+            type="tel"
+            placeholder="10-digit mobile number"
+            value={number}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, "");
+              if (!otpVerified && val.length <= 10) setNumber(val);
+            }}
+            disabled={otpVerified} // can't change after OTP verified
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          {/* REFERRAL DROPDOWN */}
+          <select
+            value={refBy}
+            onChange={(e) => setRefBy(e.target.value)}
+            disabled={otpVerified} // lock after OTP verified
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <option value="self">Self</option>
+            <option value="broker">Broker</option>
+          </select>
+
+          {/* BROKER ID INPUT */}
+          {refBy === "broker" && (
             <input
               type="text"
-              placeholder="Your full name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-blue-600"
+              placeholder="Enter Broker ID"
+              value={brokerId}
+              onChange={(e) => setBrokerId(e.target.value)}
+              disabled={otpVerified} // lock after OTP verified
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
-          </div>
+          )}
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-              Email Address
-            </label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder="Create a password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-              number Number
-            </label>
-            <input
-              type="tel"
-              placeholder="10-digit number number"
-              value={number}
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "");
-                if (value.length <= 10) setnumber(value);
-              }}
-              className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-            <button className="bg-black hover:bg-black/80 transition duration-500
-             h-12 w-20 rounded-md m-2 text-center text-white"
-            onClick={sendOTP()}
-            >Send OTP</button>
-          </div>
-          
-          <div>
-            <input type="text"placeholder="Verify OTP" className="mt-2 w-full
-            px-4 py-3 border border-slate-300 rounded-lg focus:outline-none
-            focus:ring-2 focus:ring-blue-600"
-            value={recivedotp}
-            onChange={(e) => {setrecivedotp(e.target.value)}} />
-
+          {/* SEND OTP BUTTON */}
           <button
-            className="bg-black hover:bg-black/80 transition duration-500
-             h-12 w-20 rounded-md m-2 text-center text-white"
-            type="button" onClick={VerifyOTP()}
+            type="button"
+            onClick={sendOTP}
+            disabled={loading || otpSent}
+            className="bg-black hover:bg-black/80 transition duration-500 h-12 w-full rounded-md text-white disabled:opacity-50"
           >
-            Verify OTP
+            {otpSent ? "OTP Sent" : "Send OTP"}
           </button>
 
-          </div>
+          {/* OTP VERIFICATION */}
+          {otpSent && (
+            <>
+              <p className="text-sm text-slate-600 text-center">
+                OTP sent to your mobile number
+              </p>
 
+              {!canResend ? (
+                <p className="text-sm text-center text-slate-500">
+                  Resend OTP in{" "}
+                  <span className="font-semibold">{resendTimer}s</span>
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={sendOTP}
+                  className="text-sm text-blue-700 hover:underline text-center"
+                >
+                  Resend OTP
+                </button>
+              )}
+
+              <input
+                type="text"
+                placeholder="Verify OTP"
+                value={receivedOtp}
+                onChange={(e) =>
+                  setReceivedOtp(e.target.value.replace(/\D/g, ""))
+                }
+                disabled={otpVerified} // lock after verified
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              {otpError && (
+                <p className="text-sm text-red-600 mt-1">{otpError}</p>
+              )}
+
+              <button
+                type="button"
+                onClick={verifyOTP}
+                disabled={loading || otpVerified}
+                className="bg-black hover:bg-black/80 transition duration-500 h-12 w-full rounded-md text-white disabled:opacity-50"
+              >
+                {otpVerified ? "Verified" : "Verify OTP"}
+              </button>
+            </>
+          )}
+
+          {/* SIGNUP BUTTON */}
           <button
+            type="button"
+            onClick={submitForm}
+            disabled={loading || !otpVerified}
             className="w-full py-3 rounded-lg font-medium text-white
                        bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                        hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                       transition"
-            type="button" onClick={FormSender()}
+                       transition disabled:opacity-50"
           >
             Submit
           </button>

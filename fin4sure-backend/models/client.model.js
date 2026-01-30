@@ -14,11 +14,12 @@ const clientSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-clientSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next()
-    this.password = await bcrypt.hash(this.password, 10)
-    next()
-})
+clientSchema.pre("save", async function () {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+});
+
 
 clientSchema.methods.isPasswordCorrect = async function(password) {
     return await bcrypt.compare(password, this.password)  // here we made this function using methods method

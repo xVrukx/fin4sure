@@ -9,8 +9,11 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e) {
+  const API_BASE = "http://localhost:5000/api/auth"; // change if deployed
+
+  async function handleSubmit(e) {
     e.preventDefault();
 
     if (!email.trim() || !password.trim()) {
@@ -19,22 +22,38 @@ export default function Login() {
     }
 
     setError("");
+    setLoading(true);
 
-    // Temporary mock login
-    login({
-      name: "Demo User",
-      email,
-    });
+    try {
+      const res = await fetch(`${API_BASE}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    navigate("/apply");
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      // Save user info in context
+      login({ email, role: data.role }); 
+
+      // Navigate based on role
+      navigate(data.redirect || "/");
+    } catch (err) {
+      setError(err.message || "Network error");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen flex items-center">
       <div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
-          Login to{" "}
-          <span className="text-blue-700">Finn4sure</span>
+          Login to <span className="text-blue-700">Finn4sure</span>
         </h1>
 
         <p className="mt-2 text-sm text-slate-600">
@@ -78,12 +97,13 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-lg font-medium text-white
-                       bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
-                       hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                       transition"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-medium text-white
+                        bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
+                        hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
+                        transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

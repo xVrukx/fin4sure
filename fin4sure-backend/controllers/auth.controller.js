@@ -1,25 +1,28 @@
 // ----------------------------------------------------------------------------------------------------------------------
 // imports
 
-import Admin from "../models/admin.model.js"
-import Broker from "../models/broker.model.js"
-import Client from "../models/client.model.js"
+import Admin from "../models/admin.model.js";
+import Broker from "../models/broker.model.js";
+import Client from "../models/client.model.js";
+import axios from "axios";
 // ----------------------------------------------------------------------------------------------------------------------
 
 
 // ----------------------------------------------------------------------------------------------------------------------
 // global variables
-const url = "/login"
-const otp_data = {}
+const url = "/login";
+const otp_data = {}; // CHANGED: store as object instead of raw OTP (future-safe)
+const OTP_EXPIRY_TIME = 5 * 60 * 1000; // 5 minutes
 // ----------------------------------------------------------------------------------------------------------------------
 
 
 // ----------------------------------------------------------------------------------------------------------------------
-// singup handeler
+// signup handler
 export const signUpHandler = async (req, res) => {
   try {
     const { name, email, number, password, role, broker_id } = req.body;
 
+    // CHANGED: fixed validation typos, logic & ensured response is sent
     if (
       !name?.trim() ||
       !email?.trim() ||
@@ -27,14 +30,25 @@ export const signUpHandler = async (req, res) => {
       !password?.trim() ||
       !role?.trim()
     ) {
+      console.log("Signup failed: Missing required fields");
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const existingClient = await Client.findOne({ $or: [{ number }, { email }] });
-    const existingBroker = await Broker.findOne({ $or: [{ number }, { email }] });
-    const existingAdmin = await Admin.findOne({ $or: [{ number }, { email }] });
+    const normalizedEmail = email.toLowerCase().trim(); // CHANGED: normalize email
+
+    // CHANGED: use findOne instead of find, await properly
+    const existingClient = await Client.findOne({
+      $or: [{ number }, { email: normalizedEmail }],
+    });
+    const existingBroker = await Broker.findOne({
+      $or: [{ number }, { email: normalizedEmail }],
+    });
+    const existingAdmin = await Admin.findOne({
+      $or: [{ number }, { email: normalizedEmail }],
+    });
 
     if (existingClient || existingBroker || existingAdmin) {
+      console.log("Signup blocked: User already exists");
       return res.status(409).json({ message: "User already exists" });
     }
 
@@ -42,19 +56,20 @@ export const signUpHandler = async (req, res) => {
       case "client": {
         const newClient = new Client({
           name,
-          email,
+          email: normalizedEmail,
           number,
-          password,
+          password, // hashed by pre-save hook
           broker_id: broker_id || "self",
         });
 
-        await newClient.save(); // password gets hashed by pre-save hook
+        await newClient.save();
 
-        // If referred by broker, attach client to broker
+        // CHANGED: validate broker referral before attaching
         if (broker_id && broker_id !== "self") {
           const broker = await Broker.findOne({ brokerId: broker_id });
 
           if (!broker) {
+            console.log("Invalid broker ID provided during signup");
             return res.status(400).json({ message: "Invalid Broker ID" });
           }
 
@@ -62,23 +77,27 @@ export const signUpHandler = async (req, res) => {
           await broker.save();
         }
 
-        return res.json({ redirect: "/login" });
+        console.log("Client registered successfully:", newClient._id);
+        return res.json({ redirect: url });
       }
 
       case "broker": {
         const newBroker = new Broker({
           name,
-          email,
+          email: normalizedEmail,
           number,
-          password,
-          brokerId: `BRK${Date.now()}`, // simple unique broker id
+          password, // hashed by pre-save hook
+          brokerId: `BRK${Date.now()}`, // unchanged logic
         });
 
         await newBroker.save();
-        return res.json({ redirect: "/login" });
+
+        console.log("Broker registered successfully:", newBroker.brokerId);
+        return res.json({ redirect: url });
       }
 
       default:
+        console.log("Signup failed: Invalid role");
         return res.status(400).json({ message: "Invalid role" });
     }
   } catch (err) {
@@ -86,20 +105,19 @@ export const signUpHandler = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 // ----------------------------------------------------------------------------------------------------------------------
 
 
 // ----------------------------------------------------------------------------------------------------------------------
-// otpgenerater
+// otp generator
 const generateOTP = () => {
- return Math.floor(1000 + Math.random()*9000).toString();
-}
+  return Math.floor(1000 + Math.random() * 9000).toString();
+};
 // ----------------------------------------------------------------------------------------------------------------------
 
 
 // ----------------------------------------------------------------------------------------------------------------------
-// otpsender
+// otp sender
 export const SendOTP = async (req, res) => {
   try {
     const { number } = req.body;
@@ -108,13 +126,17 @@ export const SendOTP = async (req, res) => {
     let num_b = await Broker.findOne({ number })
 
     if ( num_a || num_b || num_c ) {
-      return res.json("Already existing user")
+      return res.status(409).json({ message: "Already existing user" });
     }
 
     if (!num_a && !num_b && !num_c) {
       const pattern = /^[0-9]{10}$/; // pattern
       const otp = generateOTP();
-      otp_data[number] = otp;
+      // ✅ STORE OTP WITH EXPIRY
+    otp_data[number] = {
+      otp,
+      expiresAt: Date.now() + OTP_EXPIRY_TIME,
+    };
 
       if (!pattern.test(number)) return res.json({ message: "invalid number passed" })
 
@@ -161,62 +183,96 @@ export const SendOTP = async (req, res) => {
     res.status(500).json({ error: "Failed to send OTP" });
   }
 };
+// ----------------------------------------------------------------------------------------------------------------------
 
+
+// ----------------------------------------------------------------------------------------------------------------------
+// otp verification
 export const verifyOTP = async (req, res) => {
-    const {number, otp} = req.body;
-    if(!number || !otp) {
-      return console.log({"sendotp" : "no valid number or otp or both provided"});
-    };
-    console.log({"verifyotp log" : "valid otp and number provided"});
-    if(otp_data[number] !== otp){
-      return console.log({"verifyotp log" : "otp is incorrect please provide a valid otp"});
-    };
-    console.log({"verifyotp log" : "number verified by otp succesfully"});
-    res.json(url)
-}
+  const { number, otp } = req.body;
 
+  if (!number || !otp) {
+    return res.status(400).json({ message: "Number and OTP required" });
+  }
+
+  const record = otp_data[number];
+
+  // ❌ No OTP found
+  if (!record) {
+    return res.status(400).json({ message: "OTP expired or not found" });
+  }
+
+  // ❌ OTP expired
+  if (record.expiresAt < Date.now()) {
+    delete otp_data[number];
+    return res.status(400).json({ message: "OTP expired" });
+  }
+
+  // ❌ OTP mismatch
+  if (record.otp !== otp) {
+    return res.status(400).json({ message: "Invalid OTP" });
+  }
+
+  // ✅ OTP verified
+  delete otp_data[number]; // one-time use
+
+  return res.json({ message: "OTP verified successfully" });
+};
+
+// ----------------------------------------------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------------------------------------------
+// login handler
 export const loginHandler = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
+      console.log("Login failed: Missing credentials");
       return res.status(400).json({ message: "Email and password required" });
     }
 
-    //  using let variable to override the user
-    let user = await Admin.findOne({ email });
+    const normalizedEmail = email.toLowerCase().trim(); // CHANGED
+
+    // CHANGED: fixed broken else-if chain (CRITICAL BUG)
+    let user = await Admin.findOne({ email: normalizedEmail });
     let role = "admin";
-    let url = "https://admin";
+    let redirect = "/admin";
 
     if (!user) {
-      user = await Broker.findOne({ email });
+      user = await Broker.findOne({ email: normalizedEmail });
       role = "broker";
-      url = "https://broker";
+      redirect = "/broker";
     }
 
-    else if (!user) {
-      user = await Client.findOne({ email });
+    if (!user) {
+      user = await Client.findOne({ email: normalizedEmail });
       role = "client";
-      url = "https://client";
+      redirect = "/client";
     }
 
-    else if (!user) {
+    if (!user) {
+      console.log("Login failed: User not found");
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await user.isPasswordCorrect(password);
 
     if (!isMatch) {
+      console.log("Login failed: Password mismatch");
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    console.log(`Login successful: ${role} - ${user._id}`);
     return res.json({
       success: true,
       role,
-      redirect: url,
+      redirect,
     });
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+// ----------------------------------------------------------------------------------------------------------------------

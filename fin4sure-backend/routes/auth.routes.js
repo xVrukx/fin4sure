@@ -1,8 +1,17 @@
 import express from "express";
-import { SendOTP, signUpHandler, verifyOTP } from "../controllers/auth.controller"; 
-auth_router = express.Router
-();
+import {
+  SendOTP,
+  signUpHandler,
+  verifyOTP,
+  loginHandler,
+} from "../controllers/auth.controller.js";
 
-auth_router.post("sign_up", signUpHandler());
-auth_router.get("sendOTP", SendOTP());
-auth_router.post("verifyOTP", verifyOTP());
+const router = express.Router();
+
+// Auth routes
+router.post("/signup", signUpHandler);     // signup
+router.post("/send-otp", SendOTP);         // send OTP
+router.post("/verify-otp", verifyOTP);     // verify OTP
+router.post("/login", loginHandler);       // login
+
+export default router;
