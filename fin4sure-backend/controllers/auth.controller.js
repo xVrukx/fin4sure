@@ -121,24 +121,24 @@ const generateOTP = () => {
 export const SendOTP = async (req, res) => {
   try {
     const { number } = req.body;
+    const pattern = /^[0-9]{10}$/; // pattern
     let num_a = await Admin.findOne({ number })
     let num_c = await Client.findOne({ number })
     let num_b = await Broker.findOne({ number })
+
+    if (!pattern.test(number)) return res.json({ message: "invalid number passed" })
 
     if ( num_a || num_b || num_c ) {
       return res.status(409).json({ message: "Already existing user" });
     }
 
     if (!num_a && !num_b && !num_c) {
-      const pattern = /^[0-9]{10}$/; // pattern
       const otp = generateOTP();
       // ✅ STORE OTP WITH EXPIRY
     otp_data[number] = {
       otp,
       expiresAt: Date.now() + OTP_EXPIRY_TIME,
     };
-
-      if (!pattern.test(number)) return res.json({ message: "invalid number passed" })
 
       const whatsapp_url = `https://graph.facebook.com/v20.0/${process.env.MOBILE_ID}/messages`;
 
@@ -227,29 +227,31 @@ export const verifyOTP = async (req, res) => {
 export const loginHandler = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     if (!email || !password) {
-      console.log("Login failed: Missing credentials");
-      return res.status(400).json({ message: "Email and password required" });
+     console.log({"Login failed": "credentials not provided"});
+      return res.status(400).json({ message: "Email and password required"});
     }
 
-    const normalizedEmail = email.toLowerCase().trim(); // CHANGED
+    const Email = email.toLowerCase().trim(); // CHANGED
+    console.log(Email, password)
 
     // CHANGED: fixed broken else-if chain (CRITICAL BUG)
-    let user = await Admin.findOne({ email: normalizedEmail });
-    let role = "admin";
-    let redirect = "/admin";
-
+     let  user = await Client.findOne({ email : Email });
+     let  role = "client";
+     let  redirect = "/client";
+      console.log({"c" : user})
     if (!user) {
-      user = await Broker.findOne({ email: normalizedEmail });
+      user = await Broker.findOne({ email : Email });
       role = "broker";
       redirect = "/broker";
+      console.log({"b" : user})
     }
 
     if (!user) {
-      user = await Client.findOne({ email: normalizedEmail });
-      role = "client";
-      redirect = "/client";
+    user = await Admin.findOne({ email : Email });
+    role = "admin";
+    redirect = "/admin";
+    console.log({"a" : user})
     }
 
     if (!user) {

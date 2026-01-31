@@ -7,6 +7,7 @@ import Apply from "../pages/Apply";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import Calculator from "../pages/Calculator";
+import BrokerRegistration from "../pages/BrokerRegister";
 
 export default function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ export default function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/calculator" element={<Calculator />} />
+        <Route path="/broker-register" element= {<BrokerRegistration />}/>
       </Routes>
     </Layout>
   );

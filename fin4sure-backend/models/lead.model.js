@@ -3,11 +3,10 @@ import mongoose from "mongoose";
 const leadSchema = new mongoose.Schema(
     {
         name : {type : String, required : true},
-        // role : {type : String, default : "client"},
-        email : {type : String, required : true, unique : true},
-        number : {type : String, required : true, unique : true},
-        pan_card : {type : String, default : "Not provided"},
-        product : {type : String, default : "not provided"},
+        email : {type : String, required : true},
+        number : {type : String, required : true},
+        pan_card : {type : String, sparse : true, unique : true},
+        product : [{type : String, sparse : true}],
         broker_id : {type : String, default : "self"}
     },
     {

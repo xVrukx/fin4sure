@@ -7,7 +7,7 @@ const clientSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     number: { type: String, required: true, unique: true, trim: true },
     pan_card: {type: String, unique: true, sparse: true,}, // allows many "Not provided"
-    product: { type: String, default: "not provided" },
+    product: [{ type: String, sparse : true}],
     password: { type: String, required: true },
     broker_id: {type: String,default: "self"}, // "self" or something like "BRK12345"
   },
