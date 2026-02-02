@@ -132,7 +132,7 @@ export default function BrokerRegistration() {
         throw new Error(data.message || "Signup failed");
       }
 
-      navigate("/waiting-page");
+      navigate("/Broker-Dashboard");
     } catch (err) {
       setError(err.message || "Network error");
     } finally {

@@ -8,6 +8,7 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import Calculator from "../pages/Calculator";
 import BrokerRegistration from "../pages/BrokerRegister";
+import { BrokerDashboard } from "../pages/Brokerdashboard";
 
 export default function AppRoutes() {
   return (
@@ -21,6 +22,7 @@ export default function AppRoutes() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/calculator" element={<Calculator />} />
         <Route path="/broker-register" element= {<BrokerRegistration />}/>
+        <Route path="/broker-register" element= {<BrokerDashboard />}/>
       </Routes>
     </Layout>
   );
