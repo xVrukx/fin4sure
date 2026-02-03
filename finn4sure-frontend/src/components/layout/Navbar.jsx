@@ -1,5 +1,5 @@
 // ----------------------------------- imports -----------------------------------
-import { Link, Navigate, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import logo from "../../assets/images/logo.jpeg";
 import {CgProfile, } from "react-icons/cg";
@@ -14,9 +14,15 @@ export default function Navbar() {
 // ----------------------------------- usestate, navigate values -----------------------------------
   const [userNavtogel, setusernavtogel] = useState("notLoggedin");
   const [clientMenutogel, setclientMenutogel] = useState(false);
+  const [profile, setProfile] = useState({
+  name: "",
+  number: "",
+  email: "",
+  password: ""
+  });
   const [brokerMenutogel, setbrokerMenutogel] = useState(false);
   const [adminMenutogel, setadminMenutogel] = useState(false);
-    const Navigate = Navigate();
+    const Navigate = useNavigate();
 // ----------------------------------------------------------------------
 
 // ----------------------------------- useffect for getting user role -----------------------------------
@@ -29,18 +35,35 @@ export default function Navbar() {
         headers : {"content-Type":"application/json"},
       });
       if(!res.ok){
-        return res.json({message : "error occored while getting the client type"});
+        throw new Error("error occored while getting the client type");
+        ;
       };
       const data = await res.json();
       setusernavtogel(data);
     } catch(e) {
-      return res.json({message : "failed to read the response"});
+      throw new Error(e);
     };
     };
     userRole();
   },
   []
   );
+// ------------------------------------------------------------------------------------------------------
+
+
+// ---------------------------------------- user profile detail -----------------------------------------
+const userProfile = async() => {
+  const res = await fetch("http://localhost/auth/user/profile",{
+    method : "GET",
+    credentials : "include",
+    headers : {"content-Type" : "application/json"}
+  })
+  if(!res.ok) {
+    throw new Error("error occored while fetching the profile");
+  }
+  const data = await res.json()
+  setProfile(data)
+}
 // ------------------------------------------------------------------------------------------------------
 
 
@@ -73,35 +96,43 @@ const redirectToEMIcalculator = async () => {
   Navigate("/EMI-calculator");
 };
 
-const redirectTologout = async (user_id) => {
-  const logout = async() => {
+const redirectTologout = async () => {
     try{
-      const res = await fetch("http://localhost:5000/auth/logout",{
+      const res = await fetch(`http://localhost:5000/auth/logout`,{
       method : "POST",
       credentials : "include",
       headers : {"content-Type" : "application/json"}
     });
     if(!res.ok) {
-      return res.json({message : "error occored while logging out"});
+      throw new Error("error occored while logging out");;
     };
-    return res.status.json({message : "loggrd out succesfully"});
   } catch(e) {
-    return res.json({message: "cannot read respose for logging out"});
-  };
+    throw new Error("cannot read respose for logging out");;
 };
-  logout(user_id);
   Navigate("/login");
 
 };
 // ------------------------------------------------------------------------------------------------------
 
 
-// ----------------------------------- useffect for broker navigation -----------------------------------
-
+// ------------------------------------ client toggle -----------------------------------
+const Clienttoggle = async() => {
+  setclientMenutogel(!clientMenutogel)
+}
 // ------------------------------------------------------------------------------------------------------
 
+// ------------------------------------ broker toggle -----------------------------------
+const Brokertoggle = async() => {
+  setbrokerMenutogel(!brokerMenutogel)
+}
+// ------------------------------------------------------------------------------------------------------
 
-// ------------------------------------ useffect for admin navigation -----------------------------------
+// ------------------------------------ admin toggle -----------------------------------
+const Admintoggle = async() => {
+  setadminMenutogel(!adminMenutogel)
+}
+// ------------------------------------------------------------------------------------------------------
+
 
 // ------------------------------------------------------------------------------------------------------
   return (
@@ -175,38 +206,47 @@ const redirectTologout = async (user_id) => {
 
 
 {/* ----------------------------- client nav after login signing ----------------------------- */}
-      {(userNavtogel ==="client") && (<div className="flex item-center m-2 justify-between">
-        <button className="flex justify-center">
-          <CgProfile size={40} color="black"/>
-        </button>
+      {(userNavtogel ==="client") && (<div className="flex items-center justify-between px-4 py-2 w-full">
 
-        <h1 className="text-blue-500 ">Fin4sure</h1>
+        {/* LEFT (logo + profile stacked) */}
+        <div className="w-16 flex flex-col items-center gap-1">
+          <img src={logo} className="h-7 w-auto" />
+          <CgProfile size={26} />
+        </div>
 
-        <button value={clientMenutogel} onClick={(e) => {setclientMenutogel(e.target.value)}}>
-          <GiHamburgerMenu size={40} color="black"/>
-        </button>
+        {/* CENTER */}
+        <h1 className="flex-1 text-center font-semibold text-blue-600 text-lg">
+          Fin4sure
+        </h1>
+
+        {/* RIGHT */}
+        <div className="w-16 flex justify-end">
+          <button onClick={Clienttoggle}>
+            <GiHamburgerMenu size={30} />
+          </button>
+        </div>
 
         {(clientMenutogel)&&(
-          <div className="flex item-center h-48 w-72">
+          <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
 
-            <button className="m-2 p-1" onClick={redirectTohome()}>{/* redirect to home */}
-              Home <IoIosHome size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTohome}>{/* redirect to home */}
+              <IoIosHome/> Home 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectToproduct()}>{/* redirect to Products */}
-              Products <AiFillProduct size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToproduct}>{/* redirect to Products */}
+              <AiFillProduct/> Products 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectToEMIcalculator()}>{/* redirect to EMI Calculator */}
-              EMI Calculator <CiCalculator2 size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToEMIcalculator}>{/* redirect to EMI Calculator */}
+              EMI <CiCalculator2/> Calculator 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectTologout()}>{/* redirect to Logout */}
-              Logout <IoMdLogOut size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm text-red-600" onClick={redirectTologout}>{/* redirect to Logout */}
+              <IoMdLogOut/> Logout 
             </button>
 
-            <button className="m-2 p-1" value={clientMenutogel} onClick={(e) => {setclientMenutogel(e.target.value)}}>
-              <IoIosClose size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={Clienttoggle}>
+              <IoIosClose/>               
             </button>
           </div>
       )}
@@ -215,41 +255,52 @@ const redirectTologout = async (user_id) => {
 
 
 {/* ----------------------------- broker nav after login signing ----------------------------- */}
-      {(userNavtogel ==="broker") && (<div className="flex item-center m-2 justify-between">
-        <button className="flex justify-center">
-          <CgProfile size={40} color="black"/>
-        </button>
+      {(userNavtogel ==="broker") && (<div className="flex items-center justify-between px-4 py-2 w-full">
 
-        <h1 className="text-blue-500 ">Fin4sure</h1>
+        {/* LEFT (logo + profile stacked) */}
+        <div className="w-16 flex flex-col items-center gap-1">
+          <img src={logo} className="h-7 w-auto" />
+          <CgProfile size={26} />
+        </div>
 
-        <button value={brokerMenutogel} onClick={(e) => {setbrokerMenutogel(e.target.value)}}>
-          <GiHamburgerMenu size={40} color="black"/>
-        </button>
+        {/* CENTER */}
+        <h1 className="flex-1 text-center font-semibold text-blue-600 text-lg">
+          Fin4sure
+        </h1>
+
+        {/* RIGHT */}
+        <div className="w-16 flex justify-end">
+          <button onClick={Brokertoggle}>
+            <GiHamburgerMenu size={30} />
+          </button>
+        </div>
 
         {(brokerMenutogel)&&(
-          <div className="flex item-center h-48 w-72">
+          <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
 
-            <button className="m-2 p-1" onClick={redirectTobrokerDashboard()}>{/* redirect to dashboard */}
-              Dashboard <MdDashboard size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTobrokerDashboard}>{/* redirect to dashboard */}
+              <MdDashboard/> Dashboard 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectTobrokerInsight()}>{/* redirect to insghits */}
-              Insights <MdInsights size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTobrokerInsight}>{/* redirect to insghits */}
+              <MdInsights/> Insights 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectToproduct()}>{/* redirect to Products */}
-              Products <AiFillProduct size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToproduct}>{/* redirect to Products */}
+              <AiFillProduct/> Products 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectToEMIcalculator()}>{/* redirect to EMI Calculator */}
-              EMI Calculator <CiCalculator2 size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToEMIcalculator}>{/* redirect to EMI Calculator */}
+              EMI <CiCalculator2/> Calculator 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectTologout()}>{/* redirect to Logout */}
-              Logout <IoMdLogOut size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm text-red-600" onClick={redirectTologout}>{/* redirect to Logout */}
+              <IoMdLogOut/> Logout 
             </button>
 
-            <button className="m-2 p-1" value={brokerMenutogel} onClick={(e) => {setbrokerMenutogel(e.target.value)}}></button>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={Brokertoggle}>
+              <IoIosClose/>
+            </button>
           </div>
       )}
       </div>)}
@@ -257,41 +308,52 @@ const redirectTologout = async (user_id) => {
 
 
 {/* ----------------------------- admin nav after login signing ----------------------------- */}
-      {(userNavtogel ==="admin") && (<div className="flex item-center m-2 justify-between">
-        <button className="flex justify-center">
-          <CgProfile size={40} color="black"/>
-        </button>
+      {(userNavtogel ==="admin") && (<div className="flex items-center justify-between px-4 py-2 w-full">
 
-        <h1 className="text-blue-500 ">Fin4sure</h1>
+        {/* LEFT (logo + profile stacked) */}
+        <div className="w-16 flex flex-col items-center gap-1">
+          <img src={logo} className="h-7 w-auto" />
+          <CgProfile size={26} />
+        </div>
 
-        <button value={adminMenutogel} onClick={(e) => {setadminMenutogel(e.target.value)}}>
-          <GiHamburgerMenu size={40} color="black"/>
-        </button>
+        {/* CENTER */}
+        <h1 className="flex-1 text-center font-semibold text-blue-600 text-lg">
+          Fin4sure
+        </h1>
+
+        {/* RIGHT */}
+        <div className="w-16 flex justify-end">
+          <button onClick={Admintoggle}>
+            <GiHamburgerMenu size={30} />
+          </button>
+        </div>
 
         {(adminMenutogel)&&(
-          <div className="flex item-center h-48 w-72">
+          <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
             
-            <button className="m-2 p-1" onClick={redirectToadminDashboard()}>{/* redirect to dashboard */}
-              Dashboard <MdDashboard size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToadminDashboard}>{/* redirect to dashboard */}
+              <MdDashboard/> Dashboard 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectToadminInsight()}>{/* redirect to insghits */}
-              Insights <MdInsights size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToadminInsight}>{/* redirect to insghits */}
+              <MdInsights/> Insights 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectToproduct()}>{/* redirect to Products */}
-              Products <AiFillProduct size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToproduct}>{/* redirect to Products */}
+              <AiFillProduct/> Products 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectToEMIcalculator()}>{/* redirect to EMI Calculator */}
-              EMI Calculator <CiCalculator2 size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToEMIcalculator}>{/* redirect to EMI Calculator */}
+              EMI <CiCalculator2/> Calculator 
             </button>
 
-            <button className="m-2 p-1" onClick={redirectTologout()}>{/* redirect to Logout */}
-              Logout <IoMdLogOut size={30} color="black"/>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm text-red-600" onClick={redirectTologout}>{/* redirect to Logout */}
+              <IoMdLogOut/> Logout 
             </button>
 
-            <button className="m-2 p-1" value={adminMenutogel} onClick={(e) => {setadminMenutogel(e.target.value)}}></button>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={Admintoggle}>
+              <IoIosClose/>
+            </button>
           </div>
       )}
       </div>)}
