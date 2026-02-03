@@ -1,20 +1,10 @@
 import { useState } from "react";
 
-const BANK_RATES = [
-  { name: "Select Bank", rate: "" },
-  { name: "SBI", rate: 8.25 },
-  { name: "HDFC Bank", rate: 8.5 },
-  { name: "ICICI Bank", rate: 8.6 },
-  { name: "Axis Bank", rate: 8.75 },
-  { name: "PNB", rate: 8.4 },
-];
-
 export default function Calculator() {
   const [amount, setAmount] = useState(500000);
   const [rate, setRate] = useState(9);
   const [tenure, setTenure] = useState(20);
-  const [tenureType, setTenureType] = useState("years"); // "years" | "months"
-  const [selectedBank, setSelectedBank] = useState("Select Bank");
+  const [tenureType, setTenureType] = useState("years");
 
   function calculateEMI(P, R, tenureValue, type) {
     const months = type === "years" ? tenureValue * 12 : tenureValue;
@@ -45,138 +35,169 @@ export default function Calculator() {
 
   return (
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen">
-      <div className="max-w-4xl mx-auto px-6 py-16">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-900">
+      <div className="max-w-5xl mx-auto px-6 py-16">
+        <h1 className="text-4xl font-bold text-slate-900">
           Loan <span className="text-blue-700">Calculator</span>
         </h1>
 
         <p className="mt-3 text-slate-600 max-w-2xl">
-          Compare bank interest rates and calculate your EMI instantly.
+          Adjust values using sliders or inputs and instantly see your EMI.
         </p>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Inputs */}
-          <div className="bg-white p-6 rounded-xl border border-blue-100 space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">
-                Select Bank
-              </label>
-              <select
-                value={selectedBank}
-                onChange={(e) => {
-                  const bank = BANK_RATES.find(
-                    (b) => b.name === e.target.value
-                  );
-                  setSelectedBank(e.target.value);
-                  if (bank?.rate) setRate(bank.rate);
-                }}
-                className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-blue-600"
-              >
-                {BANK_RATES.map((bank) => (
-                  <option key={bank.name} value={bank.name}>
-                    {bank.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-10">
 
+          {/* Inputs Card */}
+          <div className="bg-white p-7 rounded-2xl border border-blue-100 shadow-sm space-y-7">
+
+            {/* Loan Amount */}
             <div>
-              <label className="block text-sm font-medium text-slate-700">
-                Loan Amount (₹)
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-medium text-slate-700">
+                  Loan Amount
+                </label>
+                <span className="px-3 py-1 text-sm rounded-full bg-blue-50 text-blue-700 font-medium">
+                  ₹ {amount.toLocaleString()}
+                </span>
+              </div>
+
               <input
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="mt-3 w-full px-4 py-3 border border-slate-300 rounded-xl
+                           focus:ring-2 focus:ring-blue-600 outline-none"
+              />
+
+              <input
+                type="range"
+                min={50000}
+                max={10000000}
+                step={50000}
+                value={amount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                className="mt-4 w-full accent-blue-600"
               />
             </div>
 
+            {/* Interest Rate */}
             <div>
-              <label className="block text-sm font-medium text-slate-700">
-                Interest Rate (% per year)
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-medium text-slate-700">
+                  Interest Rate
+                </label>
+                <span className="px-3 py-1 text-sm rounded-full bg-teal-50 text-teal-700 font-medium">
+                  {rate} %
+                </span>
+              </div>
+
               <input
                 type="number"
                 step="0.1"
                 value={rate}
                 onChange={(e) => setRate(Number(e.target.value))}
-                className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="mt-3 w-full px-4 py-3 border border-slate-300 rounded-xl
+                           focus:ring-2 focus:ring-blue-600 outline-none"
+              />
+
+              <input
+                type="range"
+                min={1}
+                max={20}
+                step={0.1}
+                value={rate}
+                onChange={(e) => setRate(Number(e.target.value))}
+                className="mt-4 w-full accent-teal-600"
               />
             </div>
 
+            {/* Tenure */}
             <div>
-              <label className="block text-sm font-medium text-slate-700">
-                Tenure
-              </label>
-              <div className="mt-2 flex gap-3">
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-medium text-slate-700">
+                  Loan Tenure
+                </label>
+                <span className="px-3 py-1 text-sm rounded-full bg-emerald-50 text-emerald-700 font-medium">
+                  {tenure} {tenureType}
+                </span>
+              </div>
+
+              <div className="mt-3 flex gap-3">
                 <input
                   type="number"
                   value={tenure}
                   onChange={(e) => setTenure(Number(e.target.value))}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg
-                             focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-xl
+                             focus:ring-2 focus:ring-blue-600 outline-none"
                 />
 
                 <select
                   value={tenureType}
                   onChange={(e) => setTenureType(e.target.value)}
-                  className="px-3 py-3 border border-slate-300 rounded-lg
-                             focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="px-4 py-3 border border-slate-300 rounded-xl
+                             focus:ring-2 focus:ring-blue-600 outline-none"
                 >
                   <option value="years">Years</option>
                   <option value="months">Months</option>
                 </select>
               </div>
+
+              <input
+                type="range"
+                min={tenureType === "years" ? 1 : 6}
+                max={tenureType === "years" ? 30 : 360}
+                step={1}
+                value={tenure}
+                onChange={(e) => setTenure(Number(e.target.value))}
+                className="mt-4 w-full accent-emerald-600"
+              />
             </div>
           </div>
 
-          {/* Results */}
-          <div className="bg-white p-6 rounded-xl border border-blue-100">
-            <h2 className="text-xl font-semibold text-slate-900">
-              Calculation Result
-            </h2>
+          {/* Results Card */}
+          <div className="bg-white p-7 rounded-2xl border border-blue-100 shadow-sm flex flex-col justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-900">
+                Your EMI Breakdown
+              </h2>
 
-            <div className="mt-6 space-y-4">
-              <div className="flex justify-between text-slate-700">
-                <span>Monthly EMI</span>
-                <span className="font-semibold text-blue-700">
-                  ₹ {emi.toLocaleString()}
-                </span>
-              </div>
-
-              <div className="flex justify-between text-slate-700">
-                <span>Total Interest</span>
-                <span className="font-semibold text-[#d9a93d]">
-                  ₹ {interest.toLocaleString()}
-                </span>
-              </div>
-
-              <div className="flex justify-between text-slate-700">
-                <span>Total Payable</span>
-                <span className="font-semibold text-slate-900">
-                  ₹ {total.toLocaleString()}
-                </span>
+              <div className="mt-8 space-y-5">
+                <ResultRow label="Monthly EMI" value={emi} highlight />
+                <ResultRow label="Total Interest" value={interest} color="gold" />
+                <ResultRow label="Total Payable" value={total} />
               </div>
             </div>
 
-            <div className="mt-8">
-              <a
-                href="/apply"
-                className="block text-center px-6 py-3 rounded-lg font-medium text-white
-                           bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
-                           hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                           transition"
-              >
-                Apply for this Loan
-              </a>
-            </div>
+            <a
+              href="/apply"
+              className="mt-10 block text-center px-6 py-4 rounded-xl font-medium text-white
+                         bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
+                         hover:scale-[1.02] transition"
+            >
+              Apply for this Loan
+            </a>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function ResultRow({ label, value, highlight, color }) {
+  const colorMap = {
+    gold: "text-[#d9a93d]",
+    default: "text-slate-900",
+  };
+
+  return (
+    <div className="flex justify-between items-center">
+      <span className="text-slate-600">{label}</span>
+      <span
+        className={`text-lg font-semibold ${
+          highlight ? "text-blue-700" : colorMap[color] || colorMap.default
+        }`}
+      >
+        ₹ {value.toLocaleString()}
+      </span>
+    </div>
   );
 }
