@@ -4,14 +4,16 @@ import {
   signUpHandler,
   verifyOTP,
   loginHandler,
+  profileHandler,
 } from "../controllers/auth.controller.js";
 
-const router = express.Router();
+export const authRouter = express.Router();
 
 // Auth routes
-router.post("/signup", signUpHandler);     // signup
-router.post("/send-otp", SendOTP);         // send OTP
-router.post("/verify-otp", verifyOTP);     // verify OTP
-router.post("/login", loginHandler);       // login
-
+authRouter.post("/signup", signUpHandler);     // signup
+authRouter.post("/send-otp", SendOTP);         // send OTP
+authRouter.post("/verify-otp", verifyOTP);     // verify OTP
+authRouter.post("/login", loginHandler);       // login
+authRouter.get("/profile", profileHandler);    // profile
+// authRouter.post("/logout", logout);     //logout
 export default router;

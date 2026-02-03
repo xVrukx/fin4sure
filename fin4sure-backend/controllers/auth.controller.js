@@ -4,6 +4,7 @@
 import Admin from "../models/admin.model.js";
 import Broker from "../models/broker.model.js";
 import Client from "../models/client.model.js";
+import jwt from "jsonwebtoken";
 import axios from "axios";
 // ----------------------------------------------------------------------------------------------------------------------
 
@@ -267,14 +268,44 @@ export const loginHandler = async (req, res) => {
     }
 
     console.log(`Login successful: ${role} - ${user._id}`);
-    return res.json({
-      success: true,
-      role,
-      redirect,
-    });
+    return res.json(redirect);
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+// ----------------------------------------------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------------------------------------------
+// logout handeler
+// export const Logouthandaler = async (req, res) => {
+//   try{
+//   }catch(e){
+//     return res.json({message : `${e}`})
+//   }
+// }
+// ----------------------------------------------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------------------------------------------
+// profile handeler
+export const profileHandler = async(req, res, filtredtoken) => {
+  const user_id = filtredtoken;
+  if(!user_id) {
+    return res.json({message : "failed to authenticate user profile handaler"})
+  }
+  const client = await Client.findById({_id : user_id});
+  if(client) {
+    return res.json(client);
+  };
+  const broker = await Broker.findById({_id : user_id})
+    if(broker) {
+    return res.json(broker);
+  };
+  const admin = await Admin.findById({_id : user_id})
+    if(admin) {
+    return res.json(admin);
+  };
+}
 // ----------------------------------------------------------------------------------------------------------------------

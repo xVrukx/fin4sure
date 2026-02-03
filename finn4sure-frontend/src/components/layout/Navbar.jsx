@@ -1,5 +1,5 @@
 // ----------------------------------- imports -----------------------------------
-import { Link, useNavigate } from "react-router-dom";
+import { data, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import logo from "../../assets/images/logo.jpeg";
 import {CgProfile, } from "react-icons/cg";
@@ -12,7 +12,7 @@ import {MdInsights, MdDashboard} from "react-icons/md";
 export default function Navbar() {
 
 // ----------------------------------- usestate, navigate values -----------------------------------
-  const [userNavtogel, setusernavtogel] = useState("");
+  const [userNavtogel, setusernavtogel] = useState("/admin");
   const [clientMenutogel, setclientMenutogel] = useState(false);
   const [profile, setProfile] = useState({
   name: "",
@@ -29,7 +29,7 @@ export default function Navbar() {
   useEffect(() => {
     const userRole = async () => {
       try {
-        const res = await fetch("http://localhost:5000/auth/navbar",{
+        const res = await fetch("http://localhost:5000/auth/login",{
         method : "GET",
         credentials : "include",
         headers : {"content-Type":"application/json"},
@@ -139,7 +139,7 @@ const Admintoggle = async() => {
     <header className="w-full bg-white border-b border-blue-100">
 
 {/*----------------------------- normal homepage nav after login signing -----------------------------*/}
-      {(userNavtogel === "not_user") && (<div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      {(userNavtogel ==="")&&(<div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/*----------------------------- Logo left side of the nav -----------------------------*/}
         <Link to="/" className="flex items-center">
           <img
@@ -160,7 +160,7 @@ const Admintoggle = async() => {
           <Link to="/products" className="hover:text-blue-700 transition">
             Loans
           </Link>
-          <Link to="/calculator" className="hover:text-blue-700 transition">
+          <Link to="/EMI-calculator" className="hover:text-blue-700 transition">
             Calculator
           </Link>
           <Link
@@ -206,25 +206,29 @@ const Admintoggle = async() => {
 
 
 {/* ----------------------------- client nav after login signing ----------------------------- */}
-      {(userNavtogel ==="client") && (<div className="flex items-center justify-between px-4 py-2 w-full">
+      {(userNavtogel ==="/client") && (<div className="flex items-center justify-between px-4 py-2 w-full">
 
-        {/* LEFT (logo + profile stacked) */}
-        <div className="w-16 flex flex-col items-center gap-1">
-          <img src={logo} className="h-7 w-auto" />
+        {/* profile */}
+        <div className="w-20 flex flex-col items-center gap-1">
+          
           <CgProfile size={26} />
         </div>
 
-        {/* CENTER */}
-        <h1 className="flex-1 text-center font-semibold text-blue-600 text-lg">
-          Fin4sure
+        {/* branding */}
+        <div className="flex items-center justify-between">
+        <img src={logo} className="h-20 w-auto" />
+        <h1 className="flex-1 text-center font-semibold text-blue-600 text-4xl">
+         Fin4sure
         </h1>
+        </div>
 
-        {/* RIGHT */}
+        {/* tools */}
         <div className="w-16 flex justify-end">
-          <button onClick={Clienttoggle}>
+          <button onClick={Admintoggle}>
             <GiHamburgerMenu size={30} />
           </button>
         </div>
+
 
         {(clientMenutogel)&&(
           <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
@@ -238,7 +242,7 @@ const Admintoggle = async() => {
             </button>
 
             <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToEMIcalculator}>{/* redirect to EMI Calculator */}
-              EMI <CiCalculator2/> Calculator 
+              <CiCalculator2/>EMI Calculator 
             </button>
 
             <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm text-red-600" onClick={redirectTologout}>{/* redirect to Logout */}
@@ -255,25 +259,29 @@ const Admintoggle = async() => {
 
 
 {/* ----------------------------- broker nav after login signing ----------------------------- */}
-      {(userNavtogel ==="broker") && (<div className="flex items-center justify-between px-4 py-2 w-full">
+      {(userNavtogel ==="/broker") && (<div className="flex items-center justify-between px-4 py-2 w-full">
 
-        {/* LEFT (logo + profile stacked) */}
-        <div className="w-16 flex flex-col items-center gap-1">
-          <img src={logo} className="h-7 w-auto" />
+        {/* profile */}
+        <div className="w-20 flex flex-col items-center gap-1">
+          
           <CgProfile size={26} />
         </div>
 
-        {/* CENTER */}
-        <h1 className="flex-1 text-center font-semibold text-blue-600 text-lg">
-          Fin4sure
+        {/* branding */}
+        <div className="flex items-center justify-between">
+        <img src={logo} className="h-20 w-auto" />
+        <h1 className="flex-1 text-center font-semibold text-blue-600 text-4xl">
+         Fin4sure
         </h1>
+        </div>
 
-        {/* RIGHT */}
+        {/* tools */}
         <div className="w-16 flex justify-end">
-          <button onClick={Brokertoggle}>
+          <button onClick={Admintoggle}>
             <GiHamburgerMenu size={30} />
           </button>
         </div>
+
 
         {(brokerMenutogel)&&(
           <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
@@ -291,7 +299,7 @@ const Admintoggle = async() => {
             </button>
 
             <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToEMIcalculator}>{/* redirect to EMI Calculator */}
-              EMI <CiCalculator2/> Calculator 
+              <CiCalculator2/>EMI Calculator 
             </button>
 
             <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm text-red-600" onClick={redirectTologout}>{/* redirect to Logout */}
@@ -308,20 +316,23 @@ const Admintoggle = async() => {
 
 
 {/* ----------------------------- admin nav after login signing ----------------------------- */}
-      {(userNavtogel ==="admin") && (<div className="flex items-center justify-between px-4 py-2 w-full">
+      {(userNavtogel ==="/admin") && (<div className="flex items-center justify-between px-4 py-2 w-full">
 
-        {/* LEFT (logo + profile stacked) */}
-        <div className="w-16 flex flex-col items-center gap-1">
-          <img src={logo} className="h-7 w-auto" />
+        {/* profile */}
+        <div className="w-20 flex flex-col items-center gap-1">
+          
           <CgProfile size={26} />
         </div>
 
-        {/* CENTER */}
-        <h1 className="flex-1 text-center font-semibold text-blue-600 text-lg">
-          Fin4sure
+        {/* branding */}
+        <div className="flex items-center justify-between">
+        <img src={logo} className="h-20 w-auto" />
+        <h1 className="flex-1 text-center font-semibold text-blue-600 text-4xl">
+         Fin4sure
         </h1>
+        </div>
 
-        {/* RIGHT */}
+        {/* tools */}
         <div className="w-16 flex justify-end">
           <button onClick={Admintoggle}>
             <GiHamburgerMenu size={30} />
@@ -344,7 +355,7 @@ const Admintoggle = async() => {
             </button>
 
             <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToEMIcalculator}>{/* redirect to EMI Calculator */}
-              EMI <CiCalculator2/> Calculator 
+              <CiCalculator2/> EMI Calculator 
             </button>
 
             <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm text-red-600" onClick={redirectTologout}>{/* redirect to Logout */}
