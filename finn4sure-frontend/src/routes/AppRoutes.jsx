@@ -20,7 +20,7 @@ export default function AppRoutes() {
         <Route path="/apply" element={<Apply />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/calculator" element={<Calculator />} />
+        <Route path="/EMI-calculator" element={<Calculator />} />
         <Route path="/broker-register" element= {<BrokerRegistration />}/>
         <Route path="/broker-register" element= {<BrokerDashboard />}/>
       </Routes>
