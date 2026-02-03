@@ -12,7 +12,7 @@ import {MdInsights, MdDashboard} from "react-icons/md";
 export default function Navbar() {
 
 // ----------------------------------- usestate, navigate values -----------------------------------
-  const [userNavtogel, setusernavtogel] = useState("notLoggedin");
+  const [userNavtogel, setusernavtogel] = useState("");
   const [clientMenutogel, setclientMenutogel] = useState(false);
   const [profile, setProfile] = useState({
   name: "",
