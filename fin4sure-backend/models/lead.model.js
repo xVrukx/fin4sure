@@ -7,6 +7,7 @@ const leadSchema = new mongoose.Schema(
         number : {type : String, required : true},
         pan_card : {type : String, sparse : true, unique : true},
         product : [{type : String, sparse : true}],
+        status : 
         broker_id : {type : String, default : "self"}
     },
     {

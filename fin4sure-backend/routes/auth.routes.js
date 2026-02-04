@@ -16,4 +16,3 @@ authRouter.post("/verify-otp", verifyOTP);     // verify OTP
 authRouter.post("/login", loginHandler);       // login
 authRouter.get("/profile", profileHandler);    // profile
 // authRouter.post("/logout", logout);     //logout
-export default router;
