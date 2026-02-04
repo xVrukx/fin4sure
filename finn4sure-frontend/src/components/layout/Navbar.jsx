@@ -12,7 +12,7 @@ import {MdInsights, MdDashboard} from "react-icons/md";
 export default function Navbar() {
 
 // ----------------------------------- usestate, navigate values -----------------------------------
-  const [userNavtogel, setusernavtogel] = useState("/admin");
+  const [userNavtogel, setusernavtogel] = useState("admin");
   const [clientMenutogel, setclientMenutogel] = useState(false);
   const [profile, setProfile] = useState({
   name: "",
@@ -206,7 +206,7 @@ const Admintoggle = async() => {
 
 
 {/* ----------------------------- client nav after login signing ----------------------------- */}
-      {(userNavtogel ==="/client") && (<div className="flex items-center justify-between px-4 py-2 w-full">
+      {(userNavtogel ==="client") && (<div className="flex items-center justify-between px-4 py-2 w-full">
 
         {/* profile */}
         <div className="w-20 flex flex-col items-center gap-1">
@@ -259,7 +259,7 @@ const Admintoggle = async() => {
 
 
 {/* ----------------------------- broker nav after login signing ----------------------------- */}
-      {(userNavtogel ==="/broker") && (<div className="flex items-center justify-between px-4 py-2 w-full">
+      {(userNavtogel ==="broker") && (<div className="flex items-center justify-between px-4 py-2 w-full">
 
         {/* profile */}
         <div className="w-20 flex flex-col items-center gap-1">
@@ -316,7 +316,7 @@ const Admintoggle = async() => {
 
 
 {/* ----------------------------- admin nav after login signing ----------------------------- */}
-      {(userNavtogel ==="/admin") && (<div className="flex items-center justify-between px-4 py-2 w-full">
+      {(userNavtogel ==="admin") && (<div className="flex items-center justify-between px-4 py-2 w-full">
 
         {/* profile */}
         <div className="w-20 flex flex-col items-center gap-1">
