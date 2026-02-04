@@ -13,31 +13,43 @@ const publickey = fs.readFileSync(path.join(process.cwd(),"../Keys","public.key"
 
 // --------------------------------- access token signing ---------------------------------
 export const signAccesstoken = (payload) => {
-    const accessToken = jwt.sign(payload, privatekey, {
+    try{
+        const accessToken = jwt.sign(payload, privatekey, {
         algorithm : "RS256",
         expiresIn : "1d"
     });
     return accessToken;
+}catch(e) {
+    res.json({message : `${e} error occored while signing accessToken`})
+}
 };
 // ----------------------------------------------------------------------------------------
 
 
 // --------------------------------- refresstokesigningn ---------------------------------
 export const signrefreshToken = (payload) => {
-    const refreshToken = jwt.sign(payload, privatekey, {
+    try{
+        const refreshToken = jwt.sign(payload, privatekey, {
         algorithm : "RS256",
         expiresIn : "1w",
     });
     return refreshToken;
+}catch(e) {
+    res.json({message : `${e}error occored while creating refresh token`})
+}
 };
 // ---------------------------------------------------------------------------------------
 
 
 // --------------------------------- verify token ---------------------------------
 export const verifyToken = (token) => {
-    const verifiedToken = jwt.verify(token,publickey,{
+    try {
+        const verifiedToken = jwt.verify(token,publickey,{
         algorithms : ["RS256"],
     });
     return verifiedToken;
+}catch(e) {
+    res.json({message : `${e}error occored while verifing toker`})
+}
 };
 // --------------------------------------------------------------------------------

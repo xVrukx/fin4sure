@@ -264,15 +264,15 @@ export const loginHandler = async (req, res) => {
 
     const Accesstoken = signAccesstoken({"_id" : user._id, "role" : role})
 
-    return res.cookies(
+    return res.cookie(
       "AccessToken", Accesstoken,{
         httpOnly : true,
         secure : true,
-        sameSite : lax,
+        sameSite : "lax",
         maxAge : 24*60*60*1000,
       }
     ).json(role);
-    
+
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
