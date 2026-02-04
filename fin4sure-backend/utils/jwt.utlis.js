@@ -34,7 +34,7 @@ export const signrefreshToken = (payload) => {
 
 
 // --------------------------------- verify token ---------------------------------
-export const verifyToken = (token, next) => {
+export const verifyToken = (token) => {
     const verifiedToken = jwt.verify(token,publickey,{
         algorithms : ["RS256"],
     });
