@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js"; // ADD THIS
+import cookieParser from "cookie-parser";
 import cors from "cors";
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoutes); // ADD THIS

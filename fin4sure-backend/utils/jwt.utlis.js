@@ -1,55 +1,91 @@
 // --------------------------------- imports ---------------------------------
 import jwt from "jsonwebtoken";
-import path from "path";
 import fs from "fs";
+import path from "path";
 // ---------------------------------------------------------------------------
 
 
-// --------------------------------- getting data of the privite and public key ---------------------------------
-const privatekey = fs.readFileSync(path.join(process.cwd(),"../Keys","private.key"));
-const publickey = fs.readFileSync(path.join(process.cwd(),"../Keys","public.key"));
-// --------------------------------------------------------------------------------------------------------------
+// --------------------------------- load RSA keys (once at startup) ---------
+let privateKey;
+let publicKey;
 
+try {
+  privateKey = fs.readFileSync(
+    path.join(process.cwd(), "../Keys", "private.key"),
+    "utf8"
+  );
 
-// --------------------------------- access token signing ---------------------------------
-export const signAccesstoken = (payload) => {
-    try{
-        const accessToken = jwt.sign(payload, privatekey, {
-        algorithm : "RS256",
-        expiresIn : "1d"
-    });
-    return accessToken;
-}catch(e) {
-    res.json({message : `${e} error occored while signing accessToken`})
+  publicKey = fs.readFileSync(
+    path.join(process.cwd(), "../Keys", "public.key"),
+    "utf8"
+  );
+} catch (err) {
+  console.error("❌ Failed to load JWT keys:", err.message);
+  process.exit(1); // 🚨 app must not run without keys
 }
-};
-// ----------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 
-// --------------------------------- refresstokesigningn ---------------------------------
-export const signrefreshToken = (payload) => {
-    try{
-        const refreshToken = jwt.sign(payload, privatekey, {
-        algorithm : "RS256",
-        expiresIn : "1w",
+// --------------------------------- sign access token -----------------------
+export const signAccessToken = (payload) => {
+  try {
+    if (!payload || typeof payload !== "object") {
+      throw new Error("Invalid JWT payload");
+    }
+
+    return jwt.sign(payload, privateKey, {
+      algorithm: "RS256",
+      expiresIn: "1d", // ✅ short-lived access token
     });
-    return refreshToken;
-}catch(e) {
-    res.json({message : `${e}error occored while creating refresh token`})
-}
+  } catch (err) {
+    console.error("❌ Error signing access token:", err.message);
+    throw new Error("ACCESS_TOKEN_SIGN_FAILED");
+  }
 };
-// ---------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 
-// --------------------------------- verify token ---------------------------------
+// --------------------------------- sign refresh token ----------------------
+export const signRefreshToken = (payload) => {
+  try {
+    if (!payload || typeof payload !== "object") {
+      throw new Error("Invalid JWT payload");
+    }
+
+    return jwt.sign(payload, privateKey, {
+      algorithm: "RS256",
+      expiresIn: "7d", // ✅ long-lived refresh token
+    });
+  } catch (err) {
+    console.error("❌ Error signing refresh token:", err.message);
+    throw new Error("REFRESH_TOKEN_SIGN_FAILED");
+  }
+};
+// ---------------------------------------------------------------------------
+
+
+// --------------------------------- verify token ----------------------------
 export const verifyToken = (token) => {
-    try {
-        const verifiedToken = jwt.verify(token,publickey,{
-        algorithms : ["RS256"],
+  try {
+    if (!token) {
+      throw new Error("Token not provided");
+    }
+
+    return jwt.verify(token, publicKey, {
+      algorithms: ["RS256"], // 🔐 algorithm pinning
     });
-    return verifiedToken;
-}catch(e) {
-    res.json({message : `${e}error occored while verifing toker`})
-}
+  } catch (err) {
+    // Normalize JWT errors (important for middleware)
+    if (
+      err.name === "TokenExpiredError" ||
+      err.name === "JsonWebTokenError" ||
+      err.name === "NotBeforeError"
+    ) {
+      throw new Error("INVALID_OR_EXPIRED_TOKEN");
+    }
+
+    console.error("❌ Token verification failed:", err.message);
+    throw new Error("TOKEN_VERIFICATION_FAILED");
+  }
 };
-// --------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------

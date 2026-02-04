@@ -4,7 +4,7 @@
 import Admin from "../models/admin.model.js";
 import Broker from "../models/broker.model.js";
 import Client from "../models/client.model.js";
-import { signAccesstoken, signRefreshtoken } from "../utils/jwt.utlis.js";
+import { signAccessToken, signRefreshtoken } from "../utils/jwt.utlis.js";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 // ----------------------------------------------------------------------------------------------------------------------
@@ -229,55 +229,57 @@ export const verifyOTP = async (req, res) => {
 export const loginHandler = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password) {
-     console.log({"Login failed": "credentials not provided"});
-      return res.status(400).json({ message: "Email and password required"});
+      return res.status(400).json({ message: "Email and password required" });
     }
 
     const Email = email.toLowerCase().trim();
-     let  user = await Client.findOne({ email : Email });
-     let  role = "/client";
+
+    let user = await Client.findOne({ email: Email });
+    let role = "client";
 
     if (!user) {
-      user = await Broker.findOne({ email : Email });
-      role = "/broker";
+      user = await Broker.findOne({ email: Email });
+      role = "broker";
     }
 
     if (!user) {
-    user = await Admin.findOne({ email : Email });
-    role = "/admin";
+      user = await Admin.findOne({ email: Email });
+      role = "admin";
     }
-    
+
     if (!user) {
-      console.log("Login failed: User not found");
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await user.isPasswordCorrect(password);
-
     if (!isMatch) {
-      console.log("Login failed: Password mismatch");
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    console.log(`Login successful: ${role} - ${user._id}`);
+    const accessToken = signAccessToken({
+      _id: user._id,
+      role,
+    });
 
-    const Accesstoken = signAccesstoken({"_id" : user._id, "role" : role})
-
-    return res.cookie(
-      "AccessToken", Accesstoken,{
-        httpOnly : true,
-        secure : true,
-        sameSite : "lax",
-        maxAge : 24*60*60*1000,
-      }
-    ).json(role);
+    return res
+      .cookie("AccessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .json({
+        role, // frontend uses this to navigate
+      });
 
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 // ----------------------------------------------------------------------------------------------------------------------
 
 
