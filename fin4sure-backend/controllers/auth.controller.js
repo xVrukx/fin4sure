@@ -4,6 +4,7 @@
 import Admin from "../models/admin.model.js";
 import Broker from "../models/broker.model.js";
 import Client from "../models/client.model.js";
+import { signAccesstoken, signRefreshtoken } from "../utils/jwt.utlis.js";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 // ----------------------------------------------------------------------------------------------------------------------
@@ -233,28 +234,20 @@ export const loginHandler = async (req, res) => {
       return res.status(400).json({ message: "Email and password required"});
     }
 
-    const Email = email.toLowerCase().trim(); // CHANGED
-    console.log(Email, password)
-
-    // CHANGED: fixed broken else-if chain (CRITICAL BUG)
+    const Email = email.toLowerCase().trim();
      let  user = await Client.findOne({ email : Email });
-     let  role = "client";
-     let  redirect = "/client";
-      console.log({"c" : user})
+     let  role = "/client";
+
     if (!user) {
       user = await Broker.findOne({ email : Email });
-      role = "broker";
-      redirect = "/broker";
-      console.log({"b" : user})
+      role = "/broker";
     }
 
     if (!user) {
     user = await Admin.findOne({ email : Email });
-    role = "admin";
-    redirect = "/admin";
-    console.log({"a" : user})
+    role = "/admin";
     }
-
+    
     if (!user) {
       console.log("Login failed: User not found");
       return res.status(401).json({ message: "Invalid credentials" });
@@ -268,7 +261,18 @@ export const loginHandler = async (req, res) => {
     }
 
     console.log(`Login successful: ${role} - ${user._id}`);
-    return res.json(redirect);
+
+    const Accesstoken = signAccesstoken({"_id" : user._id, "role" : role})
+
+    return res.cookies(
+      "AccessToken", Accesstoken,{
+        httpOnly : true,
+        secure : true,
+        sameSite : lax,
+        maxAge : 24*60*60*1000,
+      }
+    ).json(role);
+    
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
@@ -290,7 +294,7 @@ export const loginHandler = async (req, res) => {
 
 // ----------------------------------------------------------------------------------------------------------------------
 // profile handeler
-export const profileHandler = async(req, res, filtredtoken) => {
+export const profileHandler = async(req, res) => {
   const user_id = filtredtoken;
   if(!user_id) {
     return res.json({message : "failed to authenticate user profile handaler"})
