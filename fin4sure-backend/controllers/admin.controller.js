@@ -1,23 +1,14 @@
 // -------------------------- imports --------------------------
-import Client from "../models/client.model";
-import Broker from "../models/broker.model";
+import Client from "../models/client.model.js";
+import Broker from "../models/broker.model.js";
 // ----------------------------------------------------
 
 
 // -------------------------- function for fetching User counts --------------------------
 export const userCount = async(req, res) => {
     try{
-        let totalbrokers = await Broker.countDocuments();
-        let totalclients = await Client.countDocuments();
-        
-        if(!totalbrokers) {
-            totalbrokers = 0
-            console.log({message : "faield to fetch broker count"})
-        }
-        if(!totalclients) {
-            totalclients = 0
-            console.log({message : "faield to fetch total client"})
-        }
+        const totalbrokers = await Broker.countDocuments();
+        const totalclients = await Client.countDocuments();
         const totaluser = totalclients + totalbrokers;
         res.json({totaluser, totalbrokers, totalclients});
 }catch(e) {
@@ -30,18 +21,9 @@ export const userCount = async(req, res) => {
 // -------------------------- function for fetching Brokers information --------------------------
 export const brokersByClients = async(req, res) => {
     try{
-        
-        let brokerInformation = [];
-        const BrokerArray = await Broker.find().select(
-            "name broker_id clients"
+        const brokerInformation = await Broker.find().select(
+            "name brokerId status clients"
         ).lean();
-
-        if(!BrokerArray){
-            return res.json({message : "faield to fetch broker information"});
-        };
-        for (const broker of BrokerArray) {
-            brokerInformation.push(broker);
-        };
         if(!brokerInformation) {
             return res.json({message : "0 Brokers found"});
         };
@@ -56,16 +38,9 @@ export const brokersByClients = async(req, res) => {
 // -------------------------- function for fetching Clients information --------------------------
 export const clientByproducts = async(req, res) => {
     try{
-        let clientInformation = [];
-        const clientArray = await Client.find().select(
-            "name number product broker_id"
+        const clientInformation = await Client.find().select(
+            "name number product brokerId"
         ).lean();
-        if(!clientArray) {
-            return res.json({message : "faield to fetch client information"})
-        }
-        for(const client of clientArray) {
-            clientInformation.push(client);
-        };
         if(!clientInformation) {
             return res.json({message : "0 Client found"})
         }
@@ -75,3 +50,57 @@ export const clientByproducts = async(req, res) => {
 };
 };
 // ----------------------------------------------------
+
+export const brokerStatus = async(req, res) => {
+    try{
+    const {brokerId, status} = req.body;
+    if(!brokerId || !status) {
+        console.log({message : "brokerId or status not provided"});
+        return res.status(500).json("internal server error");
+    }
+    const update = {
+        $set : {
+            status : status
+        }
+    };
+    const callback = {
+        new : true
+    };
+    const brokerStatus = await Broker.findOneAndUpdate({brokerId, update, callback}).select(
+        "status"
+    );
+    if(!brokerStatus) {
+        return res.json({message : "faild to fetch updated user status"})
+    }
+    return res.json(brokerStatus);
+}catch(e) {
+    return res.status(500).json({message:`${e} internal server error occored while changing the Broker's status`})
+};
+};
+
+// export const brokerStatus = async(req, res) => {
+//     try{
+//     const {brokerId, status} = req.body;
+//     if(!brokerId || !status) {
+//         console.log({message : "brokerId or status not provided"});
+//         return res.status(500).json("internal server error");
+//     }
+//     const update = {
+//         $set : {
+//             status : status
+//         }
+//     };
+//     const callback = {
+//         new : true
+//     };
+//     const brokerStatus = await Broker.findOneAndUpdate({brokerId, update, callback}).select(
+//         "status"
+//     );
+//     if(!brokerStatus) {
+//         return res.json({message : "faild to fetch updated user status"})
+//     }
+//     return res.json(brokerStatus);
+// }catch(e) {
+//     return res.status(500).json({message:`${e} internal server error occored while changing the Broker's status`})
+// };
+// };
