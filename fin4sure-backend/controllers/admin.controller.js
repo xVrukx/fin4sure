@@ -1,110 +1,77 @@
+// -------------------------- imports --------------------------
 import Client from "../models/client.model";
 import Broker from "../models/broker.model";
+// ----------------------------------------------------
 
+
+// -------------------------- function for fetching User counts --------------------------
 export const userCount = async(req, res) => {
     try{
-        const brokerArray = await Broker.find();
-        const clientArray = await Client.find();
-        const totalbrokers = brokerArray.length;
-        const totalclients = clientArray.length;
+        let totalbrokers = await Broker.countDocuments();
+        let totalclients = await Client.countDocuments();
+        
+        if(!totalbrokers) {
+            totalbrokers = 0
+            console.log({message : "faield to fetch broker count"})
+        }
+        if(!totalclients) {
+            totalclients = 0
+            console.log({message : "faield to fetch total client"})
+        }
         const totaluser = totalclients + totalbrokers;
-        res.json(totaluser, totalbrokers, totalclients);
+        res.json({totaluser, totalbrokers, totalclients});
 }catch(e) {
-    return res.json({message : `${e} error occored while getting total broker count`});
+    return res.json({message : `${e} error occored while getting total user, broker and client count`});
 };
 };
+// ----------------------------------------------------
 
+
+// -------------------------- function for fetching Brokers information --------------------------
 export const brokersByClients = async(req, res) => {
     try{
-        const BrokerArray = await Broker.find();
-        let brokerIds = [];
+        
+        let brokerInformation = [];
+        const BrokerArray = await Broker.find().select(
+            "name broker_id clients"
+        ).lean();
+
+        if(!BrokerArray){
+            return res.json({message : "faield to fetch broker information"});
+        };
         for (const broker of BrokerArray) {
-            brokerIds.push({"Broker" : broker.brokerId, "clients" : broker.clients});
+            brokerInformation.push(broker);
         };
-        return res.json(brokerIds);
+        if(!brokerInformation) {
+            return res.json({message : "0 Brokers found"});
+        };
+        return res.json(brokerInformation);
 }catch(e) {
-    return res.json({message : `${e} error occored while getting total broker count`});
+    return res.json({message : `${e} error occored while getting Broker information`});
 };
 };
+// ----------------------------------------------------
 
-export const usersByproducts = async(req, res) => {
+
+// -------------------------- function for fetching Clients information --------------------------
+export const clientByproducts = async(req, res) => {
     try{
-        let clientProducts = [];
-        const clientArray = await Client.find();
+        let clientInformation = [];
+        const clientArray = await Client.find().select(
+            "name number product broker_id"
+        ).lean();
+        if(!clientArray) {
+            return res.json({message : "faield to fetch client information"})
+        }
         for(const client of clientArray) {
-            clientProducts.push({"client":client._id,"products":client.product});
+            clientInformation.push(client);
         };
-        res.json(clientProducts);
+        if(!clientInformation) {
+            return res.json({message : "0 Client found"})
+        }
+        res.json(clientInformation);
 }catch(e) {
-    return res.json({message : `${e} error occored while getting total broker count`});
+    return res.json({message : `${e} error occored while getting Client information`});
 };
 };
-
-
-
-// -------------------------------------------------------------------------------------
-
-// export const userCount = async (req, res) => {
-//   try {
-//     const [totalBrokers, totalClients] = await Promise.all([
-//       Broker.countDocuments(),
-//       Client.countDocuments(),
-//     ]);
-
-//     return res.json({
-//       totalUsers: totalBrokers + totalClients,
-//       totalBrokers,
-//       totalClients,
-//     });
-//   } catch (err) {
-//     console.error("User count error:", err);
-//     return res.status(500).json({
-//       message: "Failed to fetch user counts",
-//     });
-//   }
-// };
-
-// export const brokersByClients = async (req, res) => {
-//   try {
-//     const brokers = await Broker.find()
-//       .select("brokerId name clients")
-//       .lean();
-
-//     const result = brokers.map((broker) => ({
-//       brokerId: broker.brokerId,
-//       name: broker.name,
-//       totalClients: broker.clients.length,
-//       clients: broker.clients, // or remove if not needed
-//     }));
-
-//     return res.json(result);
-//   } catch (err) {
-//     console.error("Broker client mapping error:", err);
-//     return res.status(500).json({
-//       message: "Failed to fetch broker client mapping",
-//     });
-//   }
-// };
-
-
-// export const usersByProducts = async (req, res) => {
-//   try {
-//     const clients = await Client.find()
-//       .select("name email product")
-//       .lean();
-
-//     const result = clients.map((client) => ({
-//       clientId: client._id,
-//       name: client.name,
-//       email: client.email,
-//       products: client.product,
-//     }));
-
-//     return res.json(result);
-//   } catch (err) {
-//     console.error("Users by product error:", err);
-//     return res.status(500).json({
-//       message: "Failed to fetch users by products",
-//     });
-//   }
-// };
+// ----------------------------------------------------
