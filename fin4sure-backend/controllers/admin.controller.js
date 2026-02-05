@@ -46,7 +46,7 @@ export const brokersByClients = async (req, res) => {
 // -------------------------- function for fetching Clients information --------------------------
 export const clientByproducts = async (req, res) => {
   try {
-    const clientInformation = await Client.find()
+    const clientInformation = await Lead.find()
       .select("name number product broker_id") // 🔧 CHANGED: fixed field name
       .lean();
 
@@ -128,7 +128,7 @@ export const clientStatus = async(req, res) => {
     const filter = { product : { product : product }}
     const update = { $set : { product : { status :status }}};
     const callback = {new : true};
-    const clientStatus = await Client.findOneAndUpdate(filter, update, callback).select(
+    const clientStatus = await Lead.findOneAndUpdate(filter, update, callback).select(
         "number product"
     );
     if(!clientStatus) {
