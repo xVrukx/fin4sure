@@ -1,7 +1,8 @@
 // -------------------------- imports --------------------------
 import Client from "../models/client.model.js";
+import Lead from "../models/lead.model.js";;
 import Broker from "../models/broker.model.js";
-// ------------------------------------------------------------
+// ----------------------------------------------------
 
 
 // -------------------------- function for fetching User counts --------------------------
@@ -80,18 +81,22 @@ export const brokerStatus = async (req, res) => {
       });
     }
 
+    const filter = {brokerId};
+    const update = { $set: { status } };
+    const callback = {new : true};
+
     // 🔧 CHANGED: correct findOneAndUpdate usage
     const updatedBroker = await Broker.findOneAndUpdate(
-      { brokerId },              // filter
-      { $set: { status } },      // update
-      { new: true }              // options
+      filter,              // filter
+      update,      // update
+      callback              // options
     ).select("brokerId status");
 
     if (!updatedBroker) {
       return res.status(404).json({
         message: "Broker not found",
       });
-    }
+    };
 
     return res.json(updatedBroker);
   } catch (e) {
@@ -99,34 +104,43 @@ export const brokerStatus = async (req, res) => {
     return res.status(500).json({
       message: "Internal server error while updating broker status",
     });
-  }
+  };
 };
 // ------------------------------------------------------------
 
 
-// export const brokerStatus = async(req, res) => {
-//     try{
-//     const {brokerId, status} = req.body;
-//     if(!brokerId || !status) {
-//         console.log({message : "brokerId or status not provided"});
-//         return res.status(500).json("internal server error");
-//     }
-//     const update = {
-//         $set : {
-//             status : status
-//         }
-//     };
-//     const callback = {
-//         new : true
-//     };
-//     const brokerStatus = await Broker.findOneAndUpdate({brokerId, update, callback}).select(
-//         "status"
-//     );
-//     if(!brokerStatus) {
-//         return res.json({message : "faild to fetch updated user status"})
-//     }
-//     return res.json(brokerStatus);
-// }catch(e) {
-//     return res.status(500).json({message:`${e} internal server error occored while changing the Broker's status`})
-// };
-// };
+// -------------------------- function for updating client's product status --------------------------
+
+export const clientStatus = async(req, res) => {
+    try{
+    const {product, status} = req.body;
+    if(!product || !status) {
+        console.log({message : "clientId or status not provided"});
+        return res.status(400).json("status not provided");
+    }
+
+    const allowedStatus = ["approved", "rejected", "pending"]
+
+    if(!allowedStatus.includes(status)){
+        return res.status(400).json("invalid status code provided");
+    }
+
+    const filter = { product : { product : product }}
+    const update = { $set : { product : { status :status }}};
+    const callback = {new : true};
+    const clientStatus = await Client.findOneAndUpdate(filter, update, callback).select(
+        "number product"
+    );
+    if(!clientStatus) {
+      return res.status(404).json({
+        message: "client not found",
+      });}
+    return res.json(clientStatus);
+}catch(e) {
+    console.error(e);
+    return res.status(500).json({
+      message: "Internal server error while updating client's product status",
+    });
+};
+};
+// ------------------------------------------------------------

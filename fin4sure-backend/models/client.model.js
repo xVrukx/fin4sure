@@ -7,7 +7,15 @@ const clientSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     number: { type: String, required: true, unique: true, trim: true },
     pan_card: {type: String, unique: true, sparse: true,}, // allows many "Not provided"
-    product: [{ type: String, sparse : true}],
+    product: [
+      {product : {
+        type: String, sparse : true
+      },
+      status : {
+        type : String, required : true, enum : ["approved", "pending", "rejected"]
+      }, default : "pending"
+      }
+    ],
     password: { type: String, required: true },
     broker_id: {type: String,default: "self"}, // "self" or something like "BRK12345"
   },
