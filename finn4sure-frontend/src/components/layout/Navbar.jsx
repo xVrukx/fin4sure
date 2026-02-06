@@ -13,16 +13,14 @@ export default function Navbar() {
 
 // ----------------------------------- usestate, navigate values -----------------------------------
   const [userNavtogel, setusernavtogel] = useState("admin");
-  const [clientMenutogel, setclientMenutogel] = useState(false);
+  const [Menutoggle, setMenutoggle] = useState(false);
   const [profile, setProfile] = useState({
   name: "",
   number: "",
   email: "",
   password: ""
   });
-  const [brokerMenutogel, setbrokerMenutogel] = useState(false);
-  const [adminMenutogel, setadminMenutogel] = useState(false);
-    const Navigate = useNavigate();
+const Navigate = useNavigate();
 // ----------------------------------------------------------------------
 
 // ----------------------------------- useffect for getting user role -----------------------------------
@@ -116,23 +114,10 @@ const redirectTologout = async () => {
 
 
 // ------------------------------------ client toggle -----------------------------------
-const Clienttoggle = async() => {
-  setclientMenutogel(!clientMenutogel)
+const menuToggle = async() => {
+  setMenutoggle(!Menutoggle)
 }
 // ------------------------------------------------------------------------------------------------------
-
-// ------------------------------------ broker toggle -----------------------------------
-const Brokertoggle = async() => {
-  setbrokerMenutogel(!brokerMenutogel)
-}
-// ------------------------------------------------------------------------------------------------------
-
-// ------------------------------------ admin toggle -----------------------------------
-const Admintoggle = async() => {
-  setadminMenutogel(!adminMenutogel)
-}
-// ------------------------------------------------------------------------------------------------------
-
 
 // ------------------------------------------------------------------------------------------------------
   return (
@@ -230,7 +215,7 @@ const Admintoggle = async() => {
         </div>
 
 
-        {(clientMenutogel)&&(
+        {(Menutoggle)&&(
           <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
 
             <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTohome}>{/* redirect to home */}
@@ -249,7 +234,7 @@ const Admintoggle = async() => {
               <IoMdLogOut/> Logout 
             </button>
 
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={Clienttoggle}>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={menuToggle}>
               <IoIosClose/>               
             </button>
           </div>
@@ -283,8 +268,12 @@ const Admintoggle = async() => {
         </div>
 
 
-        {(brokerMenutogel)&&(
+        {(Menutoggle)&&(
           <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
+
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTohome}>{/* redirect to home */}
+              <IoIosHome/> Home 
+            </button>
 
             <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTobrokerDashboard}>{/* redirect to dashboard */}
               <MdDashboard/> Dashboard 
@@ -306,7 +295,7 @@ const Admintoggle = async() => {
               <IoMdLogOut/> Logout 
             </button>
 
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={Brokertoggle}>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={menuToggle}>
               <IoIosClose/>
             </button>
           </div>
@@ -339,9 +328,13 @@ const Admintoggle = async() => {
           </button>
         </div>
 
-        {(adminMenutogel)&&(
+        {(Menutoggle)&&(
           <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
-            
+
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTohome}>{/* redirect to home */}
+              <IoIosHome/> Home 
+            </button>
+
             <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToadminDashboard}>{/* redirect to dashboard */}
               <MdDashboard/> Dashboard 
             </button>
@@ -362,7 +355,7 @@ const Admintoggle = async() => {
               <IoMdLogOut/> Logout 
             </button>
 
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={Admintoggle}>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={menuToggle}>
               <IoIosClose/>
             </button>
           </div>

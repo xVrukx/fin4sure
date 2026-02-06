@@ -7,18 +7,21 @@ import {
 } from "../controllers/admin.controller.js";
 import { verifyUser, isAdmin } from "../middlewares/auth.middleware.js";
 
-const router = express.Router();
+const adminRouter = express.Router();
 
 // dashboard stats
-router.get("/user-count", verifyUser, isAdmin, userCount);
+adminRouter.get("/user-count", verifyUser, isAdmin, userCount);
 
 // brokers list with clients
-router.get("/brokers", verifyUser, isAdmin, brokersByClients);
+adminRouter.get("/brokers", verifyUser, isAdmin, brokersByClients);
 
 // clients list with products
-router.get("/clients", verifyUser, isAdmin, clientByproducts);
+adminRouter.get("/clients", verifyUser, isAdmin, clientByproducts);
 
 // approve / reject broker
-router.post("/broker-status", verifyUser, isAdmin, brokerStatus);
+adminRouter.post("/broker-status", verifyUser, isAdmin, brokerStatus);
 
-export default router;
+// approve / reject client product
+adminRouter.post("/", verifyUser, isAdmin, clientByproducts)
+
+export default adminRouter;

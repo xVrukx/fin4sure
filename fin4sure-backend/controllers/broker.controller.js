@@ -1,37 +1,6 @@
 import Broker from "../models/broker.model.js";
 import Client from "../models/client.model.js";
 import Lead from "../models/lead.model.js";
-
-/**
- * GET /broker/profile
- * Broker can see his own profile & approval status
- */
-export const getBrokerProfile = async (req, res) => {
-  try {
-    const brokerId = req.user._id;
-
-    const broker = await Broker.findById(brokerId).select(
-      "-password -__v"
-    );
-
-    if (!broker) {
-      return res.status(404).json({ message: "Broker not found" });
-    }
-
-    return res.json({
-      brokerId: broker.brokerId,
-      name: broker.name,
-      email: broker.email,
-      number: broker.number,
-      status: broker.status, // pending | approved | rejected
-      createdAt: broker.createdAt,
-    });
-  } catch (err) {
-    console.error("Broker profile error:", err);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
 /**
  * GET /broker/clients
  * Broker can see all clients referred by him

@@ -266,7 +266,7 @@ export const loginHandler = async (req, res) => {
     return res
       .cookie("AccessToken", accessToken, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000,
       })
@@ -279,37 +279,54 @@ export const loginHandler = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 // ----------------------------------------------------------------------------------------------------------------------
 
 
 // ----------------------------------------------------------------------------------------------------------------------
 // logout handeler
-// export const Logouthandaler = async (req, res) => {
-//   try{
-//   }catch(e){
-//     return res.json({message : `${e}`})
-//   }
-// }
+export const Logouthandaler = async (req, res) => {
+  try{
+    const AccessToken = req.cookie.AccessToken;
+    if(!AccessToken) {
+      return res.status(500).json({message : "accesstoken not found"});
+    };
+    res.clearCookie("AccessToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    })
+    .json({ message: "Logged out successfully" });
+  }catch(e){
+    return res.json({message : `${e}`})
+  }
+}
 // ----------------------------------------------------------------------------------------------------------------------
 
 
 // ----------------------------------------------------------------------------------------------------------------------
 // profile handeler
 export const profileHandler = async(req, res) => {
-  const user_id = filtredtoken;
+  const user_id = req.user._id;
   if(!user_id) {
     return res.json({message : "failed to authenticate user profile handaler"})
   }
-  const client = await Client.findById({_id : user_id});
+
+  const client = await Client.findById({_id : user_id}).select(
+    "-password -__v"
+  );
+  const admin = await Admin.findById({_id : user_id}).select(
+    "-password -__v"
+  );
+  const broker = await Broker.findById({_id : user_id}).select(
+    "-password -__v"
+  );
+
   if(client) {
     return res.json(client);
   };
-  const broker = await Broker.findById({_id : user_id})
     if(broker) {
     return res.json(broker);
   };
-  const admin = await Admin.findById({_id : user_id})
     if(admin) {
     return res.json(admin);
   };

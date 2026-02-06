@@ -1,10 +1,11 @@
 import express from "express";
-import { profileHandler } from "../controllers/auth.controller.js";
+import { getBrokerLeads, getReferredClients } from "../controllers/broker.controller.js";
 import { verifyUser, isBroker } from "../middlewares/auth.middleware.js";
 
-const router = express.Router();
+const brokerRouter = express.Router();
 
 // broker profile
-router.get("/profile", verifyUser, isBroker, profileHandler);
-
-export default router;
+// router.get("/profile", verifyUser, isBroker, profileHandler); single general auth for all the users
+brokerRouter.get("/getRefferedClients", verifyUser,isBroker,getReferredClients);
+brokerRouter.get("/getBrokerLeads", verifyUser, getBrokerLeads);
+export default brokerRouter;
