@@ -9,7 +9,7 @@ export function AuthProvider({ children }) {
   // 🔥 Sync frontend auth with backend session
   const fetchProfile = async () => {
     try {
-      const res = await fetch("http://localhost:5000/auth/profile", {
+      const res = await fetch("http://localhost:5000/api/auth/profile", {
         credentials: "include",
       });
 

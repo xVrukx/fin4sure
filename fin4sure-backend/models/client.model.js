@@ -12,8 +12,8 @@ const clientSchema = new mongoose.Schema(
         type: String, sparse : true
       },
       status : {
-        type : String, required : true, enum : ["approved", "pending", "rejected"]
-      }, default : "pending"
+        type : String, required : true, enum : ["approved", "pending", "rejected"], default : "pending"
+      }
       }
     ],
     password: { type: String, required: true },

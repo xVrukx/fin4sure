@@ -1,5 +1,5 @@
 // --------------------------------- imports ---------------------------------
-import { verifyToken } from "../utils/jwt.utils.js";
+import { verifyToken } from "../utils/jwt.utlis.js";
 import Client from "../models/client.model.js";
 import Broker from "../models/broker.model.js";
 import Admin from "../models/admin.model.js";
@@ -9,7 +9,7 @@ import Admin from "../models/admin.model.js";
 export const verifyUser = async (req, res, next) => {
   try {
     // ✅ 1. Read token from cookies
-    const accessToken = req.cookies?.AccessToken;
+    const accessToken = req.cookies?.AccessToken; 
     if (!accessToken) {
       return res.status(401).json({ message: "Authentication required" });
     }

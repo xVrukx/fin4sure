@@ -87,6 +87,7 @@ export default function BrokerRegistration() {
 
       const res = await fetch(`${API_BASE}/verify-otp`, {
         method: "POST",
+        credentials : "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ number, otp: receivedOtp }),
       });
@@ -122,6 +123,7 @@ export default function BrokerRegistration() {
 
       const res = await fetch(`${API_BASE}/signup`, {
         method: "POST",
+        credentials : "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });

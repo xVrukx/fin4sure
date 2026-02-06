@@ -1,10 +1,9 @@
 // ----------------------------------------------------------------------------------------------------------------------
 // imports
-
 import Admin from "../models/admin.model.js";
 import Broker from "../models/broker.model.js";
 import Client from "../models/client.model.js";
-import { signAccessToken, signRefreshtoken } from "../utils/jwt.utlis.js";
+import { signAccessToken, signRefreshToken } from "../utils/jwt.utlis.js";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 // ----------------------------------------------------------------------------------------------------------------------

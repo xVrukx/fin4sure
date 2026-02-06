@@ -1,7 +1,10 @@
 import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./config/db.js";
-import authRoutes from "./routes/auth.routes.js"; // ADD THIS
+import authRouter from "./routes/auth.routes.js"; // ADD THIS
+import adminRouter from "./routes/admin.routes.js";
+import brokerRouter from "./routes/broker.routes.js";
+import clientRouter from "./routes/client.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -21,7 +24,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
-app.use("/api/auth", authRoutes); // ADD THIS
+app.use("/api/auth", authRouter); // ADD THIS
+app.use("/api/admin", adminRouter);
+app.use("/api/broker", brokerRouter);
+app.use("/api/client", clientRouter);
 
 const PORT = process.env.PORT || 8000;
 

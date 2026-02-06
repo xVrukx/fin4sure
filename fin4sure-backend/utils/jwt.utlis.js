@@ -11,12 +11,12 @@ let publicKey;
 
 try {
   privateKey = fs.readFileSync(
-    path.join(process.cwd(), "../Keys", "private.key"),
+    path.join(process.cwd(), "./Keys", "private.key"),
     "utf8"
   );
 
   publicKey = fs.readFileSync(
-    path.join(process.cwd(), "../Keys", "public.key"),
+    path.join(process.cwd(), "./Keys", "public.key"),
     "utf8"
   );
 } catch (err) {

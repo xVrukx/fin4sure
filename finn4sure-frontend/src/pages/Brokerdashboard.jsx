@@ -22,7 +22,7 @@ export default function BrokerDashboard() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:5000/auth/profile", {
+        const res = await fetch("http://localhost:5000/api/auth/profile", {
           credentials: "include",
         });
         if (res.ok) {

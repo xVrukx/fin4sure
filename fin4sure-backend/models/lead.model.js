@@ -9,8 +9,7 @@ const leadSchema = new mongoose.Schema(
         product: [
             {
             product : {type: String, sparse : true},
-            status : {type : String, required : true, enum : ["approved", "pending", "rejected"]},
-            default : "pending"
+            status : {type : String, required : true, enum : ["approved", "pending", "rejected"], default : "pending"},
            }
         ],
         broker_id : {type : String, default : "self"}
