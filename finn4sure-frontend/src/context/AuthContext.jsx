@@ -1,28 +1,60 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  // 🔥 Sync frontend auth with backend session
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/auth/profile", {
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      } else {
+        setUser(null);
+      }
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Run once on app load / refresh
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  // Called after login
   function login(userData) {
     setUser(userData);
-    setIsAuthenticated(true);
   }
 
-  function logout() {
+  // Called on logout
+  async function logout() {
+    await fetch("http://localhost:5000/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
     setUser(null);
-    setIsAuthenticated(false);
   }
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
         user,
+        role: user?.role || "",
+        isAuthenticated: !!user,
+        loading,
         login,
         logout,
+        fetchProfile,
       }}
     >
       {children}

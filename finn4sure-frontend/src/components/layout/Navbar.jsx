@@ -1,367 +1,157 @@
-// ----------------------------------- imports -----------------------------------
-import { data, Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import logo from "../../assets/images/logo.jpeg";
-import {CgProfile, } from "react-icons/cg";
-import {GiHamburgerMenu} from "react-icons/gi";
+
+import { useAuth } from "../../context/AuthContext";
+
+import { GiHamburgerMenu } from "react-icons/gi";
 import { CiCalculator2 } from "react-icons/ci";
 import { AiFillProduct } from "react-icons/ai";
 import { IoMdLogOut, IoIosHome, IoIosClose } from "react-icons/io";
-import {MdInsights, MdDashboard} from "react-icons/md";
-// ----------------------------------------------------------------------
+import { MdInsights, MdDashboard } from "react-icons/md";
+
 export default function Navbar() {
+  const { user, role, isAuthenticated, logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-// ----------------------------------- usestate, navigate values -----------------------------------
-  const [userNavtogel, setusernavtogel] = useState("admin");
-  const [Menutoggle, setMenutoggle] = useState(false);
-  const [profile, setProfile] = useState({
-  name: "",
-  number: "",
-  email: "",
-  password: ""
-  });
-const Navigate = useNavigate();
-// ----------------------------------------------------------------------
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
-// ----------------------------------- useffect for getting user role -----------------------------------
-  useEffect(() => {
-    const userRole = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/auth/login",{
-        method : "GET",
-        credentials : "include",
-        headers : {"content-Type":"application/json"},
-      });
-      if(!res.ok){
-        throw new Error("error occored while getting the client type");
-        ;
-      };
-      const data = await res.json();
-      setusernavtogel(data);
-    } catch(e) {
-      throw new Error(e);
-    };
-    };
-    userRole();
-  },
-  []
+  const PublicLinks = () => (
+    <>
+      <Link to="/" className="hover:text-blue-700">Home</Link>
+      <Link to="/products" className="hover:text-blue-700">Loans</Link>
+      <Link to="/EMI-calculator" className="hover:text-blue-700">Calculator</Link>
+      <Link to="/broker-register" className="hover:text-blue-700">
+        Become a Partner
+      </Link>
+    </>
   );
-// ------------------------------------------------------------------------------------------------------
 
-
-// ---------------------------------------- user profile detail -----------------------------------------
-const userProfile = async() => {
-  const res = await fetch("http://localhost/auth/user/profile",{
-    method : "GET",
-    credentials : "include",
-    headers : {"content-Type" : "application/json"}
-  })
-  if(!res.ok) {
-    throw new Error("error occored while fetching the profile");
-  }
-  const data = await res.json()
-  setProfile(data)
-}
-// ------------------------------------------------------------------------------------------------------
-
-
-// ----------------------------------- useffect for client, broker, admin navigation -----------------------------------
-const redirectTohome = async () => {
-  Navigate("/");
-};
-
-const redirectTobrokerDashboard = async () => {
-  Navigate("/Broker-dashboard");
-};
-
-const redirectTobrokerInsight = async () => {
-  Navigate("/Broker-insights");
-};
-
-const redirectToadminDashboard = async () => {
-  Navigate("/Admin-dashboard");
-};
-
-const redirectToadminInsight = async () => {
-  Navigate("/Admin-insights");
-};
-
-const redirectToproduct = async () => {
-  Navigate("/products");
-};
-
-const redirectToEMIcalculator = async () => {
-  Navigate("/EMI-calculator");
-};
-
-const redirectTologout = async () => {
-    try{
-      const res = await fetch(`http://localhost:5000/auth/logout`,{
-      method : "POST",
-      credentials : "include",
-      headers : {"content-Type" : "application/json"}
-    });
-    if(!res.ok) {
-      throw new Error("error occored while logging out");;
-    };
-  } catch(e) {
-    throw new Error("cannot read respose for logging out");;
-};
-  Navigate("/login");
-
-};
-// ------------------------------------------------------------------------------------------------------
-
-
-// ------------------------------------ client toggle -----------------------------------
-const menuToggle = async() => {
-  setMenutoggle(!Menutoggle)
-}
-// ------------------------------------------------------------------------------------------------------
-
-// ------------------------------------------------------------------------------------------------------
   return (
     <header className="w-full bg-white border-b border-blue-100">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-{/*----------------------------- normal homepage nav after login signing -----------------------------*/}
-      {(userNavtogel ==="")&&(<div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/*----------------------------- Logo left side of the nav -----------------------------*/}
+        {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img
-            src={logo}
-            alt="Finn4sure – Smart Loan Marketplace"
-            className="h-25 w-auto"
-          />
+          <img src={logo} alt="Fin4sure" className="h-12 w-auto" />
         </Link>
-        {/* ---------------------------------------------------------- */}
 
-
-        {/* ----------------------------- main nave for no login signup ----------------------------- */}
+        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6 text-slate-700">
-          <Link to="/" className="hover:text-blue-700 transition">
-            Home
-            
-          </Link>
-          <Link to="/products" className="hover:text-blue-700 transition">
-            Loans
-          </Link>
-          <Link to="/EMI-calculator" className="hover:text-blue-700 transition">
-            Calculator
-          </Link>
-          <Link
-            to="/broker-register"
-            className="hover:text-blue-700 transition"
-          >
-            Become a Partner
-          </Link>
+          {!isAuthenticated && <PublicLinks />}
+
+          {isAuthenticated && role === "broker" && (
+            <>
+              <Link to="/broker-dashboard">Dashboard</Link>
+              <Link to="/broker-insights">Insights</Link>
+              <Link to="/products">Products</Link>
+              <Link to="/EMI-calculator">Calculator</Link>
+            </>
+          )}
+
+          {isAuthenticated && role === "admin" && (
+            <>
+              <Link to="/admin-dashboard">Dashboard</Link>
+              <Link to="/admin-insights">Insights</Link>
+              <Link to="/products">Products</Link>
+              <Link to="/EMI-calculator">Calculator</Link>
+            </>
+          )}
+
+          {isAuthenticated && role === "client" && (
+            <>
+               <Link to="/client-dashboard">Dashboard</Link>
+              <Link to="/">Home</Link>
+              <Link to="/products">Products</Link>
+              <Link to="/EMI-calculator">Calculator</Link>
+            </>
+          )}
         </nav>
-        {/* ---------------------------------------------------------- */}
 
-
-        {/* ----------------------------- right side for the nav -----------------------------*/}
-        <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-4">
-              <Link
-                to="/login"
-                className="text-slate-700 hover:text-blue-700 transition"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="text-blue-700 font-medium hover:underline transition"
-              >
+        {/* Desktop auth buttons */}
+        <div className="hidden md:flex items-center gap-4">
+          {!isAuthenticated ? (
+            <>
+              <Link to="/login" className="hover:text-blue-700">Login</Link>
+              <Link to="/signup" className="text-blue-700 font-medium hover:underline">
                 Sign Up
               </Link>
-            </div>
-            
-          <Link
-            to="/apply"
-            className="hidden md:inline-block px-4 py-2 rounded-md text-white font-medium
-                       bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
-                       hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                       transition"
-          >
-            Apply Now
-          </Link>
-        </div>
-        {/* ---------------------------------------------------------- */}
-      </div>)}
-{/* -------------------------------------------------------------------------------------------------------------------- */}
-
-
-{/* ----------------------------- client nav after login signing ----------------------------- */}
-      {(userNavtogel ==="client") && (<div className="flex items-center justify-between px-4 py-2 w-full">
-
-        {/* profile */}
-        <div className="w-20 flex flex-col items-center gap-1">
-          
-          <CgProfile size={26} />
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="text-red-600 flex items-center gap-1"
+            >
+              <IoMdLogOut /> Logout
+            </button>
+          )}
         </div>
 
-        {/* branding */}
-        <div className="flex items-center justify-between">
-        <img src={logo} className="h-20 w-auto" />
-        <h1 className="flex-1 text-center font-semibold text-blue-600 text-4xl">
-         Fin4sure
-        </h1>
-        </div>
+        {/* Mobile hamburger */}
+        <button className="md:hidden" onClick={() => setMenuOpen(true)}>
+          <GiHamburgerMenu size={28} />
+        </button>
+      </div>
 
-        {/* tools */}
-        <div className="w-16 flex justify-end">
-          <button onClick={Admintoggle}>
-            <GiHamburgerMenu size={30} />
-          </button>
-        </div>
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="fixed inset-0 bg-black/40 z-50">
+          <div className="absolute right-0 top-0 h-full w-64 bg-white p-4 flex flex-col gap-4">
 
-
-        {(Menutoggle)&&(
-          <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTohome}>{/* redirect to home */}
-              <IoIosHome/> Home 
+            <button onClick={() => setMenuOpen(false)} className="self-end">
+              <IoIosClose size={28} />
             </button>
 
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToproduct}>{/* redirect to Products */}
-              <AiFillProduct/> Products 
-            </button>
+            {!isAuthenticated && (
+              <>
+                <PublicLinks />
+                <Link to="/login">Login</Link>
+                <Link to="/signup">Sign Up</Link>
+              </>
+            )}
 
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToEMIcalculator}>{/* redirect to EMI Calculator */}
-              <CiCalculator2/>EMI Calculator 
-            </button>
+            {isAuthenticated && role === "broker" && (
+              <>
+                <Link to="/broker-dashboard"><MdDashboard /> Dashboard</Link>
+                <Link to="/broker-insights"><MdInsights /> Insights</Link>
+                <Link to="/products"><AiFillProduct /> Products</Link>
+                <Link to="/EMI-calculator"><CiCalculator2 /> Calculator</Link>
+                <button onClick={handleLogout} className="text-red-600 flex gap-2">
+                  <IoMdLogOut /> Logout
+                </button>
+              </>
+            )}
 
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm text-red-600" onClick={redirectTologout}>{/* redirect to Logout */}
-              <IoMdLogOut/> Logout 
-            </button>
+            {isAuthenticated && role === "admin" && (
+              <>
+                <Link to="/admin-dashboard"><MdDashboard /> Dashboard</Link>
+                <Link to="/admin-insights"><MdInsights /> Insights</Link>
+                <Link to="/products"><AiFillProduct /> Products</Link>
+                <Link to="/EMI-calculator"><CiCalculator2 /> Calculator</Link>
+                <button onClick={handleLogout} className="text-red-600 flex gap-2">
+                  <IoMdLogOut /> Logout
+                </button>
+              </>
+            )}
 
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={menuToggle}>
-              <IoIosClose/>               
-            </button>
+            {isAuthenticated && role === "client" && (
+              <>
+              <Link to="/client-dashboard"><MdDashboard /> Dashboard</Link>
+                <Link to="/"><IoIosHome /> Home</Link>
+                <Link to="/products"><AiFillProduct /> Products</Link>
+                <Link to="/EMI-calculator"><CiCalculator2 /> Calculator</Link>
+                <button onClick={handleLogout} className="text-red-600 flex gap-2">
+                  <IoMdLogOut /> Logout
+                </button>
+              </>
+            )}
           </div>
+        </div>
       )}
-      </div>)}
-{/* -------------------------------------------------------------------------------------------------------------------- */}
-
-
-{/* ----------------------------- broker nav after login signing ----------------------------- */}
-      {(userNavtogel ==="broker") && (<div className="flex items-center justify-between px-4 py-2 w-full">
-
-        {/* profile */}
-        <div className="w-20 flex flex-col items-center gap-1">
-          
-          <CgProfile size={26} />
-        </div>
-
-        {/* branding */}
-        <div className="flex items-center justify-between">
-        <img src={logo} className="h-20 w-auto" />
-        <h1 className="flex-1 text-center font-semibold text-blue-600 text-4xl">
-         Fin4sure
-        </h1>
-        </div>
-
-        {/* tools */}
-        <div className="w-16 flex justify-end">
-          <button onClick={Admintoggle}>
-            <GiHamburgerMenu size={30} />
-          </button>
-        </div>
-
-
-        {(Menutoggle)&&(
-          <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTohome}>{/* redirect to home */}
-              <IoIosHome/> Home 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTobrokerDashboard}>{/* redirect to dashboard */}
-              <MdDashboard/> Dashboard 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTobrokerInsight}>{/* redirect to insghits */}
-              <MdInsights/> Insights 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToproduct}>{/* redirect to Products */}
-              <AiFillProduct/> Products 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToEMIcalculator}>{/* redirect to EMI Calculator */}
-              <CiCalculator2/>EMI Calculator 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm text-red-600" onClick={redirectTologout}>{/* redirect to Logout */}
-              <IoMdLogOut/> Logout 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={menuToggle}>
-              <IoIosClose/>
-            </button>
-          </div>
-      )}
-      </div>)}
-{/* -------------------------------------------------------------------------------------------------------------------- */}
-
-
-{/* ----------------------------- admin nav after login signing ----------------------------- */}
-      {(userNavtogel ==="admin") && (<div className="flex items-center justify-between px-4 py-2 w-full">
-
-        {/* profile */}
-        <div className="w-20 flex flex-col items-center gap-1">
-          
-          <CgProfile size={26} />
-        </div>
-
-        {/* branding */}
-        <div className="flex items-center justify-between">
-        <img src={logo} className="h-20 w-auto" />
-        <h1 className="flex-1 text-center font-semibold text-blue-600 text-4xl">
-         Fin4sure
-        </h1>
-        </div>
-
-        {/* tools */}
-        <div className="w-16 flex justify-end">
-          <button onClick={Admintoggle}>
-            <GiHamburgerMenu size={30} />
-          </button>
-        </div>
-
-        {(Menutoggle)&&(
-          <div className="absolute right-2 top-16 bg-white shadow-lg rounded-xl p-3 w-48 flex flex-col gap-2 border">
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectTohome}>{/* redirect to home */}
-              <IoIosHome/> Home 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToadminDashboard}>{/* redirect to dashboard */}
-              <MdDashboard/> Dashboard 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToadminInsight}>{/* redirect to insghits */}
-              <MdInsights/> Insights 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToproduct}>{/* redirect to Products */}
-              <AiFillProduct/> Products 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={redirectToEMIcalculator}>{/* redirect to EMI Calculator */}
-              <CiCalculator2/> EMI Calculator 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm text-red-600" onClick={redirectTologout}>{/* redirect to Logout */}
-              <IoMdLogOut/> Logout 
-            </button>
-
-            <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-sm" onClick={menuToggle}>
-              <IoIosClose/>
-            </button>
-          </div>
-      )}
-      </div>)}
-{/* -------------------------------------------------------------------------------------------------------------------- */}
     </header>
   );
 }
