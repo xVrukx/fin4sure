@@ -16,12 +16,12 @@ adminRouter.get("/user-count", verifyUser, isAdmin, userCount);
 adminRouter.get("/brokers", verifyUser, isAdmin, brokersByClients);
 
 // clients list with products
-adminRouter.get("/clients", verifyUser, isAdmin, clientByproducts);
+adminRouter.get("/clients-products", verifyUser, isAdmin, clientByproducts);
 
 // approve / reject broker
 adminRouter.post("/broker-status", verifyUser, isAdmin, brokerStatus);
 
 // approve / reject client product
-adminRouter.post("/", verifyUser, isAdmin, clientByproducts)
+adminRouter.post("/client-product-status", verifyUser, isAdmin, clientByproducts)
 
 export default adminRouter;

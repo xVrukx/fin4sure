@@ -15,8 +15,8 @@ export default function BrokerRegistration() {
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(""); // form-wide error
-  const [otpError, setOtpError] = useState(""); // OTP-specific error
+  const [error, setError] = useState("");
+  const [otpError, setOtpError] = useState("");
 
   // ---------------- OTP TIMER ----------------
   const [resendTimer, setResendTimer] = useState(60);
@@ -42,6 +42,8 @@ export default function BrokerRegistration() {
 
   // ---------------- SEND OTP ----------------
   const sendOTP = async () => {
+    if (loading) return;
+
     if (number.length !== 10) {
       setError("Enter a valid 10-digit mobile number");
       return;
@@ -67,6 +69,7 @@ export default function BrokerRegistration() {
       setOtpSent(true);
       setResendTimer(60);
       setCanResend(false);
+
     } catch (err) {
       setError(err.message || "Network error");
     } finally {
@@ -76,6 +79,8 @@ export default function BrokerRegistration() {
 
   // ---------------- VERIFY OTP ----------------
   const verifyOTP = async () => {
+    if (loading) return;
+
     if (receivedOtp.length !== 4) {
       setOtpError("OTP must be 4 digits");
       return;
@@ -87,7 +92,6 @@ export default function BrokerRegistration() {
 
       const res = await fetch(`${API_BASE}/verify-otp`, {
         method: "POST",
-        credentials : "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ number, otp: receivedOtp }),
       });
@@ -100,6 +104,7 @@ export default function BrokerRegistration() {
       }
 
       setOtpVerified(true);
+
     } catch (err) {
       setOtpError(err.message || "Network error");
     } finally {
@@ -109,6 +114,8 @@ export default function BrokerRegistration() {
 
   // ---------------- SIGNUP ----------------
   const submitForm = async () => {
+    if (loading) return;
+
     if (!otpVerified) {
       setError("Please verify OTP before signup");
       return;
@@ -118,12 +125,16 @@ export default function BrokerRegistration() {
       setError("");
       setLoading(true);
 
-      const payload = { name: fullName, email,
-        number, password, role: "broker" };
+      const payload = {
+        name: fullName.trim(),
+        email: email.trim().toLowerCase(), // ✅ normalize
+        number,
+        password: password.trim(),
+        role: "broker",
+      };
 
       const res = await fetch(`${API_BASE}/signup`, {
         method: "POST",
-        credentials : "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -134,7 +145,9 @@ export default function BrokerRegistration() {
         throw new Error(data.message || "Signup failed");
       }
 
-      navigate("/Broker-Dashboard");
+      // ✅ IMPORTANT — signup does NOT login
+      navigate("/login");
+
     } catch (err) {
       setError(err.message || "Network error");
     } finally {
@@ -196,9 +209,10 @@ export default function BrokerRegistration() {
               const val = e.target.value.replace(/\D/g, "");
               if (!otpVerified && val.length <= 10) setNumber(val);
             }}
-            disabled={otpVerified} // can't change after OTP verified
+            disabled={otpVerified}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
+
           {/* SEND OTP BUTTON */}
           <button
             type="button"
@@ -209,7 +223,7 @@ export default function BrokerRegistration() {
             {otpSent ? "OTP Sent" : "Send OTP"}
           </button>
 
-          {/* OTP VERIFICATION */}
+          {/* OTP VERIFICATION — UI UNCHANGED */}
           {otpSent && (
             <>
               <p className="text-sm text-slate-600 text-center">
@@ -218,8 +232,7 @@ export default function BrokerRegistration() {
 
               {!canResend ? (
                 <p className="text-sm text-center text-slate-500">
-                  Resend OTP in{" "}
-                  <span className="font-semibold">{resendTimer}s</span>
+                  Resend OTP in <span className="font-semibold">{resendTimer}s</span>
                 </p>
               ) : (
                 <button
@@ -238,9 +251,10 @@ export default function BrokerRegistration() {
                 onChange={(e) =>
                   setReceivedOtp(e.target.value.replace(/\D/g, ""))
                 }
-                disabled={otpVerified} // lock after verified
+                disabled={otpVerified}
                 className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
+
               {otpError && (
                 <p className="text-sm text-red-600 mt-1">{otpError}</p>
               )}

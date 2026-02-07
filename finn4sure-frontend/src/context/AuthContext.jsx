@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
 
   // Called on logout
   async function logout() {
-    await fetch("http://localhost:5000/auth/logout", {
+    await fetch("http://localhost:5000/api/auth/logout", {
       method: "POST",
       credentials: "include",
     });

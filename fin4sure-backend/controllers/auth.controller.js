@@ -8,14 +8,12 @@ import jwt from "jsonwebtoken";
 import axios from "axios";
 // ----------------------------------------------------------------------------------------------------------------------
 
-
 // ----------------------------------------------------------------------------------------------------------------------
 // global variables
 const url = "/login";
 const otp_data = {}; // CHANGED: store as object instead of raw OTP (future-safe)
 const OTP_EXPIRY_TIME = 5 * 60 * 1000; // 5 minutes
 // ----------------------------------------------------------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------------------------------------------------------
 // signup handler
@@ -108,7 +106,6 @@ export const signUpHandler = async (req, res) => {
 };
 // ----------------------------------------------------------------------------------------------------------------------
 
-
 // ----------------------------------------------------------------------------------------------------------------------
 // otp generator
 const generateOTP = () => {
@@ -116,30 +113,30 @@ const generateOTP = () => {
 };
 // ----------------------------------------------------------------------------------------------------------------------
 
-
 // ----------------------------------------------------------------------------------------------------------------------
 // otp sender
 export const SendOTP = async (req, res) => {
   try {
     const { number } = req.body;
     const pattern = /^[0-9]{10}$/; // pattern
-    let num_a = await Admin.findOne({ number })
-    let num_c = await Client.findOne({ number })
-    let num_b = await Broker.findOne({ number })
+    let num_a = await Admin.findOne({ number });
+    let num_c = await Client.findOne({ number });
+    let num_b = await Broker.findOne({ number });
 
-    if (!pattern.test(number)) return res.json({ message: "invalid number passed" })
+    if (!pattern.test(number))
+      return res.json({ message: "invalid number passed" });
 
-    if ( num_a || num_b || num_c ) {
+    if (num_a || num_b || num_c) {
       return res.status(409).json({ message: "Already existing user" });
     }
 
     if (!num_a && !num_b && !num_c) {
       const otp = generateOTP();
       // ✅ STORE OTP WITH EXPIRY
-    otp_data[number] = {
-      otp,
-      expiresAt: Date.now() + OTP_EXPIRY_TIME,
-    };
+      otp_data[number] = {
+        otp,
+        expiresAt: Date.now() + OTP_EXPIRY_TIME,
+      };
 
       const whatsapp_url = `https://graph.facebook.com/v20.0/${process.env.MOBILE_ID}/messages`;
 
@@ -159,13 +156,13 @@ export const SendOTP = async (req, res) => {
               },
               {
                 type: "button",
-                sub_type: "url",    // url button (Meta calls it URL)
-                index: 0,           // index 0 -> first button
+                sub_type: "url", // url button (Meta calls it URL)
+                index: 0, // index 0 -> first button
                 parameters: [
-                  { type: "text", text: "otp" }
+                  { type: "text", text: "otp" },
                   // <- fill with the actual URL your template expects
-                ]
-              }
+                ],
+              },
             ],
           },
         },
@@ -174,7 +171,7 @@ export const SendOTP = async (req, res) => {
             Authorization: `Bearer ${process.env.TOKENS}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       res.json({ success: true });
@@ -185,7 +182,6 @@ export const SendOTP = async (req, res) => {
   }
 };
 // ----------------------------------------------------------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------------------------------------------------------
 // otp verification
@@ -221,7 +217,6 @@ export const verifyOTP = async (req, res) => {
 };
 
 // ----------------------------------------------------------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------------------------------------------------------
 // login handler
@@ -270,9 +265,11 @@ export const loginHandler = async (req, res) => {
         maxAge: 24 * 60 * 60 * 1000,
       })
       .json({
-        role, // frontend uses this to navigate
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role,
       });
-
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
@@ -280,54 +277,59 @@ export const loginHandler = async (req, res) => {
 };
 // ----------------------------------------------------------------------------------------------------------------------
 
-
 // ----------------------------------------------------------------------------------------------------------------------
 // logout handeler
 export const Logouthandaler = async (req, res) => {
-  try{
+  try {
     const AccessToken = req.cookie.AccessToken;
-    if(!AccessToken) {
-      return res.status(500).json({message : "accesstoken not found"});
-    };
-    res.clearCookie("AccessToken", {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-    })
-    .json({ message: "Logged out successfully" });
-  }catch(e){
-    return res.json({message : `${e}`})
+    if (!AccessToken) {
+      return res.status(500).json({ message: "accesstoken not found" });
+    }
+    res
+      .clearCookie("AccessToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      })
+      .json({ message: "Logged out successfully" });
+  } catch (e) {
+    return res.json({ message: `${e}` });
   }
-}
+};
 // ----------------------------------------------------------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------------------------------------------------------
 // profile handeler
-export const profileHandler = async(req, res) => {
+export const profileHandler = async (req, res) => {
   const user_id = req.user._id;
-  if(!user_id) {
-    return res.json({message : "failed to authenticate user profile handaler"})
+  const role = req.user.role;
+
+  if (!user_id) {
+    return res.status(401).json({ message: "Not authenticated" });
   }
 
-  const client = await Client.findById({_id : user_id}).select(
-    "-password -__v"
-  );
-  const admin = await Admin.findById({_id : user_id}).select(
-    "-password -__v"
-  );
-  const broker = await Broker.findById({_id : user_id}).select(
-    "-password -__v"
-  );
+  let user;
 
-  if(client) {
-    return res.json(client);
-  };
-    if(broker) {
-    return res.json(broker);
-  };
-    if(admin) {
-    return res.json(admin);
-  };
-}
+  if (role === "client") {
+    user = await Client.findById(user_id).select("-password -__v");
+  }
+
+  if (role === "broker") {
+    user = await Broker.findById(user_id).select("-password -__v");
+  }
+
+  if (role === "admin") {
+    user = await Admin.findById(user_id).select("-password -__v");
+  }
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  return res.json({
+    ...user.toObject(),
+    role, // ✅ critical fix
+  });
+};
+
 // ----------------------------------------------------------------------------------------------------------------------

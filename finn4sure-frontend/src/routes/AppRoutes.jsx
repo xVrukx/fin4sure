@@ -29,7 +29,7 @@ export default function AppRoutes() {
 
         {/* Protected dashboard routes */}
         <Route
-          path="/Broker-dashboard"
+          path="/broker-dashboard"
           element={
             <ProtectedRoute allowedRole="broker">
               <BrokerDashboard />
@@ -37,7 +37,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path="/Admin-dashboard"
+          path="/admin-dashboard"
           element={
             <ProtectedRoute allowedRole="admin">
               <AdminDashboard />
@@ -45,7 +45,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path="/Client-dashboard"
+          path="/client-dashboard"
           element={
             <ProtectedRoute allowedRole="client">
               <ClientDashboard />

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, fetchProfile } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -11,12 +11,16 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = "http://localhost:5000/api/auth"; // change if deployed
+  const API_BASE = "http://localhost:5000/api/auth";
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (loading) return;
 
-    if (!email.trim() || !password.trim()) {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
+
+    if (!cleanEmail || !cleanPassword) {
       setError("Please enter both email and password.");
       return;
     }
@@ -27,8 +31,14 @@ export default function Login() {
     try {
       const res = await fetch(`${API_BASE}/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email : email, password : password }),
+        credentials: "include", // ✅ REQUIRED for cookie auth
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: cleanEmail,
+          password: cleanPassword,
+        }),
       });
 
       const data = await res.json();
@@ -37,11 +47,17 @@ export default function Login() {
         throw new Error(data.message || "Login failed");
       }
 
-      // Save user info in context
-      login({ email, role: data.role }); 
+      // ✅ store full user object from backend
+      login(data);
 
-      // Navigate based on role
-      navigate(data.redirect || "/");
+      // ✅ re-sync profile (extra safety)
+      await fetchProfile();
+
+      // ✅ role-based secure navigation
+      if (data.role === "admin") navigate("/admin-dashboard");
+      else if (data.role === "broker") navigate("/broker-dashboard");
+      else navigate("/client-dashboard");
+
     } catch (err) {
       setError(err.message || "Network error");
     } finally {
@@ -67,41 +83,30 @@ export default function Login() {
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-              Email Address
-            </label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-          </div>
+          <input
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600"
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-          </div>
+          <input
+            type="password"
+            placeholder="Enter your password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600"
+          />
 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg font-medium text-white
-                        bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
-                        hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                        transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className="w-full py-3 rounded-lg font-medium text-white
+              bg-gradient-to-r from-blue-700 via-teal-600 to-emerald-500
+              disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </button>

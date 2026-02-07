@@ -21,7 +21,7 @@ export default function ClientDashboard() {
   useEffect(() => {
   const fetchProfile = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/client/profile", {
+      const res = await fetch("http://localhost:5000/api/auth/profile", {
         credentials: "include", // important for cookie JWT
       });
       if (res.ok) {
