@@ -1,20 +1,19 @@
 import Broker from "../models/broker.model.js";
 import Client from "../models/client.model.js";
 import Lead from "../models/lead.model.js";
-/**
- * GET /broker/clients
- * Broker can see all clients referred by him
- */
+
+// ----------------- GETTING CLIENT DETAILS OF THE BROKER(INDIVIDUAL) -----------------
 export const getReferredClients = async (req, res) => {
   try {
-    const broker = await Broker.findById(req.user._id);
+    const _id = req.user._id;
+    const broker = await Broker.findById(_id);
 
-    if (!broker) {
-      return res.status(404).json({ message: "Broker not found" });
+    if (!broker.brokerId) {
+      return res.status(404).json({ message: "Broker not found" }); //added
     }
-
+    const brokerid = broker.brokerId; //added
     const clients = await Client.find({
-      broker_id: broker.brokerId,
+      broker_id: brokerid,
     }).select("-password -__v");
 
     return res.json({
@@ -27,25 +26,24 @@ export const getReferredClients = async (req, res) => {
   }
 };
 
-/**
- * GET /broker/leads
- * Broker can see all leads referred through him
- */
+
+// ----------------- GETTING LEADS DATA OF BROKER(INDIVIDUAL) -----------------
 export const getBrokerLeads = async (req, res) => {
   try {
-    const broker = await Broker.findById(req.user._id);
+    const _id = req.user._id;
 
-    if (!broker) {
+    const broker = await Broker.findById(_id);
+
+    if (!broker.brokerId) {
       return res.status(404).json({ message: "Broker not found" });
-    }
+    };
 
+    const brokerid = broker.brokerId;
     const leads = await Lead.find({
-      broker_id: broker.brokerId,
+      broker_id: brokerid,
     }).sort({ createdAt: -1 });
 
-    return res.json({
-      count: leads.length,
-      leads: leads.map((lead) => ({
+    const Leads = leads.map((lead) => ({ // added
         id: lead._id,
         name: lead.name,
         email: lead.email,
@@ -53,7 +51,12 @@ export const getBrokerLeads = async (req, res) => {
         product: lead.product,
         status: lead.status, // pending | approved | rejected
         createdAt: lead.createdAt,
-      })),
+      }
+    )
+  );
+    return res.json({
+      count: leads.length,
+      leads: Leads
     });
   } catch (err) {
     console.error("Get broker leads error:", err);

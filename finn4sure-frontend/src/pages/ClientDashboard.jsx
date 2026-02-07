@@ -26,7 +26,9 @@ export default function ClientDashboard() {
   async function fetchProfile() {
     const res = await fetch(
       "http://localhost:5000/api/auth/profile",
-      { credentials: "include" }
+      { method : "GET",
+        headers : {"content-type" : "application/json"},
+        credentials: "include" }
     );
 
     if (!res.ok) {
@@ -40,7 +42,9 @@ export default function ClientDashboard() {
   async function fetchLeads() {
     const res = await fetch(
       "http://localhost:5000/api/client/my-leads",
-      { credentials: "include" }
+      { method : "GET",
+        headers : {"content-type" : "application/json"},
+        credentials: "include" }
     );
 
     if (res.ok) {

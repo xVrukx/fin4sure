@@ -6,51 +6,71 @@ import Admin from "../models/admin.model.js";
 
 // ---------------- USER COUNTS ----------------
 export const userCount = async (req, res) => {
+  try{
   const totalClients = await Client.countDocuments();
   const totalBrokers = await Broker.countDocuments();
   const totalUsers = totalClients + totalBrokers;
 
-  const pendingBrokers = await Broker.countDocuments({ status: "pending" });
-  const pendingLeads = await Lead.countDocuments({ status: "pending" });
+  const approvedBrokers = await Broker.countDocuments({status : "approved"});// added
+  const approvedClients = await Broker.countDocuments({status : "approved" });//added
+  
+  const pendingBrokers = await Broker.countDocuments({ status : "pending" });
+  const pendingLeads = await Lead.countDocuments({ status : "pending" });
 
   res.json({
     totalUsers,
     totalClients,
     totalBrokers,
+    approvedBrokers,//added
+    approvedClients,//added
     pendingBrokers,
     pendingLeads
   });
+}catch(e) {
+  return res.status(500).json({message : `internal server error occored ${e}`})
+};
 };
 
 
-// ---------------- BROKER LIST + CLIENT COUNT ----------------
+// ---------------- BROKER'S DATA AND COUNT OF THEIR CLIENTS AND LEADS ----------------
 export const brokersWithStats = async (req, res) => {
-  const brokers = await Broker.find()
+  try{
+    const brokers = await Broker.find()
     .select("name brokerId status email number")
     .lean();
 
   const result = await Promise.all(
-    brokers.map(async (b) => {
+    brokers.map(async (broker) => {
       const clientCount = await Client.countDocuments({
-        broker_id: b.brokerId
-      });
+        broker_id: broker.brokerId
+      });// here we are fetching the client counts from clients model by broker_id
 
       const leadCount = await Lead.countDocuments({
-        broker_id: b.brokerId
-      });
+        broker_id: broker.brokerId
+      });// here we are fetching leads count form lead model by broker_id
 
-      return { ...b, clientCount, leadCount };
+      return { ...broker, clientCount, leadCount };
     })
   );
 
   res.json(result);
+}catch(e) {
+  return res.status(500).json({message : `internal server error occored ${e}`})
+};
 };
 
 
 // ---------------- ALL LEADS (WITH FILTERS) ----------------
 export const allLeads = async (req, res) => {
+  try{
   const { status, broker } = req.query;
 
+  if(!status) {
+    res.status(400).json({message : "invalid status provided"})// added
+  }
+  if(!broker) {
+    res.status(400).json({message : "invalid broker_id provided"})// added
+  }
   const filter = {};
   if (status) filter.status = status;
   if (broker) filter.broker_id = broker;
@@ -60,46 +80,61 @@ export const allLeads = async (req, res) => {
     .lean();
 
   res.json(leads);
+}catch(e) {
+  return res.status(500).json({message : `internal server error occored ${e}`})
+};
 };
 
 
 // ---------------- UPDATE BROKER STATUS ----------------
 export const updateBrokerStatus = async (req, res) => {
-  const { brokerId, status } = req.body;
+  try{
+    const { brokerId, status } = req.body;
 
-  if (!["approved", "rejected"].includes(status)) {
+  const brokerStatus = ["approved", "rejected"]// added
+
+  if (!brokerStatus.includes(status)) {
     return res.status(400).json({ message: "Invalid status" });
   }
 
   const broker = await Broker.findOneAndUpdate(
     { brokerId },
-    { status },
+    { $set : {status : status}}, //added
     { new: true }
   );
 
   if (!broker) return res.status(404).json({ message: "Broker not found" });
 
   res.json(broker);
+}catch(e) {
+  return res.status(500).json({message : `internal server error occored ${e}`})
+};
 };
 
 
 // ---------------- UPDATE LEAD STATUS ----------------
 export const updateLeadStatus = async (req, res) => {
+  try{
   const { leadId, status } = req.body;
 
-  if (!["approved", "rejected"].includes(status)) {
+  const leadStatus = ["approved", "rejected"]// added
+
+  if (!leadStatus.includes(status)) {
     return res.status(400).json({ message: "Invalid status" });
   }
 
   const lead = await Lead.findByIdAndUpdate(
-    leadId,
-    { status },
+    {leadId}, // added
+    { $set : {status : status} }, //added
     { new: true }
   );
 
   if (!lead) return res.status(404).json({ message: "Lead not found" });
 
   res.json(lead);
+}catch(e) {
+  return res.status(500).json({message : `internal server error occored ${e}`})
+};
 };
 
 

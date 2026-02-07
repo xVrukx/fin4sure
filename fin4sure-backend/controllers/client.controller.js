@@ -1,11 +1,11 @@
 import Client from "../models/client.model.js";
 
-/**
- * GET /client/dashboard
- */
+// ----------------- GET CLIENT DATA TO SHOW IN PROFILE -----------------
 export const clientDashboard = async (req, res) => {
   try {
-    const client = await Client.findById(req.user._id)
+    const _id = req.user._id;
+
+    const client = await Client.findById(_id)
       .select("-password -__v");
 
     if (!client) {
@@ -28,14 +28,16 @@ export const clientDashboard = async (req, res) => {
 };
 
 
-/**
- * GET /client/products
- */
+// ----------------- GETS THE PRODUCT CLINET APPLIED FOR -----------------
 export const getClientProducts = async (req, res) => {
   try {
-    const client = await Client.findById(req.user._id)
+    const _id = req.user._id;
+    const client = await Client.findById(_id)
       .select("product");
 
+    if(!client) {
+      return res.status(404).json({message : "no product found"})
+    }
     return res.json(client.product);
 
   } catch (err) {
@@ -44,18 +46,17 @@ export const getClientProducts = async (req, res) => {
 };
 
 
-/**
- * POST /client/apply-product
- */
+
 export const applyProduct = async (req, res) => {
   try {
+    const _id = req.user._id;
     const { product } = req.body;
 
     if (!product) {
       return res.status(400).json({ message: "Product required" });
     }
 
-    const client = await Client.findById(req.user._id);
+    const client = await Client.findById(_id);
 
     client.product.push({
       product,
