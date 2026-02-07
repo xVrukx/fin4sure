@@ -1,27 +1,28 @@
 import express from "express";
 import {
   userCount,
-  brokersByClients,
-  clientByproducts,
-  brokerStatus,
+  brokersWithStats,
+  allLeads,
+  updateBrokerStatus,
+  updateLeadStatus,
+  createAdmin
 } from "../controllers/admin.controller.js";
+
 import { verifyUser, isAdmin } from "../middlewares/auth.middleware.js";
 
-const adminRouter = express.Router();
+const router = express.Router();
 
-// dashboard stats
-adminRouter.get("/user-count", verifyUser, isAdmin, userCount);
+router.get("/stats", verifyUser, isAdmin, userCount);
 
-// brokers list with clients
-adminRouter.get("/brokers", verifyUser, isAdmin, brokersByClients);
+router.get("/brokers", verifyUser, isAdmin, brokersWithStats);
 
-// clients list with products
-adminRouter.get("/clients-products", verifyUser, isAdmin, clientByproducts);
+router.get("/leads", verifyUser, isAdmin, allLeads);
 
-// approve / reject broker
-adminRouter.post("/broker-status", verifyUser, isAdmin, brokerStatus);
+router.post("/broker-status", verifyUser, isAdmin, updateBrokerStatus);
 
-// approve / reject client product
-adminRouter.post("/client-product-status", verifyUser, isAdmin, clientByproducts)
+router.post("/lead-status", verifyUser, isAdmin, updateLeadStatus);
 
-export default adminRouter;
+// first admin bootstrap
+router.post("/create-admin", createAdmin);
+
+export default router;

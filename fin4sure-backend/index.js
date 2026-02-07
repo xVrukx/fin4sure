@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import connectDB from "./config/db.js";
 import authRouter from "./routes/auth.routes.js"; // ADD THIS
@@ -8,7 +9,6 @@ import clientRouter from "./routes/client.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-dotenv.config();
 
 const app = express();
 

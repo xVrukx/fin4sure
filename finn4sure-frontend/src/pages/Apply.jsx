@@ -7,62 +7,96 @@ export default function Apply() {
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("product");
 
-  const selectedProduct = LOAN_PRODUCTS.find((item) => item.id === productId);
+  const { isAuthenticated, user } = useAuth();
 
-  const [fullName, setFullName] = useState("");
-  const [mobile, setMobile] = useState("");
+  const [product, setProduct] = useState(productId || "");
+  const [pan, setPan] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const { isAuthenticated } = useAuth();
+  const selectedProduct = LOAN_PRODUCTS.find(
+    (item) => item.id === product
+  );
 
-  function handleSubmit(e) {
+  const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
+  async function handleSubmit(e) {
     e.preventDefault();
+    if (loading) return;
 
-    if (!fullName.trim() || !mobile.trim()) {
-      setError("Please fill in all required fields.");
+    if (!product) {
+      setError("Please select a loan type.");
       return;
     }
 
-    if (mobile.length !== 10) {
-      setError("Please enter a valid 10-digit mobile number.");
+    const cleanPAN = pan.trim().toUpperCase();
+
+    if (!PAN_REGEX.test(cleanPAN)) {
+      setError("Enter valid PAN (ABCDE1234F)");
       return;
     }
 
-    setError("");
+    try {
+      setError("");
+      setSuccess("");
+      setLoading(true);
 
-    console.log({
-      fullName,
-      mobile,
-    });
+      const res = await fetch(
+        "http://localhost:5000/api/client/apply-loan",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            pan: cleanPAN,
+            product: product,
+          }),
+        }
+      );
 
-    alert("Form submitted successfully!");
+      const data = await res.json();
 
-    setFullName("");
-    setMobile("");
+      if (!res.ok) {
+        throw new Error(data.message || "Application failed");
+      }
+
+      setSuccess("Application submitted successfully!");
+      setPan("");
+
+    } catch (err) {
+      setError(err.message || "Network error");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen">
       <div className="max-w-3xl mx-auto px-6 py-16">
+
+        {/* Header */}
         <h1 className="text-3xl md:text-4xl font-bold text-slate-900">
-          Apply for a{" "}
-          <span className="text-blue-700">Loan</span>
+          Apply for a <span className="text-blue-700">Loan</span>
         </h1>
 
         <p className="mt-3 text-slate-600 max-w-xl">
-          Fill in your basic details and our team will help you find the best
-          loan options from trusted lenders.
+          Submit your PAN details to start your loan application.
         </p>
 
+        {/* Selected Product Banner */}
         {selectedProduct && (
-          <div className="mt-6 p-4 rounded-lg bg-blue-50 text-slate-700 border border-blue-100">
-            You are applying for:{" "}
-            <span className="font-semibold text-slate-900">
+          <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-100 text-slate-700">
+            Applying for:
+            <span className="font-semibold text-slate-900 ml-2">
               {selectedProduct.name}
             </span>
           </div>
         )}
 
+        {/* Not Logged In */}
         {!isAuthenticated ? (
           <div className="mt-10 bg-white p-6 rounded-xl border border-blue-100">
             <div className="p-4 rounded-lg text-sm
@@ -71,74 +105,122 @@ export default function Apply() {
               You must be logged in to submit a loan application.
             </div>
 
-            <div className="mt-4">
-              <a
-                href="/login"
-                className="inline-block px-5 py-2 rounded-lg font-medium text-white
-                           bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
-                           hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                           transition"
-              >
-                Login to Continue
-              </a>
-            </div>
+            <a
+              href="/login"
+              className="mt-4 inline-block px-5 py-2 rounded-lg font-medium text-white
+                         bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
+                         hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
+                         transition"
+            >
+              Login to Continue
+            </a>
           </div>
         ) : (
+
+          /* Form */
           <form
             onSubmit={handleSubmit}
-            className="mt-10 bg-white p-6 rounded-xl border border-blue-100 space-y-6"
+            className="mt-10 bg-white p-8 rounded-xl border border-blue-100 shadow-sm space-y-7"
           >
+
+            {/* Alerts */}
             {error && (
               <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
+            {success && (
+              <div className="p-3 bg-green-50 text-green-700 rounded-lg text-sm">
+                {success}
+              </div>
+            )}
+
+            {/* Autofill Card */}
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-5">
+              <h3 className="font-semibold text-slate-800 mb-4">
+                Applicant Details
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InfoField label="Full Name" value={user?.name} />
+                <InfoField label="Email" value={user?.email} />
+                <InfoField label="Mobile" value={user?.number} />
+              </div>
+            </div>
+
+            {/* Loan Selector */}
             <div>
               <label className="block text-sm font-medium text-slate-700">
-                Full Name
+                Loan Type <span className="text-red-500">*</span>
               </label>
+
+              <select
+                value={product}
+                onChange={(e) => setProduct(e.target.value)}
+                className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
+                           focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white"
+              >
+                <option value="">Select a loan type</option>
+
+                {LOAN_PRODUCTS.map((loan) => (
+                  <option key={loan.id} value={loan.id}>
+                    {loan.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* PAN */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700">
+                PAN Number <span className="text-red-500">*</span>
+              </label>
+
               <input
                 type="text"
-                placeholder="Enter your full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                placeholder="ABCDE1234F"
+                value={pan}
+                onChange={(e) =>
+                  setPan(e.target.value.toUpperCase())
+                }
+                maxLength={10}
                 className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
                            focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
+
+              <p className="text-xs text-slate-500 mt-1">
+                Format: 5 letters + 4 numbers + 1 letter
+              </p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700">
-                Mobile Number
-              </label>
-              <input
-                type="tel"
-                placeholder="Enter your 10-digit mobile number"
-                value={mobile}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, "");
-                  if (value.length <= 10) {
-                    setMobile(value);
-                  }
-                }}
-                className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-blue-600"
-              />
-            </div>
-
+            {/* Submit */}
             <button
               type="submit"
+              disabled={loading || !product}
               className="w-full py-3 rounded-lg font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                         transition"
+                         transition disabled:opacity-50"
             >
-              Continue
+              {loading ? "Submitting..." : "Submit Application"}
             </button>
+
           </form>
         )}
       </div>
     </section>
+  );
+}
+
+/* Small reusable display field */
+function InfoField({ label, value }) {
+  return (
+    <div>
+      <p className="text-xs text-slate-500">{label}</p>
+      <p className="mt-1 px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-700">
+        {value || "-"}
+      </p>
+    </div>
   );
 }
