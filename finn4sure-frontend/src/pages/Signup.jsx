@@ -10,6 +10,7 @@ export default function Signup() {
   const [number, setNumber] = useState("");
   const [receivedOtp, setReceivedOtp] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [refBy, setRefBy] = useState("self"); // referral default
   const [brokerId, setBrokerId] = useState(""); // if refBy is broker
 
@@ -19,6 +20,8 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(""); // form-wide error
   const [otpError, setOtpError] = useState(""); // OTP-specific error
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // ---------------- OTP TIMER ----------------
   const [resendTimer, setResendTimer] = useState(60);
@@ -29,18 +32,31 @@ export default function Signup() {
   // ---------------- RESEND TIMER LOGIC ----------------
   useEffect(() => {
     let timer;
-
     if (otpSent && resendTimer > 0) {
       timer = setInterval(() => setResendTimer((prev) => prev - 1), 1000);
     }
-
     if (resendTimer === 0) {
       setCanResend(true);
       clearInterval(timer);
     }
-
     return () => clearInterval(timer);
   }, [otpSent, resendTimer]);
+
+  // ---------------- PASSWORD VALIDATION ----------------
+  const passwordCriteria = [
+    { test: (pw) => pw.length >= 8, message: "At least 8 characters" },
+    { test: (pw) => /[A-Z]/.test(pw), message: "At least 1 uppercase letter" },
+    { test: (pw) => /[0-9]/.test(pw), message: "At least 1 number" },
+    { test: (pw) => /[!@#$%^&*(),.?\":{}|<>]/.test(pw), message: "At least 1 special character" },
+    { test: (pw) => /[a-zA-Z]/.test(pw), message: "At least 1 letter" },
+  ];
+
+  const validatePassword = (pw) => passwordCriteria.map((c) => ({
+    message: c.message,
+    valid: c.test(pw),
+  }));
+
+  const isPasswordStrong = () => validatePassword(password).every((c) => c.valid);
 
   // ---------------- SEND OTP ----------------
   const sendOTP = async () => {
@@ -61,10 +77,7 @@ export default function Signup() {
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to send OTP");
-      }
+      if (!res.ok) throw new Error(data.message || "Failed to send OTP");
 
       setOtpSent(true);
       setResendTimer(60);
@@ -94,7 +107,6 @@ export default function Signup() {
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         setOtpError(data.message || "OTP verification failed");
         return;
@@ -114,6 +126,14 @@ export default function Signup() {
       setError("Please verify OTP before signup");
       return;
     }
+    if (!isPasswordStrong()) {
+      setError("Please enter a strong password");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
     try {
       setError("");
@@ -125,8 +145,7 @@ export default function Signup() {
         number,
         password,
         role: "client",
-        broker_id:
-          refBy === "self" || !brokerId.trim() ? "self" : brokerId.trim(),
+        broker_id: refBy === "self" || !brokerId.trim() ? "self" : brokerId.trim(),
       };
 
       const res = await fetch(`${API_BASE}/signup`, {
@@ -136,10 +155,7 @@ export default function Signup() {
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Signup failed");
-      }
+      if (!res.ok) throw new Error(data.message || "Signup failed");
 
       navigate("/login");
     } catch (err) {
@@ -157,7 +173,7 @@ export default function Signup() {
         </h1>
 
         <p className="mt-2 text-sm text-slate-600">
-          Sign up to start your loan application journey.
+          Sign up to start your loan application journey. OTP will be sent to your WhatsApp number.
         </p>
 
         {error && (
@@ -186,13 +202,68 @@ export default function Signup() {
           />
 
           {/* PASSWORD */}
-          <input
-            type="password"
-            placeholder="Create a password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          <div>
+            <p className="text-sm text-slate-500 mb-1">
+              Password must contain: 8+ chars, uppercase, number, special char, letters.
+            </p>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Create a password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+
+            {/* PASSWORD VALIDATION */}
+            <div className="mt-1 text-sm space-y-1">
+              {validatePassword(password).map((rule, i) => (
+                <p
+                  key={i}
+                  className={`${rule.valid ? "text-green-600" : "text-red-600"}`}
+                >
+                  {rule.valid ? "✔" : "✖"} {rule.message}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          {/* CONFIRM PASSWORD */}
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+            >
+              {showConfirmPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          {/* PASSWORD MATCH FEEDBACK */}
+          {confirmPassword && (
+            <p
+              className={`text-sm mt-1 ${
+                password === confirmPassword ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {password === confirmPassword ? "Passwords match" : "Passwords do not match"}
+            </p>
+          )}
 
           {/* MOBILE NUMBER */}
           <input
@@ -203,7 +274,7 @@ export default function Signup() {
               const val = e.target.value.replace(/\D/g, "");
               if (!otpVerified && val.length <= 10) setNumber(val);
             }}
-            disabled={otpVerified} // can't change after OTP verified
+            disabled={otpVerified} 
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
 
@@ -211,11 +282,11 @@ export default function Signup() {
           <select
             value={refBy}
             onChange={(e) => setRefBy(e.target.value)}
-            disabled={otpVerified} // lock after OTP verified
+            disabled={otpVerified}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           >
-            <option value="self">Self</option>
-            <option value="broker">Broker</option>
+            <option value="self">Applying Directly</option>
+            <option value="broker">Applying Through Broker</option>
           </select>
 
           {/* BROKER ID INPUT */}
@@ -225,7 +296,7 @@ export default function Signup() {
               placeholder="Enter Broker ID"
               value={brokerId}
               onChange={(e) => setBrokerId(e.target.value)}
-              disabled={otpVerified} // lock after OTP verified
+              disabled={otpVerified}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
           )}
@@ -244,13 +315,11 @@ export default function Signup() {
           {otpSent && (
             <>
               <p className="text-sm text-slate-600 text-center">
-                OTP sent to your mobile number
+                OTP sent to your WhatsApp number
               </p>
-
               {!canResend ? (
                 <p className="text-sm text-center text-slate-500">
-                  Resend OTP in{" "}
-                  <span className="font-semibold">{resendTimer}s</span>
+                  Resend OTP in <span className="font-semibold">{resendTimer}s</span>
                 </p>
               ) : (
                 <button
@@ -266,15 +335,11 @@ export default function Signup() {
                 type="text"
                 placeholder="Verify OTP"
                 value={receivedOtp}
-                onChange={(e) =>
-                  setReceivedOtp(e.target.value.replace(/\D/g, ""))
-                }
-                disabled={otpVerified} // lock after verified
+                onChange={(e) => setReceivedOtp(e.target.value.replace(/\D/g, ""))}
+                disabled={otpVerified}
                 className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
-              {otpError && (
-                <p className="text-sm text-red-600 mt-1">{otpError}</p>
-              )}
+              {otpError && <p className="text-sm text-red-600 mt-1">{otpError}</p>}
 
               <button
                 type="button"
@@ -291,7 +356,7 @@ export default function Signup() {
           <button
             type="button"
             onClick={submitForm}
-            disabled={loading || !otpVerified}
+            disabled={loading || !otpVerified || !isPasswordStrong() || password !== confirmPassword}
             className="w-full py-3 rounded-lg font-medium text-white
                        bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                        hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600

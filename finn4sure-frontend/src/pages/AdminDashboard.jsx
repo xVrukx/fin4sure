@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { IoMdNotifications } from "react-icons/io";
-import { CgProfile } from "react-icons/cg";
-import { MdPeople, MdBusiness, MdAssessment, MdTrendingUp } from "react-icons/md";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -11,31 +8,26 @@ export default function AdminDashboard() {
   const [brokers, setBrokers] = useState([]);
   const [leads, setLeads] = useState([]);
   const [leadFilter, setLeadFilter] = useState("pending");
+  const [selectedBroker, setSelectedBroker] = useState(null);
 
   useEffect(() => {
-    loadAll();
+    fetchStats();
+    fetchBrokers();
+    fetchLeads();
   }, [leadFilter]);
 
-  async function loadAll() {
-    await fetchStats();
-    await fetchBrokers();
-    await fetchLeads();
-  }
-
   async function fetchStats() {
-    const res = await fetch(
-      "http://localhost:5000/api/admin/stats",
-      { credentials: "include" }
-    );
+    const res = await fetch("http://localhost:5000/api/admin/stats", {
+      credentials: "include",
+    });
     if (!res.ok) return navigate("/login");
     setStats(await res.json());
   }
 
   async function fetchBrokers() {
-    const res = await fetch(
-      "http://localhost:5000/api/admin/brokers",
-      { credentials: "include" }
-    );
+    const res = await fetch("http://localhost:5000/api/admin/brokers", {
+      credentials: "include",
+    });
     if (res.ok) setBrokers(await res.json());
   }
 
@@ -52,9 +44,10 @@ export default function AdminDashboard() {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ brokerId, status })
+      body: JSON.stringify({ brokerId, status }),
     });
     fetchBrokers();
+    fetchStats();
   }
 
   async function updateLeadStatus(leadId, status) {
@@ -62,176 +55,228 @@ export default function AdminDashboard() {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ leadId, status })
+      body: JSON.stringify({ leadId, status }),
     });
     fetchLeads();
     fetchStats();
   }
 
-  const StatusBadge = ({ status }) => {
-    const map = {
-      approved: "bg-green-100 text-green-700",
-      rejected: "bg-red-100 text-red-700",
-      pending: "bg-yellow-100 text-yellow-700"
-    };
-    return (
-      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${map[status]}`}>
-        {status}
-      </span>
-    );
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white">
+      <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
 
-      {/* Header */}
-      <div className="bg-white border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-500">Platform overview & approvals</p>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <IoMdNotifications size={22} className="text-gray-600" />
-            <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-              <CgProfile className="text-purple-600" size={20} />
-            </div>
-          </div>
+        {/* Header */}
+        <div>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900">
+            Admin Dashboard
+          </h1>
+          <p className="text-lg text-slate-600 mt-2">
+            Overview of platform performance and pending approvals
+          </p>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <StatCard label="Total Clients" value={stats.totalClients} icon={<MdPeople />} color="blue" />
-          <StatCard label="Total Brokers" value={stats.totalBrokers} icon={<MdBusiness />} color="green" />
-          <StatCard label="Pending Brokers" value={stats.pendingBrokers} icon={<MdAssessment />} color="orange" />
-          <StatCard label="Pending Leads" value={stats.pendingLeads} icon={<MdTrendingUp />} color="purple" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <StatCard label="Total Clients" value={stats.totalClients} color="blue" />
+          <StatCard label="Total Brokers" value={stats.totalBrokers} color="teal" />
+          <StatCard label="Pending Brokers" value={stats.pendingBrokers} color="amber" />
+          <StatCard label="Pending Leads" value={stats.pendingLeads} color="indigo" />
         </div>
 
-        {/* Broker Approvals */}
-        <div className="bg-white rounded-2xl border shadow-sm">
-          <div className="p-6 border-b">
-            <h2 className="text-xl font-bold text-gray-900">Broker Approvals</h2>
-          </div>
+        {/* Brokers */}
+<Section title="Broker Approvals">
+  <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
+    <table className="min-w-full text-sm text-left divide-y divide-slate-200">
+      <thead className="bg-gradient-to-r from-blue-100 via-blue-50 to-white text-slate-700">
+        <tr>
+          <th className="p-3 text-left">Broker</th>
+          <th className="p-3 hidden sm:table-cell">Broker ID</th>
+          <th className="p-3 hidden md:table-cell">Clients</th>
+          <th className="p-3 hidden md:table-cell">Leads</th>
+          <th className="p-3">Status</th>
+          <th className="p-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-slate-200">
+        {brokers.map((b) => (
+          <tr key={b.brokerId} className="hover:bg-blue-50 transition">
+            <td className="p-3 font-medium text-slate-800">{b.name}</td>
+            <td className="p-3 hidden sm:table-cell">{b.brokerId}</td>
+            <td className="p-3 hidden md:table-cell">{b.clientCount}</td>
+            <td className="p-3 hidden md:table-cell">{b.leadCount}</td>
+            <td className="p-3"><StatusBadge status={b.status} /></td>
+            <td className="p-3 text-right space-x-2 flex justify-end">
+              <ActionBtn onClick={() => setSelectedBroker(b)}>View</ActionBtn>
+              <ActionBtn green onClick={() => updateBrokerStatus(b.brokerId, "approved")}>Approve</ActionBtn>
+              <ActionBtn red onClick={() => updateBrokerStatus(b.brokerId, "rejected")}>Reject</ActionBtn>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Section>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-gray-600">
-                <tr>
-                  <th className="p-4 text-left">Broker</th>
-                  <th>Broker ID</th>
-                  <th>Clients</th>
-                  <th>Leads</th>
-                  <th>Status</th>
-                  <th className="text-right pr-6">Actions</th>
-                </tr>
-              </thead>
+{/* Leads */}
+<Section
+  title="Lead Applications"
+  right={
+    <select
+      value={leadFilter}
+      onChange={(e) => setLeadFilter(e.target.value)}
+      className="border rounded-md px-3 py-2 text-sm bg-white shadow-sm"
+    >
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+  }
+>
+  <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
+    <table className="min-w-full text-sm text-left divide-y divide-slate-200">
+      <thead className="bg-gradient-to-r from-teal-100 via-teal-50 to-white text-slate-700">
+        <tr>
+          <th className="p-3 text-left">Client</th>
+          <th className="p-3 hidden sm:table-cell">Email</th>
+          <th className="p-3 hidden sm:table-cell">Phone</th>
+          <th className="p-3 hidden md:table-cell">PAN</th>
+          <th className="p-3 hidden md:table-cell">Product</th>
+          <th className="p-3 hidden lg:table-cell">Source</th>
+          <th className="p-3">Status</th>
+          <th className="p-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-slate-200">
+        {leads.map((l) => (
+          <tr key={l._id} className="hover:bg-teal-50 transition">
+            <td className="p-3 font-medium">{l.name}</td>
+            <td className="p-3 hidden sm:table-cell">{l.email}</td>
+            <td className="p-3 hidden sm:table-cell">{l.number}</td>
+            <td className="p-3 hidden md:table-cell font-mono text-xs">XXXXXX{l.pan_hash.slice(-4)}</td>
+            <td className="p-3 hidden md:table-cell">{l.product}</td>
+            <td className="p-3 hidden lg:table-cell">
+              {l.source === "direct" ? (
+                <span className="text-xs px-2 py-1 rounded bg-slate-200 text-slate-700">Direct</span>
+              ) : (
+                <span className="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-700">Broker ({l.broker?.name}) ({l.broker?.brokerId})</span>
+              )}
+            </td>
+            <td className="p-3"><StatusBadge status={l.status} /></td>
+            <td className="p-3 text-right space-x-2 flex justify-end">
+              <ActionBtn green onClick={() => updateLeadStatus(l._id, "approved")}>Approve</ActionBtn>
+              <ActionBtn red onClick={() => updateLeadStatus(l._id, "rejected")}>Reject</ActionBtn>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Section>
 
-              <tbody>
-                {brokers.map(b => (
-                  <tr key={b.brokerId} className="border-t hover:bg-gray-50">
-                    <td className="p-4 font-medium">{b.name}</td>
-                    <td>{b.brokerId}</td>
-                    <td>{b.clientCount}</td>
-                    <td>{b.leadCount}</td>
-                    <td><StatusBadge status={b.status} /></td>
-                    <td className="text-right pr-6 space-x-2">
-                      <button
-                        onClick={() => updateBrokerStatus(b.brokerId, "approved")}
-                        className="px-3 py-1 text-xs font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700">
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => updateBrokerStatus(b.brokerId, "rejected")}
-                        className="px-3 py-1 text-xs font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700">
-                        Reject
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
 
-        {/* Lead Approvals */}
-        <div className="bg-white rounded-2xl border shadow-sm">
-          <div className="p-6 border-b flex justify-between items-center">
-            <h2 className="text-xl font-bold">Lead Applications</h2>
-
-            <select
-              value={leadFilter}
-              onChange={e => setLeadFilter(e.target.value)}
-              className="border px-3 py-2 rounded-lg text-sm"
-            >
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-gray-600">
-                <tr>
-                  <th className="p-4 text-left">Client</th>
-                  <th>Product</th>
-                  <th>Broker</th>
-                  <th>Status</th>
-                  <th className="text-right pr-6">Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {leads.map(l => (
-                  <tr key={l._id} className="border-t hover:bg-gray-50">
-                    <td className="p-4 font-medium">{l.name}</td>
-                    <td>{l.product}</td>
-                    <td>{l.broker_id}</td>
-                    <td><StatusBadge status={l.status} /></td>
-                    <td className="text-right pr-6 space-x-2">
-                      <button
-                        onClick={() => updateLeadStatus(l._id, "approved")}
-                        className="px-3 py-1 text-xs font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700">
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => updateLeadStatus(l._id, "rejected")}
-                        className="px-3 py-1 text-xs font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700">
-                        Reject
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-        </div>
-
+        {selectedBroker && (
+          <BrokerModal broker={selectedBroker} onClose={() => setSelectedBroker(null)} />
+        )}
       </div>
     </div>
   );
 }
 
-function StatCard({ label, value, icon, color }) {
+/* ================= UI COMPONENTS ================= */
+
+function Section({ title, right, children }) {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+      <div className="px-6 py-4 border-b flex justify-between items-center">
+        <h2 className="font-semibold text-slate-800 text-lg">{title}</h2>
+        {right}
+      </div>
+      <div className="overflow-x-auto">{children}</div>
+    </div>
+  );
+}
+
+function StatCard({ label, value, color }) {
   const colors = {
-    blue: "text-blue-600 bg-blue-50",
-    green: "text-green-600 bg-green-50",
-    orange: "text-orange-600 bg-orange-50",
-    purple: "text-purple-600 bg-purple-50"
+    blue: "from-blue-600 to-blue-400 text-white",
+    teal: "from-teal-600 to-teal-400 text-white",
+    amber: "from-amber-500 to-amber-300 text-white",
+    indigo: "from-indigo-600 to-indigo-400 text-white",
   };
 
   return (
-    <div className="bg-white rounded-2xl border shadow-sm p-6 hover:shadow-md transition">
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colors[color]}`}>
-        {icon}
+    <div className={`p-5 rounded-xl shadow-md bg-gradient-to-r ${colors[color] || colors.blue}`}>
+      <div className="text-2xl md:text-3xl font-bold">{value || 0}</div>
+      <div className="text-sm mt-1">{label}</div>
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const styles = {
+    approved: "bg-green-100 text-green-700",
+    rejected: "bg-red-100 text-red-700",
+    pending: "bg-amber-100 text-amber-700",
+  };
+
+  return (
+    <span className={`text-xs px-2 py-1 rounded font-medium ${styles[status]}`}>
+      {status.toUpperCase()}
+    </span>
+  );
+}
+
+function ActionBtn({ children, onClick, green, red }) {
+  const base = "text-xs px-3 py-1.5 rounded font-medium transition";
+  const color = green
+    ? "bg-green-600 text-white hover:bg-green-700"
+    : red
+    ? "bg-red-600 text-white hover:bg-red-700"
+    : "bg-slate-700 text-white hover:bg-slate-800";
+
+  return (
+    <button onClick={onClick} className={`${base} ${color}`}>
+      {children}
+    </button>
+  );
+}
+
+function BrokerModal({ broker, onClose }) {
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl w-full max-w-3xl p-6 space-y-6 shadow-xl">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Broker Details</h3>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-800">
+            ✕
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div><b>Name:</b> {broker.name}</div>
+          <div><b>Email:</b> {broker.email}</div>
+          <div><b>Phone:</b> {broker.number}</div>
+          <div><b>Broker ID:</b> {broker.brokerId}</div>
+        </div>
+
+        <div>
+          <h4 className="font-medium mb-2">Clients</h4>
+          <ul className="list-disc ml-5 text-sm space-y-1">
+            {broker.clients.map((c) => (
+              <li key={c._id}>{c.name} – {c.email}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="font-medium mb-2">Leads</h4>
+          <ul className="list-disc ml-5 text-sm space-y-1">
+            {broker.leads.map((l) => (
+              <li key={l._id}>{l.name} – {l.product} – {l.status}</li>
+            ))}
+          </ul>
+        </div>
       </div>
-      <div className="mt-4 text-3xl font-bold">{value || 0}</div>
-      <div className="text-sm text-gray-500 mt-1">{label}</div>
     </div>
   );
 }

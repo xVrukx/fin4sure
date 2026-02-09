@@ -105,7 +105,7 @@ export default function Login() {
             type="submit"
             disabled={loading}
             className="w-full py-3 rounded-lg font-medium text-white
-              bg-gradient-to-r from-blue-700 via-teal-600 to-emerald-500
+              bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
               disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}

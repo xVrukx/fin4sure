@@ -11,7 +11,7 @@ import { IoMdLogOut, IoIosHome, IoIosClose } from "react-icons/io";
 import { MdInsights, MdDashboard } from "react-icons/md";
 
 export default function Navbar() {
-  const { user, role, isAuthenticated, logout } = useAuth();
+  const { role, isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -22,69 +22,82 @@ export default function Navbar() {
 
   const PublicLinks = () => (
     <>
-      <Link to="/" className="hover:text-blue-700">Home</Link>
-      <Link to="/products" className="hover:text-blue-700">Loans</Link>
-      <Link to="/EMI-calculator" className="hover:text-blue-700">Calculator</Link>
-      <Link to="/broker-register" className="hover:text-blue-700">
-        Become a Partner
-      </Link>
+      <Link className="nav-link" to="/">Home</Link>
+      <Link className="nav-link" to="/products">Loans</Link>
+      <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
+      <Link className="nav-link" to="/broker-register">Become a Partner</Link>
     </>
   );
 
   return (
-    <header className="w-full bg-white border-b border-blue-100">
+    <header className="w-full bg-white border-b border-blue-100 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center">
+        <Link to="/" className="flex items-center gap-2">
           <img src={logo} alt="Fin4sure" className="h-12 w-auto" />
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6 text-slate-700">
+        <nav className="hidden md:flex items-center gap-6 text-slate-700 font-medium">
           {!isAuthenticated && <PublicLinks />}
 
           {isAuthenticated && role === "broker" && (
             <>
-              <Link to="/broker-dashboard">Dashboard</Link>
-              <Link to="/broker-insights">Insights</Link>
-              <Link to="/products">Products</Link>
-              <Link to="/EMI-calculator">Calculator</Link>
+              <Link className="nav-link" to="/broker-dashboard">Dashboard</Link>
+              <Link className="nav-link" to="/broker-insights">Insights</Link>
+              <Link className="nav-link" to="/products">Products</Link>
+              <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
             </>
           )}
 
           {isAuthenticated && role === "admin" && (
             <>
-              <Link to="/admin-dashboard">Dashboard</Link>
-              <Link to="/admin-insights">Insights</Link>
-              <Link to="/products">Products</Link>
-              <Link to="/EMI-calculator">Calculator</Link>
+              <Link className="nav-link" to="/admin-dashboard">Dashboard</Link>
+              <Link className="nav-link" to="/admin-insights">Insights</Link>
+              <Link className="nav-link" to="/products">Products</Link>
+              <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
             </>
           )}
 
           {isAuthenticated && role === "client" && (
             <>
-               <Link to="/client-dashboard">Dashboard</Link>
-              <Link to="/">Home</Link>
-              <Link to="/products">Products</Link>
-              <Link to="/EMI-calculator">Calculator</Link>
+              <Link className="nav-link" to="/client-dashboard">Dashboard</Link>
+              <Link className="nav-link" to="/">Home</Link>
+              <Link className="nav-link" to="/products">Products</Link>
+              <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
             </>
           )}
         </nav>
 
         {/* Desktop auth buttons */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
           {!isAuthenticated ? (
             <>
-              <Link to="/login" className="hover:text-blue-700">Login</Link>
-              <Link to="/signup" className="text-blue-700 font-medium hover:underline">
+              <Link
+                to="/login"
+                className="px-4 py-2 rounded-lg font-medium text-white
+                           bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
+                           hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
+                           transition"
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/signup"
+                className="px-4 py-2 rounded-lg font-medium
+                           border border-[#d9a93d] text-[#d9a93d]
+                           hover:bg-[#d9a93d]/10 transition"
+              >
                 Sign Up
               </Link>
             </>
           ) : (
             <button
               onClick={handleLogout}
-              className="text-red-600 flex items-center gap-1"
+              className="flex items-center gap-1 text-red-600 font-medium
+                         hover:text-red-700 cursor-pointer transition"
             >
               <IoMdLogOut /> Logout
             </button>
@@ -92,66 +105,88 @@ export default function Navbar() {
         </div>
 
         {/* Mobile hamburger */}
-        <button className="md:hidden" onClick={() => setMenuOpen(true)}>
-          <GiHamburgerMenu size={28} />
+        <button
+          className="md:hidden flex flex-col justify-between w-8 h-6 focus:outline-none"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span
+            className={`block h-1 w-full bg-slate-700 rounded transition-transform duration-300
+                        ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+          ></span>
+          <span
+            className={`block h-1 w-full bg-slate-700 rounded transition-opacity duration-300
+                        ${menuOpen ? "opacity-0" : ""}`}
+          ></span>
+          <span
+            className={`block h-1 w-full bg-slate-700 rounded transition-transform duration-300
+                        ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+          ></span>
         </button>
       </div>
 
       {/* Mobile menu */}
-      {menuOpen && (
-        <div className="fixed inset-0 bg-black/40 z-50">
-          <div className="absolute right-0 top-0 h-full w-64 bg-white p-4 flex flex-col gap-4">
+      {/* Mobile menu */}
+{menuOpen && (
+  <div className="fixed inset-0 z-50 flex justify-end">
+    {/* Overlay */}
+    <div
+      className="absolute inset-0 bg-black/30"
+      onClick={() => setMenuOpen(false)}
+    ></div>
 
-            <button onClick={() => setMenuOpen(false)} className="self-end">
-              <IoIosClose size={28} />
-            </button>
+    {/* Menu panel */}
+    <div className="relative w-72 h-full bg-white p-6 flex flex-col gap-5
+                    shadow-lg rounded-l-xl
+                    transform transition-transform duration-200 ease-in-out">
+      
+      {/* Close button */}
+      <button
+        onClick={() => setMenuOpen(false)}
+        className="self-end text-gray-600 hover:text-gray-900 transition"
+      >
+        <IoIosClose size={28} />
+      </button>
 
-            {!isAuthenticated && (
-              <>
-                <PublicLinks />
-                <Link to="/login">Login</Link>
-                <Link to="/signup">Sign Up</Link>
-              </>
-            )}
-
-            {isAuthenticated && role === "broker" && (
-              <>
-                <Link to="/broker-dashboard"><MdDashboard /> Dashboard</Link>
-                <Link to="/broker-insights"><MdInsights /> Insights</Link>
-                <Link to="/products"><AiFillProduct /> Products</Link>
-                <Link to="/EMI-calculator"><CiCalculator2 /> Calculator</Link>
-                <button onClick={handleLogout} className="text-red-600 flex gap-2">
-                  <IoMdLogOut /> Logout
-                </button>
-              </>
-            )}
-
-            {isAuthenticated && role === "admin" && (
-              <>
-                <Link to="/admin-dashboard"><MdDashboard /> Dashboard</Link>
-                <Link to="/admin-insights"><MdInsights /> Insights</Link>
-                <Link to="/products"><AiFillProduct /> Products</Link>
-                <Link to="/EMI-calculator"><CiCalculator2 /> Calculator</Link>
-                <button onClick={handleLogout} className="text-red-600 flex gap-2">
-                  <IoMdLogOut /> Logout
-                </button>
-              </>
-            )}
-
-            {isAuthenticated && role === "client" && (
-              <>
-              <Link to="/client-dashboard"><MdDashboard /> Dashboard</Link>
-                <Link to="/"><IoIosHome /> Home</Link>
-                <Link to="/products"><AiFillProduct /> Products</Link>
-                <Link to="/EMI-calculator"><CiCalculator2 /> Calculator</Link>
-                <button onClick={handleLogout} className="text-red-600 flex gap-2">
-                  <IoMdLogOut /> Logout
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+      {/* Links */}
+      {!isAuthenticated && (
+        <>
+          <PublicLinks />
+          <Link to="/login" className="mobile-link text-gray-700 font-medium hover:text-blue-600 transition">
+            Login
+          </Link>
+          <Link to="/signup" className="mobile-link text-gray-700 font-medium hover:text-blue-600 transition">
+            Sign Up
+          </Link>
+        </>
       )}
+
+      {isAuthenticated && (
+        <>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/${role}-dashboard`}>
+            <MdDashboard /> Dashboard
+          </Link>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/${role}-insights`}>
+            <MdInsights /> Insights
+          </Link>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/products">
+            <AiFillProduct /> Products
+          </Link>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/EMI-calculator">
+            <CiCalculator2 /> Calculator
+          </Link>
+
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-red-600 hover:text-red-800 font-medium cursor-pointer mt-auto transition"
+          >
+            <IoMdLogOut /> Logout
+          </button>
+        </>
+      )}
+    </div>
+  </div>
+)}
+
     </header>
   );
 }

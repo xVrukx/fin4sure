@@ -1,28 +1,31 @@
 import express from "express";
 import {
   userCount,
-  brokersWithStats,
+  brokersWithFullData,
   allLeads,
   updateBrokerStatus,
   updateLeadStatus,
-  createAdmin
+  createAdmin,
 } from "../controllers/admin.controller.js";
 
 import { verifyUser, isAdmin } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
+/* ---------- DASHBOARD STATS ---------- */
 router.get("/stats", verifyUser, isAdmin, userCount);
 
-router.get("/brokers", verifyUser, isAdmin, brokersWithStats);
+/* ---------- BROKERS (FULL DATA) ---------- */
+router.get("/brokers", verifyUser, isAdmin, brokersWithFullData);
 
+/* ---------- LEADS (FULL DATA) ---------- */
 router.get("/leads", verifyUser, isAdmin, allLeads);
 
+/* ---------- ACTIONS ---------- */
 router.post("/broker-status", verifyUser, isAdmin, updateBrokerStatus);
-
 router.post("/lead-status", verifyUser, isAdmin, updateLeadStatus);
 
-// first admin bootstrap
+/* ---------- ADMIN BOOTSTRAP ---------- */
 router.post("/create-admin", createAdmin);
 
 export default router;
