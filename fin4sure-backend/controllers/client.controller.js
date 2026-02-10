@@ -1,4 +1,5 @@
 import Client from "../models/client.model.js";
+import jwt from "jsonwebtoken";
 
 // ----------------- GET CLIENT DATA TO SHOW IN PROFILE -----------------
 export const clientDashboard = async (req, res) => {
@@ -98,3 +99,72 @@ export const updatePAN = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const updateClientProfile = async (req, res) => {
+  try {
+    const { name, email, number, updateToken } = req.body;
+    const updates = {};
+
+    // ------------------ NAME ------------------
+    if (name) updates.name = name.trim();
+
+    // ------------------ EMAIL ------------------
+    if (email) {
+      const normalizedEmail = email.toLowerCase().trim();
+
+      // Check if email already exists in any user
+      const exists =
+        (await Client.findOne({ email: normalizedEmail, _id: { $ne: req.user._id } })) ||
+        (await Broker.findOne({ email: normalizedEmail })) ||
+        (await Admin.findOne({ email: normalizedEmail }));
+
+      if (exists) {
+        return res.status(409).json({ message: "Email already in use" });
+      }
+
+      updates.email = normalizedEmail;
+    }
+
+    // ------------------ NUMBER ------------------
+    if (number) {
+      if (!updateToken) {
+        return res.status(403).json({
+          message: "OTP verification required to update number",
+        });
+      }
+
+      let decoded;
+      try {
+        decoded = jwt.verify(updateToken, process.env.JWT_SECRET);
+      } catch (err) {
+        return res.status(403).json({ message: "Invalid or expired update token" });
+      }
+
+      if (decoded.userId !== req.user._id.toString() || decoded.newNumber !== number) {
+        return res.status(403).json({ message: "Invalid update token" });
+      }
+
+      // Optional: Check if number already exists
+      const numberExists =
+        (await Client.findOne({ number, _id: { $ne: req.user._id } })) ||
+        (await Broker.findOne({ number })) ||
+        (await Admin.findOne({ number }));
+
+      if (numberExists) {
+        return res.status(409).json({ message: "Number already in use" });
+      }
+
+      updates.number = number;
+    }
+
+    // ------------------ UPDATE CLIENT ------------------
+    const client = await Client.findByIdAndUpdate(req.user._id, updates, { new: true })
+      .select("-password -__v");
+
+    return res.json(client);
+  } catch (err) {
+    console.error("Update client profile error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+

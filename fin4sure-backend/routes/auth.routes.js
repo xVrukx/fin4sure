@@ -6,17 +6,24 @@ import {
   loginHandler,
   profileHandler,
   Logouthandaler,
+  sendUpdateNumberOTP,
+  verifyUpdateNumberOTP,
 } from "../controllers/auth.controller.js";
-import { verifyUser } from "../middlewares/auth.middleware.js"; // 🔧 CHANGED: needed for protected routes
+import { verifyUser } from "../middlewares/auth.middleware.js"; // protects routes
 
 const authRouter = express.Router();
 
 // -------------------- Auth routes --------------------
-authRouter.post("/signup", signUpHandler);     // signup
-authRouter.post("/send-otp", SendOTP);         // send OTP
-authRouter.post("/verify-otp", verifyOTP);     // verify OTP
-authRouter.post("/login", loginHandler);       // login
-authRouter.post("/logout", verifyUser, Logouthandaler)     // logout
-authRouter.get("/profile", verifyUser, profileHandler);
+// Public routes
+authRouter.post("/signup", signUpHandler);       // Signup
+authRouter.post("/send-otp", SendOTP);          // Send OTP for signup
+authRouter.post("/verify-otp", verifyOTP);      // Verify OTP for signup/login
+authRouter.post("/login", loginHandler);        // Login
 
-export default authRouter
+// Protected routes (require login)
+authRouter.post("/logout", verifyUser, Logouthandaler);            // Logout
+authRouter.get("/profile", verifyUser, profileHandler);            // Get profile
+authRouter.post("/update-number-otp", verifyUser, sendUpdateNumberOTP); // Send OTP for number update
+authRouter.post("/verify-update-number-otp", verifyUser, verifyUpdateNumberOTP); // Verify OTP for number update
+
+export default authRouter;

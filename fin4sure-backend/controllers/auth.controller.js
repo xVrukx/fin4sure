@@ -53,43 +53,41 @@ export const signUpHandler = async (req, res) => {
 
     switch (role) {
       case "client": {
-        const newClient = new Client({
-          name,
-          email: normalizedEmail,
-          number,
-          password, // hashed by pre-save hook
-          broker_id: broker_id || "self",
-        });
+        let broker = null;
 
-        await newClient.save();
-
-        // CHANGED: validate broker referral before attaching
+        // ✅ validate broker BEFORE saving client
         if (broker_id && broker_id !== "self") {
-          const broker = await Broker.findOne({ brokerId: broker_id });
+          broker = await Broker.findOne({ brokerId: broker_id });
 
-          // ❌ broker not found
           if (!broker) {
-            return res.status(400).json({
-              message: "Invalid Broker ID. Please check and try again.",
-            });
+            return res.status(400).json({ message: "Invalid Broker ID" });
           }
 
-          // ❌ broker exists but not approved
           if (broker.status !== "approved") {
             return res.status(403).json({
               message:
                 broker.status === "pending"
-                  ? "This broker is not approved yet. Please try later or apply directly."
-                  : "This broker is no longer active. Please apply directly.",
+                  ? "Broker not approved yet"
+                  : "Broker inactive",
             });
           }
+        }
 
-          // ✅ broker approved → allow referral
-          broker.clients.push(newClient._id.toString());
+        const client = new Client({
+          name,
+          email: normalizedEmail,
+          number,
+          password,
+          broker_id: broker_id || "self",
+        });
+
+        await client.save();
+
+        if (broker) {
+          broker.clients.push(client._id.toString());
           await broker.save();
         }
 
-        console.log("Client registered successfully:", newClient._id);
         return res.json({ redirect: url });
       }
 
@@ -137,7 +135,7 @@ export const SendOTP = async (req, res) => {
     let num_b = await Broker.findOne({ number });
 
     if (!pattern.test(number))
-      return res.json({ message: "invalid number passed" });
+      return res.status(400).json({ message: "Invalid number passed" });
 
     if (num_a || num_b || num_c) {
       return res.status(409).json({ message: "Already existing user" });
@@ -294,7 +292,7 @@ export const loginHandler = async (req, res) => {
 // logout handeler
 export const Logouthandaler = async (req, res) => {
   try {
-    const AccessToken = req.cookie.AccessToken;
+    const AccessToken = req.cookies.AccessToken;
     if (!AccessToken) {
       return res.status(500).json({ message: "accesstoken not found" });
     }
@@ -309,6 +307,120 @@ export const Logouthandaler = async (req, res) => {
     return res.json({ message: `${e}` });
   }
 };
+// ----------------------------------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------------------------------
+// send OTP for updating number (uses SAME otp_data + WhatsApp logic)
+export const sendUpdateNumberOTP = async (req, res) => {
+  try {
+    const { newNumber } = req.body;
+
+    if (!/^[0-9]{10}$/.test(newNumber)) {
+      return res.status(400).json({ message: "Invalid number" });
+    }
+
+    // ❌ new number must not exist
+    const exists =
+      (await Client.findOne({ number: newNumber })) ||
+      (await Broker.findOne({ number: newNumber })) ||
+      (await Admin.findOne({ number: newNumber }));
+
+    if (exists) {
+      return res.status(409).json({ message: "Number already in use" });
+    }
+
+    const otp = generateOTP();
+
+    otp_data[`update_${newNumber}`] = {
+      otp,
+      expiresAt: Date.now() + OTP_EXPIRY_TIME,
+    };
+
+    // ✅ SAME WhatsApp logic you already use
+    const whatsapp_url = `https://graph.facebook.com/v20.0/${process.env.MOBILE_ID}/messages`;
+
+    await axios.post(
+      whatsapp_url,
+      {
+        messaging_product: "whatsapp",
+        to: `91${newNumber}`,
+        type: "template",
+        template: {
+          name: "delivery",
+          language: { code: "en" },
+          components: [
+            {
+              type: "body",
+              parameters: [{ type: "text", text: otp }],
+            },
+          ],
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TOKENS}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    return res.json({ message: "OTP sent to new number" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Failed to send OTP" });
+  }
+};
+// ----------------------------------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------------------------------
+// verify OTP for updating number
+export const verifyUpdateNumberOTP = async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { newNumber, otp } = req.body;
+
+    if (!newNumber || !otp) {
+      return res.status(400).json({ message: "Number and OTP required" });
+    }
+
+    const record = otp_data[`update_${newNumber}`];
+
+    if (!record) {
+      return res.status(400).json({ message: "OTP expired or not found" });
+    }
+
+    if (record.expiresAt < Date.now()) {
+      delete otp_data[`update_${newNumber}`];
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    if (record.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    delete otp_data[`update_${newNumber}`];
+
+    const updateToken = jwt.sign(
+      {
+        userId: req.user._id,
+        newNumber,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "5m" },
+    );
+
+    return res.json({
+      message: "OTP verified",
+      updateToken,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "OTP verification failed" });
+  }
+};
+
 // ----------------------------------------------------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------------------------------------------------
