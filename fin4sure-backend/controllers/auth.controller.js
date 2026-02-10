@@ -67,11 +67,24 @@ export const signUpHandler = async (req, res) => {
         if (broker_id && broker_id !== "self") {
           const broker = await Broker.findOne({ brokerId: broker_id });
 
+          // ❌ broker not found
           if (!broker) {
-            console.log("Invalid broker ID provided during signup");
-            return res.status(400).json({ message: "Invalid Broker ID" });
+            return res.status(400).json({
+              message: "Invalid Broker ID. Please check and try again.",
+            });
           }
 
+          // ❌ broker exists but not approved
+          if (broker.status !== "approved") {
+            return res.status(403).json({
+              message:
+                broker.status === "pending"
+                  ? "This broker is not approved yet. Please try later or apply directly."
+                  : "This broker is no longer active. Please apply directly.",
+            });
+          }
+
+          // ✅ broker approved → allow referral
           broker.clients.push(newClient._id.toString());
           await broker.save();
         }
