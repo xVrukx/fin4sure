@@ -313,17 +313,17 @@ export const Logouthandaler = async (req, res) => {
 // send OTP for updating number (uses SAME otp_data + WhatsApp logic)
 export const sendUpdateNumberOTP = async (req, res) => {
   try {
-    const { newNumber } = req.body;
+    const { number } = req.body;
 
-    if (!/^[0-9]{10}$/.test(newNumber)) {
+    if (!/^[0-9]{10}$/.test(number)) {
       return res.status(400).json({ message: "Invalid number" });
     }
 
     // ❌ new number must not exist
     const exists =
-      (await Client.findOne({ number: newNumber })) ||
-      (await Broker.findOne({ number: newNumber })) ||
-      (await Admin.findOne({ number: newNumber }));
+      (await Client.findOne({ number: number })) ||
+      (await Broker.findOne({ number: number })) ||
+      (await Admin.findOne({ number: number }));
 
     if (exists) {
       return res.status(409).json({ message: "Number already in use" });
@@ -331,7 +331,7 @@ export const sendUpdateNumberOTP = async (req, res) => {
 
     const otp = generateOTP();
 
-    otp_data[`update_${newNumber}`] = {
+    otp_data[`update_${number}`] = {
       otp,
       expiresAt: Date.now() + OTP_EXPIRY_TIME,
     };
@@ -343,7 +343,7 @@ export const sendUpdateNumberOTP = async (req, res) => {
       whatsapp_url,
       {
         messaging_product: "whatsapp",
-        to: `91${newNumber}`,
+        to: `91${number}`,
         type: "template",
         template: {
           name: "delivery",
@@ -380,20 +380,20 @@ export const verifyUpdateNumberOTP = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { newNumber, otp } = req.body;
+    const { number, otp } = req.body;
 
-    if (!newNumber || !otp) {
+    if (!number || !otp) {
       return res.status(400).json({ message: "Number and OTP required" });
     }
 
-    const record = otp_data[`update_${newNumber}`];
+    const record = otp_data[`update_${number}`];
 
     if (!record) {
       return res.status(400).json({ message: "OTP expired or not found" });
     }
 
     if (record.expiresAt < Date.now()) {
-      delete otp_data[`update_${newNumber}`];
+      delete otp_data[`update_${number}`];
       return res.status(400).json({ message: "OTP expired" });
     }
 
@@ -401,27 +401,16 @@ export const verifyUpdateNumberOTP = async (req, res) => {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    delete otp_data[`update_${newNumber}`];
+    delete otp_data[`update_${number}`];
 
-    const updateToken = jwt.sign(
-      {
-        userId: req.user._id,
-        newNumber,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "5m" },
-    );
-
-    return res.json({
-      message: "OTP verified",
-      updateToken,
-    });
+    return res.json({message: "OTP verified"});
   } catch (err) {
     return res.status(500).json({ message: "OTP verification failed" });
   }
 };
 
 // ----------------------------------------------------------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------------------------------------------------------
 // profile handeler
@@ -437,14 +426,41 @@ export const profileHandler = async (req, res) => {
 
   if (role === "client") {
     user = await Client.findById(user_id).select("-password -__v");
+    if (!user) {
+      return res.status(404).json({ message: "Client not found" });
+    }
+    return res.json({
+      name: user.name,
+      email: user.email,
+      number: user.number,
+      broker: user.broker_id,
+      totalProducts: user.product.length,
+      products: user.product
+    });
   }
 
   if (role === "broker") {
     user = await Broker.findById(user_id).select("-password -__v");
+    if (!user) {
+      return res.status(404).json({ message: "Client not found" });
+    }
+    return res.json({
+      name: user.name,
+      email: user.email,
+      number: user.number
+    });
   }
 
   if (role === "admin") {
     user = await Admin.findById(user_id).select("-password -__v");
+    if (!user) {
+      return res.status(404).json({ message: "Client not found" });
+    }
+    return res.json({
+      name: user.name,
+      email: user.email,
+      number: user.number
+    });
   }
 
   if (!user) {
@@ -458,3 +474,137 @@ export const profileHandler = async (req, res) => {
 };
 
 // ----------------------------------------------------------------------------------------------------------------------
+// profileupdate handeler
+export const profileUpdateHandeler = async (req, res) => {
+  const user_id = req.user._id;
+  const role = req.user.role;
+
+  if (!user_id) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+
+  let user;
+
+  if (role === "client") {
+    const { name, email, number, pan_card } = req.body;
+    let Name
+    let Email
+    let Number
+    let panHash
+    let encryptedPAN
+    // ------------------ NAME ------------------
+    if (name) Name = name.trim();
+
+    // ------------------ EMAIL ------------------
+    if (email) {
+      const normalizedEmail = email.toLowerCase().trim();
+
+      // Check if email already exists in any user
+      const exists = await Client.findOne({ email: normalizedEmail, _id: { $ne: req.user._id } })
+      if (exists) {
+        return res.status(409).json({ message: "Email already in use" });
+      }
+      Email = normalizedEmail;
+    }
+
+    // ------------------ NUMBER ------------------
+    if (number) {
+      const numberExists = await Client.findOne({ number, _id: { $ne: req.user._id } })
+      if (numberExists) {
+        return res.status(409).json({ message: "Number already in use" });
+      }
+      Number = number;
+    }
+
+    if(pan_card) {
+    const cleanPAN = pan_card.trim().toUpperCase();
+    console.log({message: "cleaned pan"})
+    if (!PAN_REGEX.test(cleanPAN)) {
+      return res.status(400).json({
+        message: "Invalid PAN format"
+      });
+    }
+    console.log({message: "verified pan"})
+    
+    // ---------- duplicate PAN check ----------
+    
+    const panHash = hashPAN(cleanPAN);
+    const exists = await Lead.findOne({ pan_hash: panHash });
+    console.log({message: "checking if pan exist"})
+    if (exists) {
+      return res.status(409).json({
+        message: "Application already exists for this PAN"
+      });
+    }
+
+    // ---------- encrypt PAN ----------
+    
+    const encryptedPAN = encryptPAN(cleanPAN);
+    console.log({message: "encrypting pan"})
+    }
+    const filter = req.user._id
+    const updates = {
+      $set : {
+        name : Name,
+        email : Email,
+        number : Number,
+        pan_hash: panHash,
+        pan_encrypted: encryptedPAN
+      }
+    }
+    const callback = {new : true}
+    
+    // ------------------ UPDATE CLIENT ------------------
+    
+    const client = await Client.findByIdAndUpdate(filter, updates, callback)
+      .select("-password -__v");
+
+    return res.json(client);
+  }
+  if (role === "broker") {
+    const { name, email, number } = req.body;
+    let Name
+    let Email
+    let Number
+    // ------------------ NAME ------------------
+    if (name) Name = name.trim();
+
+    // ------------------ EMAIL ------------------
+    if (email) {
+      const normalizedEmail = email.toLowerCase().trim();
+
+      // Check if email already exists in any user
+      const exists = await Client.findOne({ email: normalizedEmail, _id: { $ne: req.user._id } })
+      if (exists) {
+        return res.status(409).json({ message: "Email already in use" });
+      }
+      Email = normalizedEmail;
+    }
+
+    // ------------------ NUMBER ------------------
+    if (number) {
+      const numberExists = await Client.findOne({ number, _id: { $ne: req.user._id } })
+      if (numberExists) {
+        return res.status(409).json({ message: "Number already in use" });
+      }
+      Number = number;
+    }
+
+    const filter = req.user._id
+    const updates = {
+      $set : {
+        name : Name,
+        email : Email,
+        number : Number
+      }
+    }
+    const callback = {new : true}
+    
+    // ------------------ UPDATE broker ------------------
+    
+    const broker = await Broker.findByIdAndUpdate(filter, updates, callback)
+      .select("-password -__v");
+
+    return res.json(broker);
+  }
+}

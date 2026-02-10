@@ -13,8 +13,11 @@ export default function ClientDashboard() {
   const [user, setUser] = useState(null);
   const [leads, setLeads] = useState([]);
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", number: "", pan_card: "" });
-  const [otpToken, setOtpToken] = useState(""); // for phone updates
+  const [name, setname] = useState("")
+  const [email, setemail] = useState("")
+  const [number, setnumber] = useState("")
+  const [pan_card, setpan_card] = useState("")
+  const [otp, setotp] = useState(""); // for phone updates
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,7 +27,7 @@ export default function ClientDashboard() {
 
   // Fetch profile
   async function fetchProfile() {
-    const res = await fetch("http://localhost:5000/api/client/dashboard", {
+    const res = await fetch("http://localhost:5000/api/client/profile", {
       method: "GET",
       headers: { "content-type": "application/json" },
       credentials: "include",
@@ -36,13 +39,11 @@ export default function ClientDashboard() {
     }
 
     const data = await res.json();
-    setUser(data);
-    setForm({
-      name: data.name || "",
-      email: data.email || "",
-      number: data.number || "",
-      pan_card: data.pan_card || "",
-    });
+    setUser(data || "");
+    setname(data.name || "");
+    setemail(data.email || "");
+    setnumber(data.number || "");
+    setpan_card(data.pan_card || "");
   }
 
   // Fetch client leads
@@ -58,18 +59,42 @@ export default function ClientDashboard() {
     }
   }
 
-  // Handle form input change
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const sendOTP = async() => {
+    try{
+      const res = await fetch("http://localhost:5000/api/auth/update-number-otp",{
+        method : "POST",
+        credentials : "include",
+        headers : {"Content-Type" : "application/json"},
+        body : JSON.stringify({number})
+      })
+      if(!res.ok){
+         throw new Error("faield to verify");
+      }
+    }catch(e) {
+    alert(e.message)
+  }
+  }
+
+  const verifyOTP = async() => {
+    const res = await fetch("http://localhost:5000/api/auth/verify-update-number-otp",{
+      method : "POST",
+      credentials : "include",
+      headers : {"Content-Type" : "application/json"},
+      body : JSON.stringify({number, otp})
+    })
+  }
 
   // Update profile
   const handleUpdate = async () => {
     try {
-      const body = { ...form };
-      if (otpToken) body.updateToken = otpToken; // only send token if updating number
+      const body = {
+        "name" : name,
+        "email" : email,
+        "number" : number,
+        "pan_card" : pan_card
+      }
 
-      const res = await fetch("http://localhost:5000/api/client/profile", {
+      const res = await fetch("http://localhost:5000/api/client/profileupdate", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         credentials: "include",
@@ -200,7 +225,7 @@ export default function ClientDashboard() {
 
           {/* RIGHT SIDE — Profile */}
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6">
+            <div className="bg-linear-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                   <CgProfile size={24} />
@@ -220,8 +245,8 @@ export default function ClientDashboard() {
                       <input
                         type="text"
                         name="name"
-                        value={form.name}
-                        onChange={handleChange}
+                        value={name}
+                        onChange={(e) => {setname(e.target.value)}}
                         className="mt-1 p-2 w-full rounded text-black"
                       />
                     </div>
@@ -230,8 +255,8 @@ export default function ClientDashboard() {
                       <input
                         type="email"
                         name="email"
-                        value={form.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={(e) => {setemail(e.target.value)}}
                         className="mt-1 p-2 w-full rounded text-black"
                       />
                     </div>
@@ -240,8 +265,8 @@ export default function ClientDashboard() {
                       <input
                         type="text"
                         name="number"
-                        value={form.number}
-                        onChange={handleChange}
+                        value={number}
+                        onChange={(e) => {setnumber(e.target.value)}}
                         className="mt-1 p-2 w-full rounded text-black"
                       />
                     </div>
@@ -250,8 +275,8 @@ export default function ClientDashboard() {
                       <input
                         type="text"
                         name="pan_card"
-                        value={form.pan_card}
-                        onChange={handleChange}
+                        value={pan_card}
+                        onChange={(e) => {setpan_card(e.target.value)}}
                         className="mt-1 p-2 w-full rounded text-black"
                       />
                     </div>
@@ -259,10 +284,22 @@ export default function ClientDashboard() {
                       <label className="block text-gray-200">OTP Token (for phone update)</label>
                       <input
                         type="text"
-                        value={otpToken}
-                        onChange={(e) => setOtpToken(e.target.value)}
+                        value={otp}
+                        onChange={(e) => setotp(e.target.value)}
                         className="mt-1 p-2 w-full rounded text-black"
                       />
+                      <button
+                        onClick={sendOTP}
+                        className="bg-blue-300 px-4 py-2 rounded hover:bg-green-700"
+                      >
+                        send OTP
+                      </button>
+                      <button
+                        onClick={verifyOTP}
+                        className="bg-blue-600 px-4 py-2 rounded hover:bg-green-700"
+                      >
+                        verify OTP
+                      </button>
                     </div>
                     <div className="flex gap-2 mt-2">
                       <button
