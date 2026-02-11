@@ -160,13 +160,39 @@ export default function Navbar() {
         </>
       )}
 
-      {isAuthenticated && (
+      {isAuthenticated && role === "broker" && (
         <>
           <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/${role}-dashboard`}>
             <MdDashboard /> Dashboard
           </Link>
-          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/${role}-insights`}>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/`}>
+            <IoIosHome /> Home
+          </Link>
+          {/* <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/${role}-insights`}>
             <MdInsights /> Insights
+          </Link> */}
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/products">
+            <AiFillProduct /> Products
+          </Link>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/EMI-calculator">
+            <CiCalculator2 /> Calculator
+          </Link>
+
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-red-600 hover:text-red-800 font-medium cursor-pointer mt-auto transition"
+          >
+            <IoMdLogOut /> Logout
+          </button>
+        </>
+      )}
+      {isAuthenticated && role === "client" && (
+        <>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/${role}-dashboard`}>
+            <MdDashboard /> Dashboard
+          </Link>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/`}>
+            <IoIosHome /> Home
           </Link>
           <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/products">
             <AiFillProduct /> Products
@@ -183,6 +209,33 @@ export default function Navbar() {
           </button>
         </>
       )}
+      {isAuthenticated && role === "admin" && (
+        <>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/${role}-dashboard`}>
+            <MdDashboard /> Dashboard
+          </Link>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/`}>
+            <IoIosHome /> Home
+          </Link>
+          {/* <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to={`/${role}-insights`}>
+            <MdInsights /> Insights
+          </Link> */}
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/products">
+            <AiFillProduct /> Products
+          </Link>
+          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/EMI-calculator">
+            <CiCalculator2 /> Calculator
+          </Link>
+
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-red-600 hover:text-red-800 font-medium cursor-pointer mt-auto transition"
+          >
+            <IoMdLogOut /> Logout
+          </button>
+        </>
+      )}
+
     </div>
   </div>
 )}

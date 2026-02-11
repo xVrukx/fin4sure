@@ -27,7 +27,7 @@ export default function ClientDashboard() {
 
   // Fetch profile
   async function fetchProfile() {
-    const res = await fetch("http://localhost:5000/api/client/profile", {
+    const res = await fetch("http://localhost:5000/api/auth/profile", {
       method: "GET",
       headers: { "content-type": "application/json" },
       credentials: "include",
@@ -94,7 +94,7 @@ export default function ClientDashboard() {
         "pan_card" : pan_card
       }
 
-      const res = await fetch("http://localhost:5000/api/client/profileupdate", {
+      const res = await fetch("http://localhost:5000/api/auth/profileupdate", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         credentials: "include",

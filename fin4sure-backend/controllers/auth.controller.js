@@ -426,53 +426,33 @@ export const profileHandler = async (req, res) => {
 
   if (role === "client") {
     user = await Client.findById(user_id).select("-password -__v");
-    if (!user) {
-      return res.status(404).json({ message: "Client not found" });
-    }
-    return res.json({
-      name: user.name,
-      email: user.email,
-      number: user.number,
-      broker: user.broker_id,
-      totalProducts: user.product.length,
-      products: user.product
-    });
   }
 
   if (role === "broker") {
     user = await Broker.findById(user_id).select("-password -__v");
-    if (!user) {
-      return res.status(404).json({ message: "Client not found" });
-    }
-    return res.json({
-      name: user.name,
-      email: user.email,
-      number: user.number
-    });
   }
 
   if (role === "admin") {
     user = await Admin.findById(user_id).select("-password -__v");
-    if (!user) {
-      return res.status(404).json({ message: "Client not found" });
-    }
-    return res.json({
-      name: user.name,
-      email: user.email,
-      number: user.number
-    });
   }
 
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
+  // ✅ unified response for ALL roles
   return res.json({
-    ...user.toObject(),
-    role, // ✅ critical fix
+    role,
+    name: user.name,
+    email: user.email,
+    number: user.number,
+    ...(role === "client" && {
+      broker: user.broker_id,
+      totalProducts: user.product.length,
+      products: user.product,
+    }),
   });
 };
-
 // ----------------------------------------------------------------------------------------------------------------------
 // profileupdate handeler
 export const profileUpdateHandeler = async (req, res) => {
