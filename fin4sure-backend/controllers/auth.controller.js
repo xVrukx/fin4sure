@@ -353,6 +353,15 @@ export const sendUpdateNumberOTP = async (req, res) => {
               type: "body",
               parameters: [{ type: "text", text: otp }],
             },
+              {
+                type: "button",
+                sub_type: "url", // url button (Meta calls it URL)
+                index: 0, // index 0 -> first button
+                parameters: [
+                  { type: "text", text: "otp" },
+                  // <- fill with the actual URL your template expects
+                ],
+              },
           ],
         },
       },
