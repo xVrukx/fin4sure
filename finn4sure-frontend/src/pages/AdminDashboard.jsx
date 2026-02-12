@@ -62,7 +62,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white">
+    <div className="min-h-screen bg-linear-to-b from-blue-50 via-white to-white">
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
 
         {/* Header */}
@@ -87,7 +87,7 @@ export default function AdminDashboard() {
 <Section title="Broker Approvals">
   <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
     <table className="min-w-full text-sm text-left divide-y divide-slate-200">
-      <thead className="bg-gradient-to-r from-blue-100 via-blue-50 to-white text-slate-700">
+      <thead className="bg-linear-to-r from-blue-100 via-blue-50 to-white text-slate-700">
         <tr>
           <th className="p-3 text-left">Broker</th>
           <th className="p-3 hidden sm:table-cell">Broker ID</th>
@@ -134,7 +134,7 @@ export default function AdminDashboard() {
 >
   <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
     <table className="min-w-full text-sm text-left divide-y divide-slate-200">
-      <thead className="bg-gradient-to-r from-teal-100 via-teal-50 to-white text-slate-700">
+      <thead className="bg-linear-to-r from-teal-100 via-teal-50 to-white text-slate-700">
         <tr>
           <th className="p-3 text-left">Client</th>
           <th className="p-3 hidden sm:table-cell">Email</th>
@@ -205,7 +205,7 @@ function StatCard({ label, value, color }) {
   };
 
   return (
-    <div className={`p-5 rounded-xl shadow-md bg-gradient-to-r ${colors[color] || colors.blue}`}>
+    <div className={`p-5 rounded-xl shadow-md bg-linear-to-r ${colors[color] || colors.blue}`}>
       <div className="text-2xl md:text-3xl font-bold">{value || 0}</div>
       <div className="text-sm mt-1">{label}</div>
     </div>

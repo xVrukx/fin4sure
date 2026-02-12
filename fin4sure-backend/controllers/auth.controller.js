@@ -451,6 +451,10 @@ export const profileHandler = async (req, res) => {
       totalProducts: user.product.length,
       products: user.product,
     }),
+    ...(role === "broker" && {
+      brokerId: user.brokerId,
+      status: user.status
+    }),
   });
 };
 // ----------------------------------------------------------------------------------------------------------------------

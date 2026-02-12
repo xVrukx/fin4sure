@@ -26,6 +26,6 @@ authRouter.post("/logout", verifyUser, Logouthandaler);            // Logout
 authRouter.get("/profile", verifyUser, profileHandler);            // Get profile
 authRouter.post("/update-number-otp", verifyUser, sendUpdateNumberOTP); // Send OTP for number update
 authRouter.post("/verify-update-number-otp", verifyUser, verifyUpdateNumberOTP); // Verify OTP for number update
-authRouter.post("/profileupdate",verifyUser,profileUpdateHandeler)
+authRouter.patch("/profileupdate",verifyUser,profileUpdateHandeler)
 
 export default authRouter;

@@ -68,20 +68,27 @@ export default function ClientDashboard() {
         body : JSON.stringify({number})
       })
       if(!res.ok){
-         throw new Error("faield to verify");
+         throw new Error("faield to send otp");
       }
+      await res.json()
     }catch(e) {
     alert(e.message)
   }
   }
 
   const verifyOTP = async() => {
-    const res = await fetch("http://localhost:5000/api/auth/verify-update-number-otp",{
+    try{
+      const res = await fetch("http://localhost:5000/api/auth/verify-update-number-otp",{
       method : "POST",
       credentials : "include",
       headers : {"Content-Type" : "application/json"},
       body : JSON.stringify({number, otp})
     })
+    if(!res.ok){
+      throw new Error("faield to verify");
+    }}catch(e) {
+      alert(e.message)
+    }
   }
 
   // Update profile
