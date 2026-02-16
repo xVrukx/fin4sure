@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import validator from "validator";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export default function Signup() {
   const [otpVerified, setOtpVerified] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(""); // form-wide error
+  const [validateemail, setvalidateemail] = useState("")
   const [otpError, setOtpError] = useState(""); // OTP-specific error
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -55,6 +57,16 @@ export default function Signup() {
     message: c.message,
     valid: c.test(pw),
   }));
+
+  const validateEmail = (e) => {
+    setEmail(e.target.value);
+    if(validator.isEmail(email)) {
+      setvalidateemail("email is valid");
+    }
+    else{
+      setvalidateemail("email is invalid");
+    };
+  };
 
   const isPasswordStrong = () => validatePassword(password).every((c) => c.valid);
 
@@ -197,9 +209,12 @@ export default function Signup() {
             type="email"
             placeholder="you@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={validateEmail}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
+           <p style={{ color: validator.isEmail(email) ? 'green' : 'red' }}>
+               {validateemail}
+           </p>
 
           {/* PASSWORD */}
           <div>
