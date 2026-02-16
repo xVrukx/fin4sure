@@ -244,108 +244,172 @@ export default function ClientDashboard() {
               </div>
 
               {/* Profile form */}
-              <div className="space-y-3 text-sm">
-                {editing ? (
-                  <>
-                    <div>
-                      <label className="block text-gray-200">Name</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={name}
-                        onChange={(e) => {setname(e.target.value)}}
-                        className="mt-1 p-2 w-full rounded text-black"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-200">Email</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={email}
-                        onChange={(e) => {setemail(e.target.value)}}
-                        className="mt-1 p-2 w-full rounded text-black"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-200">Phone</label>
-                      <input
-                        type="text"
-                        name="number"
-                        value={number}
-                        onChange={(e) => {setnumber(e.target.value)}}
-                        className="mt-1 p-2 w-full rounded text-black"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-200">PAN</label>
-                      <input
-                        type="text"
-                        name="pan_card"
-                        value={pan_card}
-                        onChange={(e) => {setpan_card(e.target.value)}}
-                        className="mt-1 p-2 w-full rounded text-black"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-200">OTP Token (for phone update)</label>
-                      <input
-                        type="text"
-                        value={otp}
-                        onChange={(e) => setotp(e.target.value)}
-                        className="mt-1 p-2 w-full rounded text-black"
-                      />
-                      <button
-                        onClick={sendOTP}
-                        className="bg-blue-300 px-4 py-2 rounded hover:bg-green-700"
-                      >
-                        send OTP
-                      </button>
-                      <button
-                        onClick={verifyOTP}
-                        className="bg-blue-600 px-4 py-2 rounded hover:bg-green-700"
-                      >
-                        verify OTP
-                      </button>
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={handleUpdate}
-                        className="bg-green-600 px-4 py-2 rounded hover:bg-green-700"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setEditing(false)}
-                        className="bg-gray-500 px-4 py-2 rounded hover:bg-gray-600"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex justify-between">
-                      <span>Email:</span>
-                      <span className="font-medium">{user.email}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Phone:</span>
-                      <span className="font-medium">{user.number}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>PAN:</span>
-                      <span className="font-medium">{user.pan_card || "-"}</span>
-                    </div>
-                    <button
-                      onClick={() => setEditing(true)}
-                      className="mt-4 bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-100"
-                    >
-                      Edit Profile
-                    </button>
-                  </>
-                )}
-              </div>
+             {/* Profile form */}
+<div className="space-y-3 text-sm">
+  {editing ? (
+    <>
+      <div>
+        <label className="block text-gray-200">Name</label>
+        <input
+          type="text"
+          name="name"
+          value={name}
+          onChange={(e) => setname(e.target.value)}
+          className="mt-1 p-2 w-full rounded text-black"
+        />
+      </div>
+      <div>
+        <label className="block text-gray-200">Email</label>
+        <input
+          type="email"
+          name="email"
+          value={email}
+          onChange={(e) => setemail(e.target.value)}
+          className="mt-1 p-2 w-full rounded text-black"
+        />
+      </div>
+      <div>
+        <label className="block text-gray-200">Phone</label>
+        <input
+          type="text"
+          name="number"
+          value={number}
+          onChange={(e) => {
+            setnumber(e.target.value);
+            setotp(""); // reset OTP if number changes
+          }}
+          className="mt-1 p-2 w-full rounded text-black"
+        />
+      </div>
+
+      {/* Phone OTP */}
+      {number !== user.number && (
+        <div className="mt-2">
+          <label className="block text-gray-200">OTP (required to update phone)</label>
+          <div className="flex gap-2 mt-1">
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setotp(e.target.value)}
+              className="p-2 rounded text-black flex-1"
+            />
+            <button
+              onClick={async () => {
+                if (!/^\d{10}$/.test(number)) {
+                  alert("Please enter a valid 10-digit phone number");
+                  return;
+                }
+                try {
+                  const res = await fetch(
+                    "http://localhost:5000/api/auth/update-number-otp",
+                    {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      credentials: "include",
+                      body: JSON.stringify({ number }),
+                    }
+                  );
+                  if (!res.ok) throw new Error("Failed to send OTP");
+                  alert("OTP sent successfully!");
+                } catch (e) {
+                  alert(e.message);
+                }
+              }}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Send OTP
+            </button>
+            <button
+              onClick={async () => {
+                if (!otp) {
+                  alert("Please enter OTP");
+                  return;
+                }
+                try {
+                  const res = await fetch(
+                    "http://localhost:5000/api/auth/verify-update-number-otp",
+                    {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      credentials: "include",
+                      body: JSON.stringify({ number, otp }),
+                    }
+                  );
+                  if (!res.ok) throw new Error("Invalid OTP");
+                  alert("Phone verified successfully!");
+                } catch (e) {
+                  alert(e.message);
+                }
+              }}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Verify OTP
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Save / Cancel */}
+      <div className="flex gap-2 mt-4">
+        <button
+          onClick={async () => {
+            if (number !== user.number && !otp) {
+              alert("You must verify the new phone number before saving");
+              return;
+            }
+
+            try {
+              const body = { name, email, number};
+              const res = await fetch(
+                "http://localhost:5000/api/auth/profileupdate",
+                {
+                  method: "PATCH",
+                  headers: { "content-type": "application/json" },
+                  credentials: "include",
+                  body: JSON.stringify(body),
+                }
+              );
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.message || "Update failed");
+              alert("Profile updated successfully!");
+              setEditing(false);
+              fetchProfile();
+            } catch (e) {
+              alert(e.message);
+            }
+          }}
+          className="bg-green-600 px-4 py-2 rounded hover:bg-green-700"
+        >
+          Save
+        </button>
+        <button
+          onClick={() => setEditing(false)}
+          className="bg-gray-500 px-4 py-2 rounded hover:bg-gray-600"
+        >
+          Cancel
+        </button>
+      </div>
+    </>
+  ) : (
+    <>
+      <div className="flex justify-between">
+        <span>Email:</span>
+        <span className="font-medium">{user.email}</span>
+      </div>
+      <div className="flex justify-between">
+        <span>Phone:</span>
+        <span className="font-medium">{user.number}</span>
+      </div>
+      <button
+        onClick={() => setEditing(true)}
+        className="mt-4 bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-100"
+      >
+        Edit Profile
+      </button>
+    </>
+  )}
+</div>
+
             </div>
           </div>
 

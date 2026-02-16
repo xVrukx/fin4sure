@@ -3,9 +3,11 @@
 import Admin from "../models/admin.model.js";
 import Broker from "../models/broker.model.js";
 import Client from "../models/client.model.js";
+import Lead from "../models/lead.model.js";
 import { signAccessToken, signRefreshToken } from "../utils/jwt.utlis.js";
 import jwt from "jsonwebtoken";
 import axios from "axios";
+import { encryptPAN, hashPAN } from "../utils/pan.crypto.js";
 // ----------------------------------------------------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------------------------------------------------
@@ -13,6 +15,9 @@ import axios from "axios";
 const url = "/login";
 const otp_data = {}; // CHANGED: store as object instead of raw OTP (future-safe)
 const OTP_EXPIRY_TIME = 5 * 60 * 1000; // 5 minutes
+// PAN should be 5 letters, 4 digits, 1 letter (A-Z)
+const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+
 // ----------------------------------------------------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------------------------------------------------
@@ -353,15 +358,15 @@ export const sendUpdateNumberOTP = async (req, res) => {
               type: "body",
               parameters: [{ type: "text", text: otp }],
             },
-              {
-                type: "button",
-                sub_type: "url", // url button (Meta calls it URL)
-                index: 0, // index 0 -> first button
-                parameters: [
-                  { type: "text", text: "otp" },
-                  // <- fill with the actual URL your template expects
-                ],
-              },
+            {
+              type: "button",
+              sub_type: "url", // url button (Meta calls it URL)
+              index: 0, // index 0 -> first button
+              parameters: [
+                { type: "text", text: "otp" },
+                // <- fill with the actual URL your template expects
+              ],
+            },
           ],
         },
       },
@@ -412,14 +417,13 @@ export const verifyUpdateNumberOTP = async (req, res) => {
 
     delete otp_data[`update_${number}`];
 
-    return res.json({message: "OTP verified"});
+    return res.json({ message: "OTP verified" });
   } catch (err) {
     return res.status(500).json({ message: "OTP verification failed" });
   }
 };
 
 // ----------------------------------------------------------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------------------------------------------------------
 // profile handeler
@@ -462,12 +466,13 @@ export const profileHandler = async (req, res) => {
     }),
     ...(role === "broker" && {
       brokerId: user.brokerId,
-      status: user.status
+      status: user.status,
     }),
   });
 };
 // ----------------------------------------------------------------------------------------------------------------------
 // profileupdate handeler
+
 export const profileUpdateHandeler = async (req, res) => {
   const user_id = req.user._id;
   const role = req.user.role;
@@ -476,128 +481,108 @@ export const profileUpdateHandeler = async (req, res) => {
     return res.status(401).json({ message: "Not authenticated" });
   }
 
-  let user;
+  // ------------------ COMMON SETUP ------------------
+  const filter = req.user._id;
+  const callback = { new: true };
+  const updates = { $set: {} };
 
-  if (role === "client") {
-    const { name, email, number, pan_card } = req.body;
-    let Name
-    let Email
-    let Number
-    let panHash
-    let encryptedPAN
-    // ------------------ NAME ------------------
-    if (name) Name = name.trim();
+  try {
+    if (role === "client") {
+      const { name, email, number, pan_card, otp_verified } = req.body;
 
-    // ------------------ EMAIL ------------------
-    if (email) {
-      const normalizedEmail = email.toLowerCase().trim();
+      // ------------------ NAME ------------------
+      if (name) updates.$set.name = name.trim();
 
-      // Check if email already exists in any user
-      const exists = await Client.findOne({ email: normalizedEmail, _id: { $ne: req.user._id } })
-      if (exists) {
-        return res.status(409).json({ message: "Email already in use" });
+      // ------------------ EMAIL ------------------
+      if (email) {
+        const normalizedEmail = email.toLowerCase().trim();
+        const emailExists = await Client.findOne({
+          email: normalizedEmail,
+          _id: { $ne: user_id },
+        });
+        if (emailExists)
+          return res.status(409).json({ message: "Email already in use" });
+        updates.$set.email = normalizedEmail;
       }
-      Email = normalizedEmail;
-    }
 
-    // ------------------ NUMBER ------------------
-    if (number) {
-      const numberExists = await Client.findOne({ number, _id: { $ne: req.user._id } })
-      if (numberExists) {
-        return res.status(409).json({ message: "Number already in use" });
+      // ------------------ NUMBER ------------------
+      // ------------------ NUMBER ------------------
+      if (number) {
+        const client = await Client.findById(user_id); // fetch current client
+        if (number !== client.number) {
+          // only require OTP if number is changing
+          if (!otp_verified)
+            return res
+              .status(400)
+              .json({ message: "You must verify OTP to update number" });
+
+          const numberExists = await Client.findOne({
+            number,
+            _id: { $ne: user_id },
+          });
+          if (numberExists)
+            return res.status(409).json({ message: "Number already in use" });
+
+          if (!/^[0-9]{10}$/.test(number))
+            return res.status(400).json({ message: "Invalid phone number" });
+
+          updates.$set.number = number;
+        }
       }
-      Number = number;
+
+      
+
+      // ------------------ UPDATE CLIENT ------------------
+      const client = await Client.findByIdAndUpdate(
+        filter,
+        updates,
+        callback,
+      ).select("-password -__v");
+      return res.json(client);
     }
 
-    if(pan_card) {
-    const cleanPAN = pan_card.trim().toUpperCase();
-    console.log({message: "cleaned pan"})
-    if (!PAN_REGEX.test(cleanPAN)) {
-      return res.status(400).json({
-        message: "Invalid PAN format"
-      });
-    }
-    console.log({message: "verified pan"})
-    
-    // ---------- duplicate PAN check ----------
-    
-    const panHash = hashPAN(cleanPAN);
-    const exists = await Lead.findOne({ pan_hash: panHash });
-    console.log({message: "checking if pan exist"})
-    if (exists) {
-      return res.status(409).json({
-        message: "Application already exists for this PAN"
-      });
-    }
+    // ------------------ BROKER ------------------
+    if (role === "broker") {
+      const { name, email, number } = req.body;
 
-    // ---------- encrypt PAN ----------
-    
-    const encryptedPAN = encryptPAN(cleanPAN);
-    console.log({message: "encrypting pan"})
-    }
-    const filter = req.user._id
-    const updates = {
-      $set : {
-        name : Name,
-        email : Email,
-        number : Number,
-        pan_hash: panHash,
-        pan_encrypted: encryptedPAN
+      if (name) updates.$set.name = name.trim();
+
+      if (email) {
+        const normalizedEmail = email.toLowerCase().trim();
+        const emailExists = await Broker.findOne({
+          email: normalizedEmail,
+          _id: { $ne: user_id },
+        });
+        if (emailExists)
+          return res.status(409).json({ message: "Email already in use" });
+        updates.$set.email = normalizedEmail;
       }
-    }
-    const callback = {new : true}
-    
-    // ------------------ UPDATE CLIENT ------------------
-    
-    const client = await Client.findByIdAndUpdate(filter, updates, callback)
-      .select("-password -__v");
 
-    return res.json(client);
+      if (number) {
+        const numberExists = await Broker.findOne({
+          number,
+          _id: { $ne: user_id },
+        });
+        if (numberExists)
+          return res.status(409).json({ message: "Number already in use" });
+
+        if (!/^[0-9]{10}$/.test(number))
+          return res.status(400).json({ message: "Invalid phone number" });
+
+        updates.$set.number = number;
+      }
+
+      const broker = await Broker.findByIdAndUpdate(
+        filter,
+        updates,
+        callback,
+      ).select("-password -__v");
+      return res.json(broker);
+    }
+
+    return res.status(400).json({ message: "Invalid role" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Something went wrong" });
   }
-  if (role === "broker") {
-    const { name, email, number } = req.body;
-    let Name
-    let Email
-    let Number
-    // ------------------ NAME ------------------
-    if (name) Name = name.trim();
-
-    // ------------------ EMAIL ------------------
-    if (email) {
-      const normalizedEmail = email.toLowerCase().trim();
-
-      // Check if email already exists in any user
-      const exists = await Client.findOne({ email: normalizedEmail, _id: { $ne: req.user._id } })
-      if (exists) {
-        return res.status(409).json({ message: "Email already in use" });
-      }
-      Email = normalizedEmail;
-    }
-
-    // ------------------ NUMBER ------------------
-    if (number) {
-      const numberExists = await Client.findOne({ number, _id: { $ne: req.user._id } })
-      if (numberExists) {
-        return res.status(409).json({ message: "Number already in use" });
-      }
-      Number = number;
-    }
-
-    const filter = req.user._id
-    const updates = {
-      $set : {
-        name : Name,
-        email : Email,
-        number : Number
-      }
-    }
-    const callback = {new : true}
-    
-    // ------------------ UPDATE broker ------------------
-    
-    const broker = await Broker.findByIdAndUpdate(filter, updates, callback)
-      .select("-password -__v");
-
-    return res.json(broker);
-  }
-}
+};
