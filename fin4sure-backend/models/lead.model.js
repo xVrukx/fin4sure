@@ -54,6 +54,16 @@ const leadSchema = new mongoose.Schema(
     broker_id: {
       type: String,
       default: "self"
+    },
+
+    dob: {
+      type: String,
+      required: true
+    },
+
+    address: {
+      type: String,
+      required: true
     }
   },
   { timestamps: true }

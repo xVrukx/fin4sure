@@ -30,7 +30,9 @@ export const signUpHandler = async (req, res) => {
       !email?.trim() ||
       !number?.trim() ||
       !password?.trim() ||
-      !role?.trim()
+      !role?.trim()||
+      !dob?.trim()||
+      !address?.trim()
     ) {
       console.log("Signup failed: Missing required fields");
       return res.status(400).json({ message: "All fields are required" });
@@ -82,6 +84,8 @@ export const signUpHandler = async (req, res) => {
           number,
           password,
           broker_id: broker_id || "self",
+          dob: dob,
+          address: address
         });
 
         await client.save();
@@ -101,6 +105,8 @@ export const signUpHandler = async (req, res) => {
           number,
           password, // hashed by pre-save hook
           brokerId: `BRK${Date.now()}`, // unchanged logic
+          dob: dob,
+          address: address
         });
 
         await newBroker.save();
