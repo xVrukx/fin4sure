@@ -58,6 +58,7 @@ export const applyLoan = async (req, res) => {
     console.log({message: "encrypting pan"})
     // ---------- create lead ----------
     const lead = await Lead.create({// added
+      client_id: _id,
       name: client.name,
       email: client.email,
       number: client.number,
@@ -66,7 +67,22 @@ export const applyLoan = async (req, res) => {
       pan_hash: panHash,
       pan_encrypted: encryptedPAN
     });
+
+    const Client_update = await Client.findByIdAndUpdate(
+      {
+        client_id: _id
+      },{
+        $set : {
+      pan_hash: panHash,
+      pan_encrypted: encryptedPAN
+    }
+  },{
+    new : true
+  }
+);
+
     console.log({message: "creating leaad"})
+    console.log({message : Client_update})
     return res.status(201).json({
       message: "Loan application submitted successfully",
       leadId: lead._id,
@@ -85,10 +101,7 @@ export const getMyLeads = async (req, res) => { // should be in client cause it 
       return res.status(404).json({ message: "Client not found" });
     }
 
-    const leads = await Lead.find({
-      email: client.email,
-      number: client.number
-    })
+    const leads = await Lead.find({_id : _id})
       .sort({ createdAt: -1 })
       .select("product status createdAt");
 

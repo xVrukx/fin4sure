@@ -22,7 +22,7 @@ const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 // signup handler
 export const signUpHandler = async (req, res) => {
   try {
-    const { name, email, number, password, role, broker_id } = req.body;
+    const { name, email, number, password, role, broker_id, dob, address } = req.body; //still under work
 
     // CHANGED: fixed validation typos, logic & ensured response is sent
     if (
@@ -486,7 +486,7 @@ export const profileUpdateHandeler = async (req, res) => {
 
   try {
     if (role === "client") {
-      const { name, email, number, pan_card, otp_verified } = req.body;
+      const { name, email, number, otp_verified } = req.body;
 
       // ------------------ NAME ------------------
       if (name) updates.$set.name = name.trim();
@@ -494,10 +494,7 @@ export const profileUpdateHandeler = async (req, res) => {
       // ------------------ EMAIL ------------------
       if (email) {
         const normalizedEmail = email.toLowerCase().trim();
-        const emailExists = await Client.findOne({
-          email: normalizedEmail,
-          _id: { $ne: user_id },
-        });
+        const emailExists = await Client.findOne({email: normalizedEmail});
         if (emailExists)
           return res.status(409).json({ message: "Email already in use" });
         updates.$set.email = normalizedEmail;
@@ -529,7 +526,7 @@ export const profileUpdateHandeler = async (req, res) => {
       }
 
       
-
+      console.log(updates)
       // ------------------ UPDATE CLIENT ------------------
       const client = await Client.findByIdAndUpdate(
         filter,

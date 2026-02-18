@@ -3,6 +3,11 @@ import { LOAN_PRODUCT_IDS } from "../utils/constants.js";
 
 const leadSchema = new mongoose.Schema(
   {
+    client_id: {
+      type: String,
+      required: true,
+      trim: true
+    },
     name: {
       type: String,
       required: true,
