@@ -26,7 +26,7 @@ export default function Hero() {
           </a>
 
           <a
-            href="/calculator"
+            href="/EMI-calculator"
             className="px-6 py-3 rounded-lg font-medium
                        border border-[#d9a93d] text-[#d9a93d]
                        hover:bg-[#d9a93d]/10 transition"

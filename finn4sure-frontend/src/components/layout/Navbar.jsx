@@ -35,7 +35,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Fin4sure" className="h-12 w-auto" />
+          <img src={logo} alt="Fin4sure" className="h-24 w-auto" />
         </Link>
 
         {/* Desktop nav */}
