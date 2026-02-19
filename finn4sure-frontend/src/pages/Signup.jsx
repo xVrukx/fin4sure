@@ -24,6 +24,8 @@ export default function Signup() {
   const [otpError, setOtpError] = useState(""); // OTP-specific error
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [dob, setdob] = useState("");
+  const [address, setaddress] = useState("");
 
   // ---------------- OTP TIMER ----------------
   const [resendTimer, setResendTimer] = useState(60);
@@ -158,6 +160,8 @@ export default function Signup() {
         password,
         role: "client",
         broker_id: refBy === "self" || !brokerId.trim() ? "self" : brokerId.trim(),
+        dob,
+        address
       };
 
       const res = await fetch(`${API_BASE}/signup`, {
@@ -268,6 +272,24 @@ export default function Signup() {
               {showConfirmPassword ? "Hide" : "Show"}
             </button>
           </div>
+
+          {/* dob */}
+          <input
+            type="date"
+            placeholder="enter your date of birth"
+            value={dob}
+            onChange={(e) => setdob(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          {/* address */}
+          <input
+            type="text"
+            placeholder="enter your address"
+            value={address}
+            onChange={(e) => setaddress(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
 
           {/* PASSWORD MATCH FEEDBACK */}
           {confirmPassword && (

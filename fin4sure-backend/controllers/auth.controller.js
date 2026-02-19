@@ -30,9 +30,7 @@ export const signUpHandler = async (req, res) => {
       !email?.trim() ||
       !number?.trim() ||
       !password?.trim() ||
-      !role?.trim()||
-      !dob?.trim()||
-      !address?.trim()
+      !role?.trim()
     ) {
       console.log("Signup failed: Missing required fields");
       return res.status(400).json({ message: "All fields are required" });
@@ -50,6 +48,10 @@ export const signUpHandler = async (req, res) => {
     const existingAdmin = await Admin.findOne({
       $or: [{ number }, { email: normalizedEmail }],
     });
+    if(!existingAdmin && (!dob || !address)) {
+        console.log({"singup blocked" : "all fields are required"})
+        return res.status(400).json({ message: "All fields are required" });
+    }
 
     if (existingClient || existingBroker || existingAdmin) {
       console.log("Signup blocked: User already exists");
@@ -77,7 +79,7 @@ export const signUpHandler = async (req, res) => {
             });
           }
         }
-
+console.log(dob,address)
         const client = new Client({
           name,
           email: normalizedEmail,
@@ -89,6 +91,7 @@ export const signUpHandler = async (req, res) => {
         });
 
         await client.save();
+        console.log(client)
 
         if (broker) {
           broker.clients.push(client._id.toString());
@@ -500,8 +503,8 @@ export const profileUpdateHandeler = async (req, res) => {
       // ------------------ EMAIL ------------------
       if (email) {
         const normalizedEmail = email.toLowerCase().trim();
-        const emailExists = await Client.findOne({email: normalizedEmail});
-        if (emailExists)
+        const emailExists = await Client.findOne({_id : filter, email: normalizedEmail});
+        if (!emailExists)
           return res.status(409).json({ message: "Email already in use" });
         updates.$set.email = normalizedEmail;
       }

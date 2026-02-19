@@ -34,7 +34,7 @@ export const applyLoan = async (req, res) => {
     console.log({message: "verified pan"})
     // ---------- fetch client snapshot ----------
     const client = await Client.findById(userId)
-      .select("name email number broker_id");
+      .select("name email number broker_id dob address");
     console.log({message: "fetching user id to put product"})
     if (!client) {
       return res.status(404).json({
@@ -56,21 +56,24 @@ export const applyLoan = async (req, res) => {
     // ---------- encrypt PAN ----------
     const encryptedPAN = encryptPAN(cleanPAN);
     console.log({message: "encrypting pan"})
+    console.log(product)
     // ---------- create lead ----------
     const lead = await Lead.create({// added
-      client_id: _id,
+      client_id: userId,
       name: client.name,
       email: client.email,
       number: client.number,
       broker_id: client.broker_id || "self",
       product,
       pan_hash: panHash,
-      pan_encrypted: encryptedPAN
+      pan_encrypted: encryptedPAN,
+      dob: client.dob,
+      address: client.address
     });
 
     const Client_update = await Client.findByIdAndUpdate(
       {
-        client_id: _id
+        _id: userId
       },{
         $set : {
       pan_hash: panHash,
@@ -94,14 +97,7 @@ export const applyLoan = async (req, res) => {
 export const getMyLeads = async (req, res) => { // should be in client cause it provides client data to the client dashboard
   try {
     const _id = req.user._id;
-    const client = await Client.findById(_id)
-      .select("email number");
-
-    if (!client) {
-      return res.status(404).json({ message: "Client not found" });
-    }
-
-    const leads = await Lead.find({_id : _id})
+    const leads = await Lead.find({client_id : _id})
       .sort({ createdAt: -1 })
       .select("product status createdAt");
 

@@ -6,8 +6,8 @@ const clientSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     number: { type: String, required: true, unique: true, trim: true },
-    pan_hash: {type: String,required: true,unique: true,sparse: true},
-    pan_encrypted: {type: String, required: true,sparse: true},
+    pan_hash: {type: String,unique: true,sparse: true},
+    pan_encrypted: {type: String,sparse: true},
     product: [
       {product : {
         type: String, sparse : true
