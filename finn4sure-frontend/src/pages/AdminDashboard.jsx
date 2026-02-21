@@ -153,7 +153,7 @@ export default function AdminDashboard() {
             <td className="p-3 font-medium">{l.name}</td>
             <td className="p-3 hidden sm:table-cell">{l.email}</td>
             <td className="p-3 hidden sm:table-cell">{l.number}</td>
-            <td className="p-3 hidden md:table-cell font-mono text-xs">{l.pan_hash}</td>
+            <td className="p-3 hidden md:table-cell font-mono text-xs">XXXXXX{l.pan_hash.slice(-4)}</td>
             <td className="p-3 hidden md:table-cell">{l.product}</td>
             <td className="p-3 hidden lg:table-cell">
               {l.source === "direct" ? (
