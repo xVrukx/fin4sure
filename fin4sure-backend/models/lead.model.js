@@ -30,8 +30,6 @@ const leadSchema = new mongoose.Schema(
     pan_hash: {
       type: String,
       required: true,
-      unique: true,
-      index: true
     },
 
     pan_encrypted: {

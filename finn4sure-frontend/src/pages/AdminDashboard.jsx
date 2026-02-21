@@ -8,6 +8,7 @@ export default function AdminDashboard() {
   const [brokers, setBrokers] = useState([]);
   const [leads, setLeads] = useState([]);
   const [leadFilter, setLeadFilter] = useState("pending");
+  const [selectedLead, setSelectedLead] = useState(null);
   const [selectedBroker, setSelectedBroker] = useState(null);
 
   useEffect(() => {
@@ -152,7 +153,7 @@ export default function AdminDashboard() {
             <td className="p-3 font-medium">{l.name}</td>
             <td className="p-3 hidden sm:table-cell">{l.email}</td>
             <td className="p-3 hidden sm:table-cell">{l.number}</td>
-            <td className="p-3 hidden md:table-cell font-mono text-xs">XXXXXX{l.pan_hash.slice(-4)}</td>
+            <td className="p-3 hidden md:table-cell font-mono text-xs">{l.pan_hash}</td>
             <td className="p-3 hidden md:table-cell">{l.product}</td>
             <td className="p-3 hidden lg:table-cell">
               {l.source === "direct" ? (
@@ -163,6 +164,7 @@ export default function AdminDashboard() {
             </td>
             <td className="p-3"><StatusBadge status={l.status} /></td>
             <td className="p-3 text-right space-x-2 flex justify-end">
+              <ActionBtn onClick={() => setSelectedLead(l)}>View</ActionBtn>
               <ActionBtn green onClick={() => updateLeadStatus(l._id, "approved")}>Approve</ActionBtn>
               <ActionBtn red onClick={() => updateLeadStatus(l._id, "rejected")}>Reject</ActionBtn>
             </td>
@@ -176,6 +178,9 @@ export default function AdminDashboard() {
 
         {selectedBroker && (
           <BrokerModal broker={selectedBroker} onClose={() => setSelectedBroker(null)} />
+        )}
+        {selectedLead && (
+        <LeadModal lead={selectedLead} onClose={() => setSelectedLead(null)}/>
         )}
       </div>
     </div>
@@ -257,6 +262,8 @@ function BrokerModal({ broker, onClose }) {
           <div><b>Email:</b> {broker.email}</div>
           <div><b>Phone:</b> {broker.number}</div>
           <div><b>Broker ID:</b> {broker.brokerId}</div>
+          <div><b>Address:</b> {broker.address}</div>
+          <div><b>DOB:</b> {broker.dob}</div>
         </div>
 
         <div>
@@ -275,6 +282,30 @@ function BrokerModal({ broker, onClose }) {
               <li key={l._id}>{l.name} - {l.product} - {l.status}</li>
             ))}
           </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LeadModal({ lead, onClose }) {
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl w-full max-w-3xl p-6 space-y-6 shadow-xl">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Lead Details</h3>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-800">
+            ✕
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div><b>Name:</b> {lead.name}</div>
+          <div><b>Email:</b> {lead.email}</div>
+          <div><b>Phone:</b> {lead.number}</div>
+          <div><b>Broker ID:</b> {lead.broker_id}</div>
+          <div><b>Address:</b> {lead.address}</div>
+          <div><b>DOB:</b> {lead.dob}</div>
         </div>
       </div>
     </div>

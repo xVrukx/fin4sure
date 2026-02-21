@@ -146,6 +146,8 @@ export default function Apply() {
                 <InfoField label="Full Name" value={user?.name} />
                 <InfoField label="Email" value={user?.email} />
                 <InfoField label="Mobile" value={user?.number} />
+                <InfoField label="DOB" value={user?.dob} />
+                <InfoField label="Address" value={user?.address} />
               </div>
             </div>
 

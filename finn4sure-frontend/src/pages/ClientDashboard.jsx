@@ -15,6 +15,7 @@ export default function ClientDashboard() {
   const [editing, setEditing] = useState(false);
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
+  const [address, setaddress] = useState("");
   const [number, setnumber] = useState("");
   const [pan_card, setpan_card] = useState("");
   const [otp, setotp] = useState(""); // for phone updates
@@ -44,6 +45,7 @@ export default function ClientDashboard() {
     setname(data.name || "");
     setemail(data.email || "");
     setnumber(data.number || "");
+    setaddress(data.address || "");
     setpan_card(data.pan_card || "");
   }
 
@@ -106,6 +108,7 @@ export default function ClientDashboard() {
         name: name,
         email: email,
         number: number,
+        address : address,
         pan_card: pan_card,
       };
 
@@ -288,6 +291,16 @@ export default function ClientDashboard() {
                       />
                     </div>
                     <div>
+                      <label className="block text-gray-200">Address</label>
+                      <input
+                        type="text"
+                        name="address"
+                        value={address}
+                        onChange={(e) => setaddress(e.target.value)}
+                        className="mt-1 p-2 w-full rounded text-black"
+                      />
+                    </div>
+                    <div>
                       <label className="block text-gray-200">Phone</label>
                       <input
                         type="text"
@@ -394,6 +407,7 @@ export default function ClientDashboard() {
                             const body = {
                               name,
                               email,
+                              address,
                               number,
                               otp_verified: otpVerified,
                             };

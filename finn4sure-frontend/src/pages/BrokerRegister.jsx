@@ -278,7 +278,7 @@ export default function BrokerRegistration() {
             placeholder="enter your city pincode"
             maxLength={6}
             value={pincode}
-            onChange={(e) => setpincode(e.target.value.replace(/\d/g,""))}
+            onChange={(e) => setpincode(e.target.value.replace(/\D/g,""))}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
 

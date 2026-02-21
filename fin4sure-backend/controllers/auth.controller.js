@@ -109,7 +109,7 @@ console.log(dob,address)
           password, // hashed by pre-save hook
           brokerId: `BRK${Date.now()}`, // unchanged logic
           dob: dob,
-          address: address
+          address: ad
         });
 
         await newBroker.save();
@@ -468,11 +468,15 @@ export const profileHandler = async (req, res) => {
     number: user.number,
     ...(role === "client" && {
       broker: user.broker_id,
+      dob : user.dob,
+      address : user.address,
       totalProducts: user.product.length,
       products: user.product,
     }),
     ...(role === "broker" && {
       brokerId: user.brokerId,
+      dob : dob,
+      address : user.address,
       status: user.status,
     }),
   });
@@ -495,7 +499,7 @@ export const profileUpdateHandeler = async (req, res) => {
 
   try {
     if (role === "client") {
-      const { name, email, number, otp_verified } = req.body;
+      const { name, email, address, number, otp_verified } = req.body;
 
       // ------------------ NAME ------------------
       if (name) updates.$set.name = name.trim();
@@ -508,6 +512,8 @@ export const profileUpdateHandeler = async (req, res) => {
           return res.status(409).json({ message: "Email already in use" });
         updates.$set.email = normalizedEmail;
       }
+
+      if(address) updates.$set.address = address
 
       // ------------------ NUMBER ------------------
       // ------------------ NUMBER ------------------
@@ -547,7 +553,7 @@ export const profileUpdateHandeler = async (req, res) => {
 
     // ------------------ BROKER ------------------
     if (role === "broker") {
-      const { name, email, number } = req.body;
+      const { name, email, address, number } = req.body;
 
       if (name) updates.$set.name = name.trim();
 
@@ -561,6 +567,8 @@ export const profileUpdateHandeler = async (req, res) => {
           return res.status(409).json({ message: "Email already in use" });
         updates.$set.email = normalizedEmail;
       }
+      
+      if(address) updates.$set.address = address
 
       if (number) {
         const numberExists = await Broker.findOne({

@@ -17,7 +17,7 @@ export const applyLoan = async (req, res) => {
         message: "PAN and product are required"
       });
     }
-    console.log({message: "got pan snd product"})
+    console.log({message: "got pan and product"})
     if (!LOAN_PRODUCT_IDS.includes(product)) {
       return res.status(400).json({
         message: "Invalid loan product"
@@ -44,12 +44,11 @@ export const applyLoan = async (req, res) => {
     console.log({message: "hashing pan"})
     // ---------- duplicate PAN check ----------
     const panHash = hashPAN(cleanPAN);
-
-    const exists = await Lead.findOne({ pan_hash: panHash });
+    const exists = await Lead.findOne({product: product, pan_hash: panHash });
     console.log({message: "checking if pan exist"})
     if (exists) {
       return res.status(409).json({
-        message: "Application already exists for this PAN"
+        message: "Application already exists for this Loan"
       });
     }
 
@@ -74,7 +73,9 @@ export const applyLoan = async (req, res) => {
     const Client_update = await Client.findByIdAndUpdate(
       {
         _id: userId
-      },{
+      },{$push : {
+      product : {product: product}
+      },
         $set : {
       pan_hash: panHash,
       pan_encrypted: encryptedPAN

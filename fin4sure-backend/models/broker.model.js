@@ -9,7 +9,9 @@ const brokerschema = new mongoose.Schema(
     number: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true },
     status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending"},
-    clients: [ {type: String, sparse : true, unique : true} ]
+    clients: [ {type: String, sparse : true} ],
+    dob: {type: String, required: true},
+    address: {type: String, required: true}
   },
   { timestamps: true }
 );
