@@ -18,7 +18,7 @@ const PRODUCT_IMAGES = {
 
 export default function LoanProductsGrid() {
   return (
-    <section className="bg-gradient-to-b from-blue-50 via-white to-white">
+    <section className="bg-linear-to-b from-blue-50 via-white to-white">
       <div className="max-w-7xl mx-auto px-6 py-20">
         
         {/* Header */}
@@ -50,8 +50,8 @@ export default function LoanProductsGrid() {
                 }}
               />
 
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t 
+              {/* linear Overlay */}
+              <div className="absolute inset-0 bg-linear-to-t 
                               from-black/70 via-black/50 to-black/20" />
 
               {/* Content */}
@@ -60,7 +60,7 @@ export default function LoanProductsGrid() {
                   {product.name}
                 </h3>
 
-                <p className="mt-3 text-white/90 text-sm leading-relaxed flex-grow">
+                <p className="mt-3 text-white/90 text-sm leading-relaxed grow">
                   {product.description}
                 </p>
 
