@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import validator from "validator";
+import { states } from "../components/Statedata";
+import { districtsByState } from "../components/Statedata";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -14,7 +16,10 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [refBy, setRefBy] = useState("self"); // referral default
   const [brokerId, setBrokerId] = useState(""); // if refBy is broker
-
+  const [pincode, setpincode] = useState("")
+  const [state, setstate] = useState("");
+  const [district, setdistrict] = useState("");
+  
   // ---------------- UI STATES ----------------
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
@@ -161,7 +166,10 @@ export default function Signup() {
         role: "client",
         broker_id: refBy === "self" || !brokerId.trim() ? "self" : brokerId.trim(),
         dob,
-        address
+        address,
+        pincode,
+        state,
+        district
       };
 
       const res = await fetch(`${API_BASE}/signup`, {
@@ -282,6 +290,16 @@ export default function Signup() {
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
 
+          {/* pincode */}
+          <input
+            type="text"
+            placeholder="enter your city pincode"
+            maxLength={6}
+            value={pincode}
+            onChange={(e) => setpincode(e.target.value.replace(/\D/g,""))}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
           {/* address */}
           <input
             type="text"
@@ -290,6 +308,31 @@ export default function Signup() {
             onChange={(e) => setaddress(e.target.value)}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
+          <select name="state" id="state"
+          onChange={(e) => {
+            setstate(e.target.value)
+            setdistrict("")
+          }}>
+            
+            <option value="none">--select a state--</option>
+            
+            {states.map((s) =>
+            <option key={s} value={s}>
+              {s}
+            </option>)}
+          </select>
+
+          <select name="District" id="District" value={district}
+          disabled = {!state} onChange={(e) => {setdistrict(e.target.value)}}>
+            
+            <option value="">--select a District--</option>
+            
+            {(state) && districtsByState[state].map((d) =>   
+               <option key={d} value= {d}>
+                {d}
+                </option>)}
+          
+          </select>
 
           {/* PASSWORD MATCH FEEDBACK */}
           {confirmPassword && (

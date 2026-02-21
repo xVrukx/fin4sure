@@ -22,7 +22,7 @@ const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 // signup handler
 export const signUpHandler = async (req, res) => {
   try {
-    const { name, email, number, password, role, broker_id, dob, address } = req.body; //still under work
+    const { name, email, number, password, role, broker_id, dob, address, pincode, state, district } = req.body; //still under work
 
     // CHANGED: fixed validation typos, logic & ensured response is sent
     if (
@@ -48,11 +48,11 @@ export const signUpHandler = async (req, res) => {
     const existingAdmin = await Admin.findOne({
       $or: [{ number }, { email: normalizedEmail }],
     });
-    if(!existingAdmin && (!dob || !address)) {
+    if(!existingAdmin && (!dob || !address|| !pincode|| !state|| !district)) {
         console.log({"singup blocked" : "all fields are required"})
         return res.status(400).json({ message: "All fields are required" });
     }
-
+    const ad = address+","+pincode+","+district+","+state
     if (existingClient || existingBroker || existingAdmin) {
       console.log("Signup blocked: User already exists");
       return res.status(409).json({ message: "User already exists" });
@@ -87,7 +87,7 @@ console.log(dob,address)
           password,
           broker_id: broker_id || "self",
           dob: dob,
-          address: address
+          address: ad
         });
 
         await client.save();
