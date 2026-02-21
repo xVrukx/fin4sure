@@ -26,7 +26,7 @@ export default function Navbar() {
       <Link className="nav-link" to="/products">Loans</Link>
       <Link className="nav-link" to="/signup">sign in as a client</Link>
       <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
-      <Link className="nav-link" to="/broker-register">Become a broker</Link>
+      <Link className="nav-link" to="/broker-register">Become a Partner</Link>
     </>
   );
 
@@ -46,8 +46,8 @@ export default function Navbar() {
           {isAuthenticated && role === "broker" && (
             <>
               <Link className="nav-link" to="/broker-dashboard">Dashboard</Link>
-              <Link className="nav-link" to="/broker-insights">Insights</Link>
-              <Link className="nav-link" to="/products">Products</Link>
+              <Link className="nav-link" to="/">Home</Link>
+              {/* <Link className="nav-link" to="/products">Products</Link> */}
               <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
             </>
           )}
@@ -55,7 +55,7 @@ export default function Navbar() {
           {isAuthenticated && role === "admin" && (
             <>
               <Link className="nav-link" to="/admin-dashboard">Dashboard</Link>
-              <Link className="nav-link" to="/admin-insights">Insights</Link>
+              <Link className="nav-link" to="/">Home</Link>
               <Link className="nav-link" to="/products">Products</Link>
               <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
             </>
@@ -91,7 +91,7 @@ export default function Navbar() {
                            border border-[#d9a93d] text-[#d9a93d]
                            hover:bg-[#d9a93d]/10 transition"
               >
-                Sign Up
+                Sign Up As A Customer
               </Link>
             </>
           ) : (
