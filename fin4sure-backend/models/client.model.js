@@ -16,7 +16,7 @@ const clientSchema = new mongoose.Schema(
         type : String, required : true, enum : ["approved", "pending", "rejected"], default : "pending"
       }
       }
-    ],
+    ],                                                                                                 
     password: { type: String, required: true },
     broker_id: {type: String,default: "self"}, // "self" or something like "BRK12345"
     dob: {type: String, required: true},

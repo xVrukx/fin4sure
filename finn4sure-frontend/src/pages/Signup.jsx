@@ -290,7 +290,102 @@ export default function Signup() {
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
 
-          {/* pincode */}
+          
+
+          {/* ADDRESS */}
+<div className="flex flex-col">
+  <label className="text-sm font-medium text-slate-700 mb-1">
+    Address
+  </label>
+  <input
+    type="text"
+    placeholder="Enter your address"
+    value={address}
+    onChange={(e) => setaddress(e.target.value)}
+    className="w-full px-4 py-3 border border-slate-300 rounded-lg 
+               bg-white text-slate-800
+               focus:outline-none focus:ring-2 focus:ring-blue-600
+               transition duration-200"
+  />
+</div>
+
+{/* STATE & DISTRICT */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+  {/* STATE */}
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-slate-700 mb-1">
+      State
+    </label>
+    <div className="relative">
+      <select
+        name="state"
+        id="state"
+        value={state}
+        onChange={(e) => {
+          setstate(e.target.value);
+          setdistrict("");
+        }}
+        className="w-full appearance-none px-4 py-3 border border-slate-300 
+                   rounded-lg bg-white text-slate-700
+                   focus:outline-none focus:ring-2 focus:ring-blue-600
+                   transition duration-200"
+      >
+        <option value="">-- Select a State --</option>
+        {states.map((s) => (
+          <option key={s} value={s}>
+            {s}
+          </option>
+        ))}
+      </select>
+
+      {/* Dropdown Icon */}
+      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+        ▼
+      </div>
+    </div>
+  </div>
+
+  {/* DISTRICT */}
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-slate-700 mb-1">
+      District
+    </label>
+    <div className="relative">
+      <select
+        name="District"
+        id="District"
+        value={district}
+        disabled={!state}
+        onChange={(e) => setdistrict(e.target.value)}
+        className={`w-full appearance-none px-4 py-3 border rounded-lg
+                    focus:outline-none focus:ring-2 focus:ring-blue-600
+                    transition duration-200
+                    ${
+                      !state
+                        ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                        : "bg-white text-slate-700 border-slate-300"
+                    }`}
+      >
+        <option value="">-- Select a District --</option>
+        {state &&
+          districtsByState[state]?.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+      </select>
+
+      {/* Dropdown Icon */}
+      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+        ▼
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{/* pincode */}
           <input
             type="text"
             placeholder="enter your city pincode"
@@ -299,40 +394,6 @@ export default function Signup() {
             onChange={(e) => setpincode(e.target.value.replace(/\D/g,""))}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
-
-          {/* address */}
-          <input
-            type="text"
-            placeholder="enter your address"
-            value={address}
-            onChange={(e) => setaddress(e.target.value)}
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
-          <select name="state" id="state"
-          onChange={(e) => {
-            setstate(e.target.value)
-            setdistrict("")
-          }}>
-            
-            <option value="none">--select a state--</option>
-            
-            {states.map((s) =>
-            <option key={s} value={s}>
-              {s}
-            </option>)}
-          </select>
-
-          <select name="District" id="District" value={district}
-          disabled = {!state} onChange={(e) => {setdistrict(e.target.value)}}>
-            
-            <option value="">--select a District--</option>
-            
-            {(state) && districtsByState[state].map((d) =>   
-               <option key={d} value= {d}>
-                {d}
-                </option>)}
-          
-          </select>
 
           {/* PASSWORD MATCH FEEDBACK */}
           {confirmPassword && (
