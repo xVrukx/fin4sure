@@ -475,7 +475,7 @@ export const profileHandler = async (req, res) => {
     }),
     ...(role === "broker" && {
       brokerId: user.brokerId,
-      dob : dob,
+      dob : user.dob,
       address : user.address,
       status: user.status,
     }),
