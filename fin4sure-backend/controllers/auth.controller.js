@@ -22,7 +22,19 @@ const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 // signup handler
 export const signUpHandler = async (req, res) => {
   try {
-    const { name, email, number, password, role, broker_id, dob, address, pincode, state, district } = req.body; //still under work
+    const {
+      name,
+      email,
+      number,
+      password,
+      role,
+      broker_id,
+      // dob,
+      // address,
+      // pincode,
+      // state,
+      // district
+    } = req.body; //still under work
 
     // CHANGED: fixed validation typos, logic & ensured response is sent
     if (
@@ -48,11 +60,12 @@ export const signUpHandler = async (req, res) => {
     const existingAdmin = await Admin.findOne({
       $or: [{ number }, { email: normalizedEmail }],
     });
-    if(!existingAdmin && (!dob || !address|| !pincode|| !state|| !district)) {
-        console.log({"singup blocked" : "all fields are required"})
-        return res.status(400).json({ message: "All fields are required" });
-    }
-    const ad = address+","+pincode+","+district+","+state
+    // if(!existingAdmin && (!dob || !address|| !pincode|| !state|| !district)) {
+    //     console.log({"singup blocked" : "all fields are required"})
+    //     return res.status(400).json({ message: "All fields are required" });
+    // }
+    // const ad = address+","+pincode+","+district+","+state
+
     if (existingClient || existingBroker || existingAdmin) {
       console.log("Signup blocked: User already exists");
       return res.status(409).json({ message: "User already exists" });
@@ -79,15 +92,15 @@ export const signUpHandler = async (req, res) => {
             });
           }
         }
-console.log(dob,address)
+// console.log(dob,address)
         const client = new Client({
           name,
           email: normalizedEmail,
           number,
           password,
           broker_id: broker_id || "self",
-          dob: dob,
-          address: ad
+          // dob: dob,
+          // address: ad
         });
 
         await client.save();
@@ -108,8 +121,8 @@ console.log(dob,address)
           number,
           password, // hashed by pre-save hook
           brokerId: `BRK${Date.now()}`, // unchanged logic
-          dob: dob,
-          address: ad
+          // dob: dob,
+          // address: ad
         });
 
         await newBroker.save();
@@ -468,15 +481,15 @@ export const profileHandler = async (req, res) => {
     number: user.number,
     ...(role === "client" && {
       broker: user.broker_id,
-      dob : user.dob,
-      address : user.address,
+      // dob : user.dob,
+      // address : user.address,
       totalProducts: user.product.length,
       products: user.product,
     }),
     ...(role === "broker" && {
       brokerId: user.brokerId,
-      dob : user.dob,
-      address : user.address,
+      // dob : user.dob,
+      // address : user.address,
       status: user.status,
     }),
   });
@@ -499,7 +512,13 @@ export const profileUpdateHandeler = async (req, res) => {
 
   try {
     if (role === "client") {
-      const { name, email, address, number, otp_verified } = req.body;
+      const {
+        name,
+        email,
+        // address,
+        number,
+        otp_verified
+      } = req.body;
 
       // ------------------ NAME ------------------
       if (name) updates.$set.name = name.trim();
@@ -513,7 +532,7 @@ export const profileUpdateHandeler = async (req, res) => {
         updates.$set.email = normalizedEmail;
       }
 
-      if(address) updates.$set.address = address
+      // if(address) updates.$set.address = address
 
       // ------------------ NUMBER ------------------
       // ------------------ NUMBER ------------------
@@ -553,7 +572,12 @@ export const profileUpdateHandeler = async (req, res) => {
 
     // ------------------ BROKER ------------------
     if (role === "broker") {
-      const { name, email, address, number } = req.body;
+      const {
+        name,
+        email,
+        // address,
+        number
+      } = req.body;
 
       if (name) updates.$set.name = name.trim();
 
@@ -568,7 +592,7 @@ export const profileUpdateHandeler = async (req, res) => {
         updates.$set.email = normalizedEmail;
       }
       
-      if(address) updates.$set.address = address
+      // if(address) updates.$set.address = address
 
       if (number) {
         const numberExists = await Broker.findOne({

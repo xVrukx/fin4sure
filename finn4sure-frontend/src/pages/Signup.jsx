@@ -165,11 +165,11 @@ export default function Signup() {
         password,
         role: "client",
         broker_id: refBy === "self" || !brokerId.trim() ? "self" : brokerId.trim(),
-        dob,
-        address,
-        pincode,
-        state,
-        district
+        // dob,
+        // address,
+        // pincode,
+        // state,
+        // district
       };
 
       const res = await fetch(`${API_BASE}/signup`, {
@@ -282,18 +282,18 @@ export default function Signup() {
           </div>
 
           {/* dob */}
-          <input
+          {/* <input
             type="date"
             placeholder="enter your date of birth"
             value={dob}
             onChange={(e) => setdob(e.target.value)}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          /> */}
 
           
 
           {/* ADDRESS */}
-<div className="flex flex-col">
+{/* <div className="flex flex-col">
   <label className="text-sm font-medium text-slate-700 mb-1">
     Address
   </label>
@@ -307,13 +307,13 @@ export default function Signup() {
                focus:outline-none focus:ring-2 focus:ring-blue-600
                transition duration-200"
   />
-</div>
+</div> */}
 
 {/* STATE & DISTRICT */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+{/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+ */}
   {/* STATE */}
-  <div className="flex flex-col">
+  {/* <div className="flex flex-col">
     <label className="text-sm font-medium text-slate-700 mb-1">
       State
     </label>
@@ -338,16 +338,16 @@ export default function Signup() {
           </option>
         ))}
       </select>
-
+ */}
       {/* Dropdown Icon */}
-      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+      {/* <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
         ▼
       </div>
     </div>
-  </div>
+  </div> */}
 
   {/* DISTRICT */}
-  <div className="flex flex-col">
+  {/* <div className="flex flex-col">
     <label className="text-sm font-medium text-slate-700 mb-1">
       District
     </label>
@@ -375,25 +375,25 @@ export default function Signup() {
             </option>
           ))}
       </select>
-
+ */}
       {/* Dropdown Icon */}
-      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+      {/* <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
         ▼
       </div>
     </div>
   </div>
 
-</div>
+</div> */}
 
 {/* pincode */}
-          <input
+          {/* <input
             type="text"
             placeholder="enter your city pincode"
             maxLength={6}
             value={pincode}
             onChange={(e) => setpincode(e.target.value.replace(/\D/g,""))}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          /> */}
 
           {/* PASSWORD MATCH FEEDBACK */}
           {confirmPassword && (
