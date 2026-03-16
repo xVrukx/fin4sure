@@ -62,6 +62,9 @@ const leadSchema = new mongoose.Schema(
     address: {
       type: String,
       required: true
+    },
+    statusUpdatedAt: {
+      type: Date
     }
   },
   { timestamps: true }

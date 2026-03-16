@@ -11,6 +11,11 @@ export default function AdminDashboard() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [selectedBroker, setSelectedBroker] = useState(null);
 
+  /* NEW STATES FOR EXPORT */
+  const [exportFilter, setExportFilter] = useState("today");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+
   useEffect(() => {
     fetchStats();
     fetchBrokers();
@@ -62,6 +67,54 @@ export default function AdminDashboard() {
     fetchStats();
   }
 
+  /* ================= EXPORT LOGIC ================= */
+
+  function getDateRange() {
+    const now = new Date();
+    let from, to;
+
+    if (exportFilter === "today") {
+      from = new Date(now.setHours(0,0,0,0));
+      to = new Date();
+    }
+
+    if (exportFilter === "7days") {
+      from = new Date(Date.now() - 7 * 86400000);
+      to = new Date();
+    }
+
+    if (exportFilter === "1month") {
+      from = new Date(Date.now() - 30 * 86400000);
+      to = new Date();
+    }
+
+    if (exportFilter === "3months") {
+      from = new Date(Date.now() - 90 * 86400000);
+      to = new Date();
+    }
+
+    if (exportFilter === "custom") {
+      from = customFrom;
+      to = customTo;
+    }
+
+    return { from, to };
+  }
+
+  function exportData(type) {
+    const { from, to } = getDateRange();
+
+    if (!from || !to) {
+      alert("Please select date range");
+      return;
+    }
+
+    const url =
+      `http://localhost:5000/api/admin/export?type=${type}&from=${from}&to=${to}`;
+
+    window.open(url, "_blank");
+  }
+
   return (
     <div className="min-h-screen bg-linear-to-b from-blue-50 via-white to-white">
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
@@ -74,6 +127,59 @@ export default function AdminDashboard() {
           <p className="text-lg text-slate-600 mt-2">
             Overview of platform performance and pending approvals
           </p>
+        </div>
+
+        {/* EXPORT SECTION (NEW) */}
+        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+          <h2 className="font-semibold text-lg text-slate-800">Export Data</h2>
+
+          <div className="flex flex-wrap gap-3 items-center">
+
+            <select
+              value={exportFilter}
+              onChange={(e) => setExportFilter(e.target.value)}
+              className="border rounded-md px-3 py-2 text-sm"
+            >
+              <option value="today">Today</option>
+              <option value="7days">Last 7 Days</option>
+              <option value="1month">Last 1 Month</option>
+              <option value="3months">Last 3 Months</option>
+              <option value="custom">Custom Range</option>
+            </select>
+
+            {exportFilter === "custom" && (
+              <>
+                <input
+                  type="date"
+                  value={customFrom}
+                  onChange={(e) => setCustomFrom(e.target.value)}
+                  className="border rounded-md px-3 py-2 text-sm"
+                />
+
+                <input
+                  type="date"
+                  value={customTo}
+                  onChange={(e) => setCustomTo(e.target.value)}
+                  className="border rounded-md px-3 py-2 text-sm"
+                />
+              </>
+            )}
+
+            <button
+              onClick={() => exportData("clients")}
+              className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700"
+            >
+              Export Clients
+            </button>
+
+            <button
+              onClick={() => exportData("brokers")}
+              className="bg-teal-600 text-white px-4 py-2 rounded text-sm hover:bg-teal-700"
+            >
+              Export Brokers
+            </button>
+
+          </div>
         </div>
 
         {/* Stats */}

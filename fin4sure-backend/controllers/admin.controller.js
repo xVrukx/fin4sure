@@ -2,6 +2,7 @@ import Client from "../models/client.model.js";
 import Lead from "../models/lead.model.js";
 import Broker from "../models/broker.model.js";
 import Admin from "../models/admin.model.js";
+import ExcelJS from "exceljs";
 
 /* -----------------------------------------------------
    ADMIN STATS
@@ -115,7 +116,9 @@ export const updateBrokerStatus = async (req, res) => {
 
     const broker = await Broker.findOneAndUpdate(
       { brokerId },
-      { status },
+      { status,
+        statusUpdatedAt: new Date()
+       },
       { new: true }
     ).select("-password -__v");
 
@@ -142,7 +145,9 @@ export const updateLeadStatus = async (req, res) => {
 
     const lead = await Lead.findByIdAndUpdate(
       leadId,
-      { status },
+      { status,
+        statusUpdatedAt: new Date()
+       },
       { new: true }
     );
 
@@ -180,4 +185,96 @@ export const createAdmin = async (req, res) => {
     message: "Admin created successfully",
     id: admin._id
   });
+};
+
+/* -----------------------------------------------------
+   ADMIN – Export Data
+----------------------------------------------------- */
+
+export const exportData = async (req, res) => {
+  try {
+
+    const { from, to, type } = req.query;
+
+    const start = new Date(from);
+    const end = new Date(to);
+
+    let data = [];
+
+    if (type === "brokers") {
+      data = await Broker.find({
+        createdAt: { $gte: start, $lte: end }
+      }).lean();
+    }
+
+    if (type === "clients") {
+      data = await Client.find({
+        createdAt: { $gte: start, $lte: end }
+      }).lean();
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Report");
+
+    sheet.columns = [
+      { header: "Name", key: "name", width: 25 },
+      { header: "Email", key: "email", width: 30 },
+      { header: "Phone", key: "number", width: 20 },
+      { header: "Status", key: "status", width: 15 },
+      { header: "Created", key: "createdAt", width: 20 }
+    ];
+
+    data.forEach((item) => {
+
+      const row = sheet.addRow({
+        name: item.name,
+        email: item.email,
+        number: item.number,
+        status: item.status,
+        createdAt: item.createdAt
+      });
+
+      if (item.statusUpdatedAt) {
+
+        const statusDate = new Date(item.statusUpdatedAt);
+
+        if (statusDate >= start && statusDate <= end) {
+
+          if (item.status === "approved") {
+            row.getCell("status").fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: "C6EFCE" }
+            };
+          }
+
+          if (item.status === "rejected") {
+            row.getCell("status").fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: "FFC7CE" }
+            };
+          }
+
+        }
+      }
+
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=report.xlsx"
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+
+  } catch (error) {
+    res.status(500).json({ message: "Export failed" });
+  }
 };

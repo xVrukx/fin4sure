@@ -6,6 +6,7 @@ import {
   updateBrokerStatus,
   updateLeadStatus,
   createAdmin,
+  exportData
 } from "../controllers/admin.controller.js";
 
 import { verifyUser, isAdmin } from "../middlewares/auth.middleware.js";
@@ -27,5 +28,7 @@ router.post("/lead-status", verifyUser, isAdmin, updateLeadStatus);
 
 /* ---------- ADMIN BOOTSTRAP ---------- */
 router.post("/create-admin", createAdmin);
+
+router.get("/export", verifyUser, isAdmin, exportData);
 
 export default router;
