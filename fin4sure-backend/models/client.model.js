@@ -19,8 +19,18 @@ const clientSchema = new mongoose.Schema(
     ],                                                                                                 
     password: { type: String, required: true },
     broker_id: {type: String,default: "self"}, // "self" or something like "BRK12345"
-    dob: {type: String, required: true},
-    address: {type: String, required: true}
+    dob : {
+    type : String, sparse : true
+  }, address : {
+    type : String, sparse : true
+  }, state : {
+    type : String, sparse : true
+  }, district : {
+    type : String, sparse : true
+  }, pincode : {
+    type : String, sparse : true
+  }
+
   },
   { timestamps: true }
 );

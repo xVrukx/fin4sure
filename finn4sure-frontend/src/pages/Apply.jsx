@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { LOAN_PRODUCTS } from "../utils/constants";
 import { useAuth } from "../context/AuthContext";
+import { states } from "../components/Statedata";
+import { districtsByState } from "../components/Statedata";
+
 
 export default function Apply() {
   const [searchParams] = useSearchParams();
@@ -13,7 +16,12 @@ export default function Apply() {
   const [pan, setPan] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [dob, setdob] = useState('');
+  const [address, setaddress] = useState();
   const [loading, setLoading] = useState(false);
+  const [pincode, setpincode] = useState("")
+  const [state, setstate] = useState("");
+  const [district, setdistrict] = useState("");
 
   const selectedProduct = LOAN_PRODUCTS.find(
     (item) => item.id === product
@@ -53,6 +61,11 @@ export default function Apply() {
           body: JSON.stringify({
             pan: cleanPAN,
             product: product,
+            dob: dob,
+            address: address,
+            state: state,
+            district: district,
+            pincode: pincode
           }),
         }
       );
@@ -146,8 +159,119 @@ export default function Apply() {
                 <InfoField label="Full Name" value={user?.name} />
                 <InfoField label="Email" value={user?.email} />
                 <InfoField label="Mobile" value={user?.number} />
-                <InfoField label="DOB" value={user?.dob} />
-                <InfoField label="Address" value={user?.address} />
+          {/* dob */}
+          <input
+            type="date"
+            placeholder="enter your date of birth"
+            value={dob}
+            onChange={(e) => setdob(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          
+
+          {/* ADDRESS */}
+<div className="flex flex-col">
+  <label className="text-sm font-medium text-slate-700 mb-1">
+    Address
+  </label>
+  <input
+    type="text"
+    placeholder="Enter your address"
+    value={address}
+    onChange={(e) => setaddress(e.target.value)}
+    className="w-full px-4 py-3 border border-slate-300 rounded-lg 
+               bg-white text-slate-800
+               focus:outline-none focus:ring-2 focus:ring-blue-600
+               transition duration-200"
+  />
+</div>
+
+{/* STATE & DISTRICT */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+  {/* STATE */}
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-slate-700 mb-1">
+      State
+    </label>
+    <div className="relative">
+      <select
+        name="state"
+        id="state"
+        value={state}
+        onChange={(e) => {
+          setstate(e.target.value);
+          setdistrict("");
+        }}
+        className="w-full appearance-none px-4 py-3 border border-slate-300 
+                   rounded-lg bg-white text-slate-700
+                   focus:outline-none focus:ring-2 focus:ring-blue-600
+                   transition duration-200"
+      >
+        <option value="">-- Select a State --</option>
+        {states.map((s) => (
+          <option key={s} value={s}>
+            {s}
+          </option>
+        ))}
+      </select>
+
+      {/* Dropdown Icon */}
+      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+        ▼
+      </div>
+    </div>
+  </div>
+
+  {/* DISTRICT */}
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-slate-700 mb-1">
+      District
+    </label>
+    <div className="relative">
+      <select
+        name="District"
+        id="District"
+        value={district}
+        disabled={!state}
+        onChange={(e) => setdistrict(e.target.value)}
+        className={`w-full appearance-none px-4 py-3 border rounded-lg
+                    focus:outline-none focus:ring-2 focus:ring-blue-600
+                    transition duration-200
+                    ${
+                      !state
+                        ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                        : "bg-white text-slate-700 border-slate-300"
+                    }`}
+      >
+        <option value="">-- Select a District --</option>
+        {state &&
+          districtsByState[state]?.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+      </select>
+
+      {/* Dropdown Icon */}
+      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+        ▼
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{/* pincode */}
+          <input
+            type="text"
+            placeholder="enter your city pincode"
+            maxLength={6}
+            value={pincode}
+            onChange={(e) => setpincode(e.target.value.replace(/\D/g,""))}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
               </div>
             </div>
 

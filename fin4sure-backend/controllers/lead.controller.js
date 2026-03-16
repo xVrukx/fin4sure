@@ -8,7 +8,7 @@ const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
 export const applyLoan = async (req, res) => {
 
     const userId = req.user._id;
-    const { pan, product } = req.body;
+    const { pan, product, dob, address, state, district, pincode } = req.body;
     console.log({message: "got body"})
 
     // ---------- validate input ----------
@@ -66,8 +66,8 @@ export const applyLoan = async (req, res) => {
       product,
       pan_hash: panHash,
       pan_encrypted: encryptedPAN,
-      dob: client.dob,
-      address: client.address
+      dob: dob,
+      address: pincode+","+address+","+district+","+state
     });
 
     const Client_update = await Client.findByIdAndUpdate(
@@ -78,7 +78,12 @@ export const applyLoan = async (req, res) => {
       },
         $set : {
       pan_hash: panHash,
-      pan_encrypted: encryptedPAN
+      pan_encrypted: encryptedPAN,
+      dob: dob,
+      address: address,
+      state: state,
+      district: district,
+      pincode: pincode
     }
   },{
     new : true

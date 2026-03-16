@@ -121,8 +121,8 @@ export const signUpHandler = async (req, res) => {
           number,
           password, // hashed by pre-save hook
           brokerId: `BRK${Date.now()}`, // unchanged logic
-          // dob: dob,
-          // address: ad
+          dob: dob,
+          address: ad
         });
 
         await newBroker.save();
@@ -481,15 +481,21 @@ export const profileHandler = async (req, res) => {
     number: user.number,
     ...(role === "client" && {
       broker: user.broker_id,
-      // dob : user.dob,
-      // address : user.address,
+      dob : user.dob,
+      address : user.address,
+      state: user.state,
+      district: user.district,
+      pincode: user.pincode,
       totalProducts: user.product.length,
       products: user.product,
     }),
     ...(role === "broker" && {
       brokerId: user.brokerId,
-      // dob : user.dob,
-      // address : user.address,
+      dob : user.dob,
+      address : user.address,
+      state: user.state,
+      district: user.district,
+      pincode: user.pincode,
       status: user.status,
     }),
   });

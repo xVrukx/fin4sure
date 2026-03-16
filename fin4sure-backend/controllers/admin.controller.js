@@ -150,7 +150,7 @@ export const updateLeadStatus = async (req, res) => {
        },
       { new: true }
     );
-
+ 
     if (!lead) {
       return res.status(404).json({ message: "Lead not found" });
     }

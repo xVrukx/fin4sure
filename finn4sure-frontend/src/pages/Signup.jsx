@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import validator from "validator";
-import { states } from "../components/Statedata";
-import { districtsByState } from "../components/Statedata";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -16,9 +14,7 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [refBy, setRefBy] = useState("self"); // referral default
   const [brokerId, setBrokerId] = useState(""); // if refBy is broker
-  const [pincode, setpincode] = useState("")
-  const [state, setstate] = useState("");
-  const [district, setdistrict] = useState("");
+
   
   // ---------------- UI STATES ----------------
   const [otpSent, setOtpSent] = useState(false);
