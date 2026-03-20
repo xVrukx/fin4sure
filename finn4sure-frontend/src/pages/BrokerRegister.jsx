@@ -31,8 +31,6 @@ export default function BrokerRegistration() {
   const [resendTimer, setResendTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
 
-  const API_BASE = "http://localhost:5000/api/auth";
-
   // ---------------- RESEND TIMER LOGIC ----------------
   useEffect(() => {
     let timer;
@@ -77,8 +75,9 @@ export default function BrokerRegistration() {
       setLoading(true);
       setOtpError("");
 
-      const res = await fetch(`${API_BASE}/send-otp`, {
+      const res = await fetch(`http://localhost:5000/api/auth/send-otp`, {
         method: "POST",
+        credentials : "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ number }),
       });
@@ -110,8 +109,9 @@ export default function BrokerRegistration() {
       setOtpError("");
       setLoading(true);
 
-      const res = await fetch(`${API_BASE}/verify-otp`, {
+      const res = await fetch(`http://localhost:5000/api/auth/verify-otp`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ number, otp: receivedOtp }),
       });
@@ -165,8 +165,9 @@ export default function BrokerRegistration() {
         district
       };
 
-      const res = await fetch(`${API_BASE}/signup`, {
+      const res = await fetch(`http://localhost:5000/api/auth/signup`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });

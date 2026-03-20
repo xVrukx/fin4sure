@@ -22,6 +22,9 @@ const brokerschema = new mongoose.Schema(
     clients: [{ type: String, sparse: true }],
     dob: { type: String, required: true },
     address: { type: String, required: true },
+    pincode: { type: String, required: true},
+    district: { type: String, required: true},
+    state: { type: String, required: true},
     statusUpdatedAt: {
       type: Date,
     },

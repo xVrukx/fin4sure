@@ -208,7 +208,7 @@ export const exportData = async (req, res) => {
     }
 
     if (type === "clients") {
-      data = await Client.find({
+      data = await Lead.find({
         createdAt: { $gte: start, $lte: end }
       }).lean();
     }
@@ -234,11 +234,7 @@ export const exportData = async (req, res) => {
         createdAt: item.createdAt
       });
 
-      if (item.statusUpdatedAt) {
-
-        const statusDate = new Date(item.statusUpdatedAt);
-
-        if (statusDate >= start && statusDate <= end) {
+      if (item.statusUpdatedAt !== item.createdAt) {
 
           if (item.status === "approved") {
             row.getCell("status").fill = {
@@ -255,10 +251,7 @@ export const exportData = async (req, res) => {
               fgColor: { argb: "FFC7CE" }
             };
           }
-
-        }
       }
-
     });
 
     res.setHeader(

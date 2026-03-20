@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { LOAN_PRODUCTS } from "../utils/constants";
 import { useAuth } from "../context/AuthContext";
@@ -17,11 +17,11 @@ export default function Apply() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [dob, setdob] = useState('');
-  const [address, setaddress] = useState();
+  const [address, setaddress] = useState('');
   const [loading, setLoading] = useState(false);
-  const [pincode, setpincode] = useState("")
-  const [state, setstate] = useState("");
-  const [district, setdistrict] = useState("");
+  const [pincode, setpincode] = useState('')
+  const [state, setstate] = useState('');
+  const [district, setdistrict] = useState('');
 
   const selectedProduct = LOAN_PRODUCTS.find(
     (item) => item.id === product
@@ -29,7 +29,7 @@ export default function Apply() {
 
   const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
 
@@ -85,6 +85,17 @@ export default function Apply() {
       setLoading(false);
     }
   }
+
+  useEffect(
+    () => {
+      const load_data = async () => {
+    setdob(user?.dob);
+    setaddress(user?.address);
+    setpincode(user?.pincode)
+    setstate(user?.state);
+    setdistrict(user?.district);}
+    load_data()
+  },[user])
 
   return (
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen">
@@ -314,7 +325,6 @@ export default function Apply() {
                 className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg
                            focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
-
               <p className="text-xs text-slate-500 mt-1">
                 Format: 5 letters + 4 numbers + 1 letter
               </p>

@@ -8,6 +8,7 @@ import {
 } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import { LOAN_PRODUCTS } from "../utils/constants";
+import { states, districtsByState } from "../components/Statedata";
 
 export default function ClientDashboard() {
   const [user, setUser] = useState(null);
@@ -16,8 +17,11 @@ export default function ClientDashboard() {
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
   const [address, setaddress] = useState("");
+  const [pincode, setpincode] = useState("");
+  const [district, setdistrict] = useState("");
+  const [state, setstate] = useState("");
   const [number, setnumber] = useState("");
-  const [pan_card, setpan_card] = useState("");
+  // const [pan_card, setpan_card] = useState("");
   const [otp, setotp] = useState(""); // for phone updates
   const [otpVerified, setOtpVerified] = useState(false);
   const navigate = useNavigate();
@@ -28,7 +32,8 @@ export default function ClientDashboard() {
   }, []);
 
   // Fetch profile
-  async function fetchProfile() {
+  const fetchProfile = async() => {
+    try {
     const res = await fetch("http://localhost:5000/api/auth/profile", {
       method: "GET",
       headers: { "content-type": "application/json" },
@@ -46,24 +51,40 @@ export default function ClientDashboard() {
     setemail(data.email || "");
     setnumber(data.number || "");
     setaddress(data.address || "");
-    setpan_card(data.pan_card || "");
+    setpincode(data.pincode || "");
+    setstate(data.state || "");
+    setdistrict(data.district || "");
+    // setpan_card(data.pan_card || "");
+    } catch(e) {
+      alert(e.message);
+    }
   }
 
   // Fetch client leads
-  async function fetchLeads() {
-    const res = await fetch("http://localhost:5000/api/client/my-leads", {
+  const fetchLeads = async() => {
+    try{
+      const res = await fetch("http://localhost:5000/api/client/my-leads", {
       method: "GET",
       headers: { "content-type": "application/json" },
       credentials: "include",
     });
 
-    if (res.ok) {
-      setLeads(await res.json());
+    if (!res.ok) {
+      throw new error("failed to fetch lead");
     }
+    const data = await res.json();
+    setLeads(data);
+  } catch(e) {
+    alert(e.message);
+  }
   }
 
   const sendOTP = async () => {
     try {
+      if(!/^\d{10}$/.test(number)){
+        alert("Please enter valid 10 digit number");
+        return;
+      }
       const res = await fetch(
         "http://localhost:5000/api/auth/update-number-otp",
         {
@@ -76,6 +97,7 @@ export default function ClientDashboard() {
       if (!res.ok) {
         throw new Error("faield to send otp");
       }
+      alert("OTP was sent successfully")
       await res.json();
     } catch (e) {
       alert(e.message);
@@ -83,19 +105,27 @@ export default function ClientDashboard() {
   };
 
   const verifyOTP = async () => {
+    if (!otp) {
+      alert("Please enter OTP");
+      return;
+    }
     try {
       const res = await fetch(
         "http://localhost:5000/api/auth/verify-update-number-otp",
         {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
           credentials: "include",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ number, otp }),
         },
       );
       if (!res.ok) {
-        throw new Error("faield to verify");
+        throw new Error("Invalid OTP");
       }
+      setOtpVerified(true); // ✅ ADD THIS
+      alert("Phone verified successfully!");
     } catch (e) {
       alert(e.message);
     }
@@ -103,24 +133,30 @@ export default function ClientDashboard() {
 
   // Update profile
   const handleUpdate = async () => {
+    if(number!==user.number && !otpVerified){
+      alert("You must verify the new phone number before saving")
+    }
     try {
-      const body = {
-        name: name,
-        email: email,
-        number: number,
-        address : address,
-        pan_card: pan_card,
-      };
-
       const res = await fetch("http://localhost:5000/api/auth/profileupdate", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+                              name: name,
+                              email: email,
+                              address: address,
+                              pincode: pincode,
+                              district: district,
+                              state: state,
+                              number: number,
+                              otp_verified: otpVerified
+                            })
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Update failed");
+      if (!res.ok) {
+        throw new Error(data.message || "Update failed");
+      }
 
       alert("Profile updated successfully!");
       setEditing(false);
@@ -266,10 +302,10 @@ export default function ClientDashboard() {
               </div>
 
               {/* Profile form */}
-              {/* Profile form */}
               <div className="space-y-3 text-sm">
                 {editing ? (
                   <>
+                  {/* name */}
                     <div>
                       <label className="block text-gray-200">Name</label>
                       <input
@@ -280,6 +316,7 @@ export default function ClientDashboard() {
                         className="mt-1 p-2 w-full rounded text-black"
                       />
                     </div>
+                    {/* Profile form */}
                     <div>
                       <label className="block text-gray-200">Email</label>
                       <input
@@ -290,6 +327,7 @@ export default function ClientDashboard() {
                         className="mt-1 p-2 w-full rounded text-black"
                       />
                     </div>
+                    {/* address */}
                     <div>
                       <label className="block text-gray-200">Address</label>
                       <input
@@ -300,6 +338,48 @@ export default function ClientDashboard() {
                         className="mt-1 p-2 w-full rounded text-black"
                       />
                     </div>
+                    {/* pincode */}
+                    <div>
+                      <label className="block text-gray-200">pincode</label>
+                      <input
+                      type="text"
+                      value={pincode}
+                      onChange={(e) => {setpincode(e.target.value.replace(/\D/g,''))}}
+                      className="mt-1 p-2 w-full rounded text-black"
+                      />
+                    </div>
+                    {/* state */}
+                    <div>
+                      <label className="block text-gray-200">State</label>
+                      <select
+                      className="text-black rounded-2xl" name="state" id="state" value={state}
+                      onChange={(e) => {
+                        setstate(e.target.value)
+                        setdistrict("")
+                      }}
+                      >
+                      <option value="" className="text-black rounded-2xl">---- select a State ----</option>
+                      {states.map((s) => (
+                        <option key={s} value={s} className="text-black rounded-2xl"> 
+                        {s}
+                      </option>
+                      ))}
+                    </select>
+                    </div>
+                    {/* district */}
+                    <div>
+                     <label className="block text-gray-200">District</label>
+                      <select
+                      name="district" id="district" className="text-black rounded-2xl" disabled={!state} value={district}
+                      onChange={(e) => {setdistrict(e.target.value)}}>
+                        <option value="" className="text-black rounded-2xl">---- select a district ----</option>
+                        {state&&districtsByState[state].map((d) => (
+                          <option key={d} value={d}>{d}</option>
+                        ))}
+                        </select>
+                    </div>
+
+                    {/* phone */}
                     <div>
                       <label className="block text-gray-200">Phone</label>
                       <input
@@ -329,62 +409,14 @@ export default function ClientDashboard() {
                             className="p-2 rounded text-black flex-1"
                           />
                           <button
-                            onClick={async () => {
-                              if (!/^\d{10}$/.test(number)) {
-                                alert(
-                                  "Please enter a valid 10-digit phone number",
-                                );
-                                return;
-                              }
-                              try {
-                                const res = await fetch(
-                                  "http://localhost:5000/api/auth/update-number-otp",
-                                  {
-                                    method: "POST",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    credentials: "include",
-                                    body: JSON.stringify({ number }),
-                                  },
-                                );
-                                if (!res.ok)
-                                  throw new Error("Failed to send OTP");
-                                alert("OTP sent successfully!");
-                              } catch (e) {
-                                alert(e.message);
-                              }
-                            }}
+                            onClick={sendOTP}
                             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                           >
                             Send OTP
                           </button>
                           <button
-                            onClick={async () => {
-                              if (!otp) {
-                                alert("Please enter OTP");
-                                return;
-                              }
-                              try {
-                                const res = await fetch(
-                                  "http://localhost:5000/api/auth/verify-update-number-otp",
-                                  {
-                                    method: "POST",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    credentials: "include",
-                                    body: JSON.stringify({ number, otp }),
-                                  },
-                                );
-                                if (!res.ok) throw new Error("Invalid OTP");
-                                setOtpVerified(true); // ✅ ADD THIS
-                                alert("Phone verified successfully!");
-                              } catch (e) {
-                                alert(e.message);
-                              }
-                            }}
-                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                            onClick={verifyOTP}
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                           >
                             Verify OTP
                           </button>
@@ -395,42 +427,7 @@ export default function ClientDashboard() {
                     {/* Save / Cancel */}
                     <div className="flex gap-2 mt-4">
                       <button
-                        onClick={async () => {
-                           if (number !== user.number && !otpVerified) {
-                            alert(
-                              "You must verify the new phone number before saving",
-                            );
-                            return;
-                          }
-
-                          try {
-                            const body = {
-                              name,
-                              email,
-                              address,
-                              number,
-                              otp_verified: otpVerified,
-                            };
-
-                            const res = await fetch(
-                              "http://localhost:5000/api/auth/profileupdate",
-                              {
-                                method: "PATCH",
-                                headers: { "content-type": "application/json" },
-                                credentials: "include",
-                                body: JSON.stringify(body),
-                              },
-                            );
-                            const data = await res.json();
-                            if (!res.ok)
-                              throw new Error(data.message || "Update failed");
-                            alert("Profile updated successfully!");
-                            setEditing(false);
-                            fetchProfile();
-                          } catch (e) {
-                            alert(e.message);
-                          }
-                        }}
+                        onClick={handleUpdate}
                         className="bg-green-600 px-4 py-2 rounded hover:bg-green-700"
                       >
                         Save

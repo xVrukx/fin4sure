@@ -29,11 +29,11 @@ export const signUpHandler = async (req, res) => {
       password,
       role,
       broker_id,
-      // dob,
-      // address,
-      // pincode,
-      // state,
-      // district
+      dob,
+      address,
+      pincode,
+      state,
+      district
     } = req.body; //still under work
 
     // CHANGED: fixed validation typos, logic & ensured response is sent
@@ -60,11 +60,6 @@ export const signUpHandler = async (req, res) => {
     const existingAdmin = await Admin.findOne({
       $or: [{ number }, { email: normalizedEmail }],
     });
-    // if(!existingAdmin && (!dob || !address|| !pincode|| !state|| !district)) {
-    //     console.log({"singup blocked" : "all fields are required"})
-    //     return res.status(400).json({ message: "All fields are required" });
-    // }
-    // const ad = address+","+pincode+","+district+","+state
 
     if (existingClient || existingBroker || existingAdmin) {
       console.log("Signup blocked: User already exists");
@@ -122,7 +117,10 @@ export const signUpHandler = async (req, res) => {
           password, // hashed by pre-save hook
           brokerId: `BRK${Date.now()}`, // unchanged logic
           dob: dob,
-          address: ad
+          address: address,
+          pincode: pincode,
+          district: district,
+          state: state
         });
 
         await newBroker.save();
@@ -521,7 +519,10 @@ export const profileUpdateHandeler = async (req, res) => {
       const {
         name,
         email,
-        // address,
+        address,
+        pincode,
+        district,
+        state,
         number,
         otp_verified
       } = req.body;
@@ -538,7 +539,21 @@ export const profileUpdateHandeler = async (req, res) => {
         updates.$set.email = normalizedEmail;
       }
 
-      // if(address) updates.$set.address = address
+      if(address) {
+        updates.$set.address = address;
+      }
+
+      if(pincode) {
+        updates.$set.pincode = pincode;
+      }
+
+      if(state) {
+        updates.$set.state = state;
+      }
+
+      if(district) {
+        updates.$set.district = district;
+      }
 
       // ------------------ NUMBER ------------------
       // ------------------ NUMBER ------------------
@@ -581,7 +596,10 @@ export const profileUpdateHandeler = async (req, res) => {
       const {
         name,
         email,
-        // address,
+        address,
+        pincode,
+        district,
+        state,
         number
       } = req.body;
 
@@ -598,7 +616,21 @@ export const profileUpdateHandeler = async (req, res) => {
         updates.$set.email = normalizedEmail;
       }
       
-      // if(address) updates.$set.address = address
+      if(address) {
+        updates.$set.address = address;
+      }
+
+      if(pincode) {
+        updates.$set.pincode = pincode;
+      }
+
+      if(district) {
+        updates.$set.district = district;
+      }
+
+      if(state) {
+        updates.$set.state = state;
+      }
 
       if (number) {
         const numberExists = await Broker.findOne({
