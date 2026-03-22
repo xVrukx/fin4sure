@@ -179,6 +179,13 @@ export default function AdminDashboard() {
               Export Brokers
             </button>
 
+            <button
+              onClick={() => exportData("All")}
+              className="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-teal-700"
+            >
+              Export All
+            </button>
+
           </div>
         </div>
 
