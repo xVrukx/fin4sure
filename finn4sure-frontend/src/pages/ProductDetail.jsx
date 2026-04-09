@@ -80,10 +80,10 @@ export default function ProductDetail() {
   const inactive = "text-gray-500";
 
   return (
-    <section className="bg-gradient-to-b from-blue-50 via-white to-white">
+    <section className="bg-linear-to-b from-blue-50 via-white to-white">
 
       {/* 🔥 Scroll Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-[3px] bg-gray-200 z-50">
+      <div className="fixed top-0 left-0 w-full h-0.75 bg-gray-200 z-50">
         <div
           className="h-full bg-red-500 transition-all"
           style={{ width: `${scrollProgress}%` }}
@@ -115,7 +115,7 @@ export default function ProductDetail() {
       </div>
 
       {/* TABS */}
-      <div className="sticky top-[100px] bg-white/80 backdrop-blur-md border-b z-40 shadow-sm">
+      <div className="sticky top-25 bg-white/80 backdrop-blur-md border-b z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 flex gap-8 text-sm font-medium">
 
           <button
@@ -123,7 +123,7 @@ export default function ProductDetail() {
             className={`py-4 relative ${activeTab === "overview" ? active : inactive}`}
           >
             Overview
-            <span className={`absolute bottom-0 left-0 w-full h-[2px] ${activeTab === "overview" ? "bg-red-500" : ""}`} />
+            <span className={`absolute bottom-0 left-0 w-full h-0.5 ${activeTab === "overview" ? "bg-red-500" : ""}`} />
           </button>
 
           <button
@@ -131,7 +131,7 @@ export default function ProductDetail() {
             className={`py-4 relative ${activeTab === "features" ? active : inactive}`}
           >
             Features
-            <span className={`absolute bottom-0 left-0 w-full h-[2px] ${activeTab === "features" ? "bg-red-500" : ""}`} />
+            <span className={`absolute bottom-0 left-0 w-full h-0.5 ${activeTab === "features" ? "bg-red-500" : ""}`} />
           </button>
 
           <button
@@ -139,7 +139,7 @@ export default function ProductDetail() {
             className={`py-4 relative ${activeTab === "eligibility" ? active : inactive}`}
           >
             Eligibility
-            <span className={`absolute bottom-0 left-0 w-full h-[2px] ${activeTab === "eligibility" ? "bg-red-500" : ""}`} />
+            <span className={`absolute bottom-0 left-0 w-full h-0.5 ${activeTab === "eligibility" ? "bg-red-500" : ""}`} />
           </button>
 
           <button
@@ -147,7 +147,7 @@ export default function ProductDetail() {
             className={`py-4 relative ${activeTab === "documents" ? active : inactive}`}
           >
             Documents
-            <span className={`absolute bottom-0 left-0 w-full h-[2px] ${activeTab === "documents" ? "bg-red-500" : ""}`} />
+            <span className={`absolute bottom-0 left-0 w-full h-0.5 ${activeTab === "documents" ? "bg-red-500" : ""}`} />
           </button>
 
         </div>
