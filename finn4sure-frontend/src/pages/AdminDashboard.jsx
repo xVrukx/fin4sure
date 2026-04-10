@@ -23,7 +23,7 @@ export default function AdminDashboard() {
   }, [leadFilter]);
 
   async function fetchStats() {
-    const res = await fetch("http://localhost:5000/api/admin/stats", {
+    const res = await fetch("https://fin4sure-backend.onrender.com/api/admin/stats", {
       credentials: "include",
     });
     if (!res.ok) return navigate("/login");
@@ -31,7 +31,7 @@ export default function AdminDashboard() {
   }
 
   async function fetchBrokers() {
-    const res = await fetch("http://localhost:5000/api/admin/brokers", {
+    const res = await fetch("https://fin4sure-backend.onrender.com/api/admin/brokers", {
       credentials: "include",
     });
     if (res.ok) setBrokers(await res.json());
@@ -39,14 +39,14 @@ export default function AdminDashboard() {
 
   async function fetchLeads() {
     const res = await fetch(
-      `http://localhost:5000/api/admin/leads?status=${leadFilter}`,
+      `https://fin4sure-backend.onrender.com/api/admin/leads?status=${leadFilter}`,
       { credentials: "include" }
     );
     if (res.ok) setLeads(await res.json());
   }
 
   async function updateBrokerStatus(brokerId, status) {
-    await fetch("http://localhost:5000/api/admin/broker-status", {
+    await fetch("https://fin4sure-backend.onrender.com/api/admin/broker-status", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
   }
 
   async function updateLeadStatus(leadId, status) {
-    await fetch("http://localhost:5000/api/admin/lead-status", {
+    await fetch("https://fin4sure-backend.onrender.com/api/admin/lead-status", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -110,7 +110,7 @@ export default function AdminDashboard() {
     }
 
     const url =
-      `http://localhost:5000/api/admin/export?type=${type}&from=${from}&to=${to}`;
+      `https://fin4sure-backend.onrender.com/api/admin/export?type=${type}&from=${from}&to=${to}`;
 
     window.open(url, "_blank");
   }
