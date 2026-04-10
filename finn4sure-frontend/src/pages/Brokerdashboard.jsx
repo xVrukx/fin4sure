@@ -31,7 +31,7 @@ export default function BrokerDashboard() {
 
   async function fetchProfile() {
     const res = await fetch(
-      "https://fin4sure-backend.onrender.com/api/auth/profile",
+      "http://localhost:5000/api/auth/profile",
       { credentials: "include" }
     );
 
@@ -41,7 +41,7 @@ export default function BrokerDashboard() {
 
   async function fetchClients() {
     const res = await fetch(
-      "https://fin4sure-backend.onrender.com/api/broker/getRefferedClients",
+      "http://localhost:5000/api/broker/getRefferedClients",
       { credentials: "include" }
     );
 
@@ -53,7 +53,7 @@ export default function BrokerDashboard() {
 
   async function fetchLeads() {
     const res = await fetch(
-      "https://fin4sure-backend.onrender.com/api/broker/getBrokerLeads",
+      "http://localhost:5000/api/broker/getBrokerLeads",
       { credentials: "include" }
     );
 

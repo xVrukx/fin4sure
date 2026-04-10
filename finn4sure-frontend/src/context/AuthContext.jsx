@@ -9,7 +9,7 @@ export function AuthProvider({ children }) {
   // 🔥 Sync frontend auth with backend session
   const fetchProfile = async () => {
     try {
-      const res = await fetch("https://fin4sure-backend.onrender.com/api/auth/profile", {
+      const res = await fetch("http://localhost:5000/api/auth/profile", {
         credentials: "include",
       });
 
@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
 
   // Called on logout
   async function logout() {
-    await fetch("https://fin4sure-backend.onrender.com/api/auth/logout", {
+    await fetch("http://localhost:5000/api/auth/logout", {
       method: "POST",
       credentials: "include",
     });
