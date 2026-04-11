@@ -294,7 +294,7 @@ export const loginHandler = async (req, res) => {
     return res
       .cookie("AccessToken", accessToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000,
       })
