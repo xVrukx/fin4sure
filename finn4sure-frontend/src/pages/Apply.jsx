@@ -51,7 +51,7 @@ export default function Apply() {
       setLoading(true);
 
       const res = await fetch(
-        "http://localhost:5000/api/client/apply-loan",
+        "https://fin4sure.onrender.com/api/client/apply-loan",
         {
           method: "POST",
           credentials: "include",

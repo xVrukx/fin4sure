@@ -34,7 +34,7 @@ export default function ClientDashboard() {
   // Fetch profile
   const fetchProfile = async() => {
     try {
-    const res = await fetch("http://localhost:5000/api/auth/profile", {
+    const res = await fetch("https://fin4sure.onrender.com/api/auth/profile", {
       method: "GET",
       headers: { "content-type": "application/json" },
       credentials: "include",
@@ -63,7 +63,7 @@ export default function ClientDashboard() {
   // Fetch client leads
   const fetchLeads = async() => {
     try{
-      const res = await fetch("http://localhost:5000/api/client/my-leads", {
+      const res = await fetch("https://fin4sure.onrender.com/api/client/my-leads", {
       method: "GET",
       headers: { "content-type": "application/json" },
       credentials: "include",
@@ -86,7 +86,7 @@ export default function ClientDashboard() {
         return;
       }
       const res = await fetch(
-        "http://localhost:5000/api/auth/update-number-otp",
+        "https://fin4sure.onrender.com/api/auth/update-number-otp",
         {
           method: "POST",
           credentials: "include",
@@ -111,7 +111,7 @@ export default function ClientDashboard() {
     }
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/verify-update-number-otp",
+        "https://fin4sure.onrender.com/api/auth/verify-update-number-otp",
         {
           method: "POST",
           headers: {
@@ -137,7 +137,7 @@ export default function ClientDashboard() {
       alert("You must verify the new phone number before saving")
     }
     try {
-      const res = await fetch("http://localhost:5000/api/auth/profileupdate", {
+      const res = await fetch("https://fin4sure.onrender.com/api/auth/profileupdate", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         credentials: "include",

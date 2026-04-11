@@ -32,7 +32,7 @@ export default function Signup() {
   const [resendTimer, setResendTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
 
-  const API_BASE = "http://localhost:5000/api/auth";
+  const API_BASE = "https://fin4sure.onrender.com/api/auth";
 
   // ---------------- RESEND TIMER LOGIC ----------------
   useEffect(() => {
