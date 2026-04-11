@@ -177,7 +177,7 @@ export default function Signup() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Signup failed");
 
-      navigate("/login");
+      navigate(data.redirect);
     } catch (err) {
       setError(err.message || "Network error");
     } finally {
