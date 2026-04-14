@@ -25,7 +25,7 @@ export default function Navbar() {
       <Link className="nav-link" to="/">Home</Link>
       <Link className="nav-link" to="/products">Loans</Link>
       <Link className="nav-link" to="/EMI-calculator">EMI Calculator</Link>
-      <Link className="nav-link" to="/broker-register">Become a Partner</Link>
+      {/* <Link className="nav-link" to="/broker-register">Become a Partner</Link> */}
     </>
   );
 
