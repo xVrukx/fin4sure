@@ -47,7 +47,7 @@ export default function Calculator() {
         <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-5">
 
           {/* Inputs Card */}
-          <div className="bg-white p-3 rounded-2xl border border-blue-100 shadow-sm space-y-3.5">
+          <div className="bg-white p-12 rounded-2xl border border-blue-100 shadow-sm space-y-3.5">
 
             {/* Loan Amount */}
             <div className="flex gap-6">
@@ -156,7 +156,7 @@ export default function Calculator() {
           </div>
 
           {/* Results Card */}
-          <div className="bg-white p-3 rounded-2xl border border-blue-100 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-12 rounded-2xl border border-blue-100 shadow-sm flex flex-col justify-between">
             <div>
               <h2 className="text-xl font-semibold text-slate-900">
                 Your EMI Breakdown

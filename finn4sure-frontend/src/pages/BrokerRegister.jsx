@@ -100,8 +100,7 @@ export default function BrokerRegistration() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [dob, setdob] = useState("");
   const [address, setaddress] = useState("");
-  const [ctoggle, setctoggle] = useState(false);
-  const [ttoggle, setttoggle] = useState(false);
+  const [ctoggle, setctoggle] = useState("client");
 
   // ---------------- OTP TIMER ----------------
   const [resendTimer, setResendTimer] = useState(60);
@@ -259,47 +258,53 @@ export default function BrokerRegistration() {
       setLoading(false);
     }
   };
-  const client = async() => {
-    setctoggle(!ctoggle);
+  const client = (type) => {
+    setctoggle(type);
   };
-  const broker = async() => {
-    setttoggle(!ttoggle);
-  };
+
   return (
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen flex items-center">
       
     {/* login toggle */}
-    {(!ctoggle)&&(!ttoggle)&&(<div className="m-auto flex gap-8">
-
+  <div className="grid grid-cols-1 m-auto">
+    <div className="m-auto flex gap-3 mt-5 mb-5">
           <button className="
-            group relative px-30 py-26 rounded-2xl
+            group relative px-10 py-5 rounded-2xl
             bg-linear-to-r from-yellow-500 to-amber-400
             text-white text-lg font-semibold
             shadow-lg hover:shadow-xl
             transition-all duration-300
             hover:-translate-y-1 active:scale-95
-          ">
-            <span className="relative z-10">Sign up as Client</span>
+          "
+          onClick={() =>{client("client")}}
+          >
+            <span className="relative z-10"
+            onClick={() =>{client("client")}}
+            >Sign up as Client</span>
             <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition" 
-            onClick={client}></div>
+            onClick={() =>{client("client")}}
+            ></div>
           </button>
 
           <button className="
-            group relative px-30 py-26 rounded-2xl
+            group relative px-10 py-5 rounded-2xl
             bg-linear-to-r from-blue-700 to-indigo-600
             text-white text-lg font-semibold
             shadow-lg hover:shadow-xl
             transition-all duration-300
             hover:-translate-y-1 active:scale-95
-          ">
-            <span className="relative z-10">Sign up as Broker</span>
+            "
+            onClick={() =>{client("broker")}}
+          >
+            <span className="relative z-10"
+            onClick={() =>{client("broker")}}>Sign up as Broker</span>
             <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition"
-            onClick={broker}></div>
+            onClick={() =>{client("broker")}}></div>
           </button>
           
-        </div>)}
+        </div>
       
-      {(ctoggle)&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+      {(ctoggle === "client")&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
           Create your <span className="text-blue-700">Finn4sure</span> account
         </h1>
@@ -631,7 +636,7 @@ export default function BrokerRegistration() {
         </p>
       </div>)}
 
-      {(ttoggle)&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+      {(ctoggle === "broker")&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
           Create your <span className="text-blue-700">Finn4sure</span> account
         </h1>
@@ -925,6 +930,7 @@ export default function BrokerRegistration() {
           </Link>
         </p>
       </div>)}
+      </div>
     </section>
   );
 }

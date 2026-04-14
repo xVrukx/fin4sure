@@ -247,19 +247,10 @@ export default function Signup() {
     }
   };
 
-  const client = () => {
-    if(ctoggle === "broker") {
-    setctoggle("client");
-    };
-    return;
+  const client = (type) => {
+    setctoggle(type);
   };
 
-  const broker = () => {
-    if(ctoggle === "client") {
-    setctoggle("broker");
-    };
-    return;
-  }
   return (
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen flex items-center">
       
@@ -272,10 +263,13 @@ export default function Signup() {
             shadow-lg hover:shadow-xl
             transition-all duration-300
             hover:-translate-y-1 active:scale-95
-          ">
-            <span className="relative z-10">Sign up as Client</span>
+          "
+          onClick={() =>{client("client")}}
+          >
+            <span className="relative z-10"
+            pointer-events-none>Sign up as Client</span>
             <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition" 
-            onClick={client}></div>
+            pointer-events-none></div>
           </button>
 
           <button className="
@@ -285,17 +279,21 @@ export default function Signup() {
             shadow-lg hover:shadow-xl
             transition-all duration-300
             hover:-translate-y-1 active:scale-95
-          ">
-            <span className="relative z-10">Sign up as Broker</span>
+          "
+          onClick={() =>{client("broker")}}
+          >
+            <span className="relative z-10"
+            pointer-events-none
+            >Sign up as Broker</span>
             <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition"
-            onClick={broker}></div>
+            pointer-events-none></div>
           </button>
           
         </div>
       
 {(ctoggle === "client")&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
-          Create your <span className="text-blue-700">Finn4sure</span> account
+          Create your <span className="text-blue-700">Finn4sure</span> Client account
         </h1>
 
         <p className="mt-2 text-sm text-slate-600">
@@ -627,7 +625,7 @@ export default function Signup() {
 
       {(ctoggle === "broker")&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
               <h1 className="text-2xl font-bold text-slate-900">
-                Create your <span className="text-blue-700">Finn4sure</span> account
+                Create your <span className="text-blue-700">Finn4sure</span> Broker account
               </h1>
       
               <p className="mt-2 text-sm text-slate-600">Register now and become a partner.</p>
