@@ -47,7 +47,7 @@ export default function Navbar() {
               <Link className="nav-link" to="/broker-dashboard">Dashboard</Link>
               <Link className="nav-link" to="/">Home</Link>
               {/* <Link className="nav-link" to="/products">Products</Link> */}
-              <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
+              <Link className="nav-link" to="/EMI-calculator">EMI Calculator</Link>
             </>
           )}
 
@@ -56,7 +56,7 @@ export default function Navbar() {
               <Link className="nav-link" to="/admin-dashboard">Dashboard</Link>
               <Link className="nav-link" to="/">Home</Link>
               <Link className="nav-link" to="/products">Products</Link>
-              <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
+              <Link className="nav-link" to="/EMI-calculator">EMI Calculator</Link>
             </>
           )}
 
@@ -65,7 +65,7 @@ export default function Navbar() {
               <Link className="nav-link" to="/client-dashboard">Dashboard</Link>
               <Link className="nav-link" to="/">Home</Link>
               <Link className="nav-link" to="/products">Products</Link>
-              <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
+              <Link className="nav-link" to="/EMI-calculator">EMI Calculator</Link>
             </>
           )}
         </nav>
@@ -175,7 +175,7 @@ export default function Navbar() {
             <AiFillProduct /> Products
           </Link>
           <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/EMI-calculator">
-            <CiCalculator2 /> Calculator
+            <CiCalculator2 /> EMI Calculator
           </Link>
 
           <button
@@ -198,7 +198,7 @@ export default function Navbar() {
             <AiFillProduct /> Products
           </Link>
           <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/EMI-calculator">
-            <CiCalculator2 /> Calculator
+            <CiCalculator2 />EMI Calculator
           </Link>
 
           <button
@@ -224,7 +224,7 @@ export default function Navbar() {
             <AiFillProduct /> Products
           </Link>
           <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/EMI-calculator">
-            <CiCalculator2 /> Calculator
+            <CiCalculator2 />EMI Calculator
           </Link>
 
           <button
