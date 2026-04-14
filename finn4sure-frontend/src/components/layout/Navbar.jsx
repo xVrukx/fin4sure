@@ -24,7 +24,7 @@ export default function Navbar() {
     <>
       <Link className="nav-link" to="/">Home</Link>
       <Link className="nav-link" to="/products">Loans</Link>
-      <Link className="nav-link" to="/EMI-calculator">Calculator</Link>
+      <Link className="nav-link" to="/EMI-calculator">EMI Calculator</Link>
       <Link className="nav-link" to="/broker-register">Become a Partner</Link>
     </>
   );
@@ -35,7 +35,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Fin4sure" className="h-24 w-auto" />
+          <img src={logo} alt="Fin4sure" className="h-28 w-auto" />
         </Link>
 
         {/* Desktop nav */}
@@ -90,7 +90,7 @@ export default function Navbar() {
                            border border-[#d9a93d] text-[#d9a93d]
                            hover:bg-[#d9a93d]/10 transition"
               >
-                Sign Up As A Customer
+                Sign Up
               </Link>
             </>
           ) : (

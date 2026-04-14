@@ -20,6 +20,7 @@ const brokerschema = new mongoose.Schema(
       default: "pending",
     },
     clients: [{ type: String, sparse: true }],
+    gender: {type: String, required: true},
     dob: { type: String, required: true },
     address: { type: String, required: true },
     pincode: { type: String, required: true},

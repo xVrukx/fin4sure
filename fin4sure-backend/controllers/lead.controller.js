@@ -61,6 +61,7 @@ export const applyLoan = async (req, res) => {
       client_id: userId,
       name: client.name,
       email: client.email,
+      gender: client.gender,
       number: client.number,
       broker_id: client.broker_id || "self",
       product,

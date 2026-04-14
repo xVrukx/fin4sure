@@ -10,6 +10,10 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [ctoggle, setctoggle] = useState(false);
+  const [ttoggle, setttoggle] = useState(false);
+
+  
 
   const API_BASE = "https://fin4sure.onrender.com/api/auth";
 
@@ -65,9 +69,47 @@ export default function Login() {
     }
   }
 
+  const client = async() => {
+    setctoggle(!ctoggle);
+  }
+  const broker = async() => {
+    setttoggle(!ttoggle);
+  }
+
   return (
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen flex items-center">
-      <div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+
+    {(!ctoggle)&&(!ttoggle)&&(<div className="m-auto flex gap-8">
+
+          <button className="
+            group relative px-30 py-26 rounded-2xl
+            bg-linear-to-r from-yellow-500 to-amber-400
+            text-white text-lg font-semibold
+            shadow-lg hover:shadow-xl
+            transition-all duration-300
+            hover:-translate-y-1 active:scale-95
+          ">
+            <span className="relative z-10">Login as Client</span>
+            <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition" 
+            onClick={client}></div>
+          </button>
+
+          <button className="
+            group relative px-30 py-26 rounded-2xl
+            bg-linear-to-r from-blue-700 to-indigo-600
+            text-white text-lg font-semibold
+            shadow-lg hover:shadow-xl
+            transition-all duration-300
+            hover:-translate-y-1 active:scale-95
+          ">
+            <span className="relative z-10">Login as Broker</span>
+            <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition"
+            onClick={broker}></div>
+          </button>
+          
+        </div>)}
+
+      {(ctoggle)&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
           Login to <span className="text-blue-700">Finn4sure</span>
         </h1>
@@ -111,7 +153,55 @@ export default function Login() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-      </div>
+      </div>)}
+
+    {/* broker */}
+    {(ttoggle)&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+        <h1 className="text-2xl font-bold text-slate-900">
+          Login to <span className="text-blue-700">Finn4sure</span>
+        </h1>
+
+        <p className="mt-2 text-sm text-slate-600">
+          Please login to become a Partner.
+        </p>
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+          {error && (
+            <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
+          <input
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600"
+          />
+
+          <input
+            type="password"
+            placeholder="Enter your password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600"
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-lg font-medium text-white
+              bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
+              disabled:opacity-50"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>)}
+
     </section>
   );
 }

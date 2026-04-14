@@ -25,6 +25,7 @@ export const signUpHandler = async (req, res) => {
     const {
       name,
       email,
+      gender,
       number,
       password,
       role,
@@ -39,6 +40,7 @@ export const signUpHandler = async (req, res) => {
     // CHANGED: fixed validation typos, logic & ensured response is sent
     if (
       !name?.trim() ||
+      !gender?.trim()||
       !email?.trim() ||
       !number?.trim() ||
       !password?.trim() ||
@@ -91,6 +93,7 @@ export const signUpHandler = async (req, res) => {
         const client = new Client({
           name,
           email: normalizedEmail,
+          gender,
           number,
           password,
           broker_id: broker_id || "self",
@@ -113,6 +116,7 @@ export const signUpHandler = async (req, res) => {
         const newBroker = new Broker({
           name,
           email: normalizedEmail,
+          gender,
           number,
           password, // hashed by pre-save hook
           brokerId: `BRK${Date.now()}`, // unchanged logic
@@ -480,6 +484,7 @@ export const profileHandler = async (req, res) => {
     ...(role === "client" && {
       broker: user.broker_id,
       dob : user.dob,
+      gender : user.gender,
       address : user.address,
       state: user.state,
       district: user.district,
@@ -555,7 +560,6 @@ export const profileUpdateHandeler = async (req, res) => {
         updates.$set.district = district;
       }
 
-      // ------------------ NUMBER ------------------
       // ------------------ NUMBER ------------------
       if (number) {
         const client = await Client.findById(user_id); // fetch current client

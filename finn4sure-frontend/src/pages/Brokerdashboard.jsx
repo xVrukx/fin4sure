@@ -199,22 +199,32 @@ export default function BrokerDashboard() {
             <div className="bg-linear-to-br from-green-500 to-green-600 text-white rounded-xl shadow-lg p-6">
               <h3 className="font-bold text-xl mb-4">{user.name}</h3>
 
+              {/* broker id */}
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>ID:</span>
                   <span>{user.brokerId}</span>
                 </div>
 
+                {/* Email */}
                 <div className="flex justify-between">
                   <span>Email:</span>
                   <span>{user.email}</span>
                 </div>
-
+                
+                {/* gender */}
+                <div>
+                  <label className="block text-gray-200">Gender</label>
+                  <input type="text" disabled value={user.gender}/>
+                </div>
+                
+                {/* Phone */}
                 <div className="flex justify-between">
                   <span>Phone:</span>
                   <span>{user.number}</span>
                 </div>
 
+                {/* status */}
                 <div className="flex justify-between">
                   <span>Status:</span>
                   <span className="px-2 py-1 rounded-full bg-white/20 text-xs">

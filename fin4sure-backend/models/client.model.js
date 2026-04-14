@@ -4,6 +4,7 @@ import bcrypt from "bcrypt"
 const clientSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
+    gender: {type: String, required: true},
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     number: { type: String, required: true, unique: true, trim: true },
     pan_hash: {type: String,unique: true,sparse: true},

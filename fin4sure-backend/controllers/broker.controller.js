@@ -47,6 +47,7 @@ export const getBrokerLeads = async (req, res) => {
         id: lead._id,
         name: lead.name,
         email: lead.email,
+        gender: lead.gender,
         number: lead.number,
         product: lead.product,
         status: lead.status, // pending | approved | rejected

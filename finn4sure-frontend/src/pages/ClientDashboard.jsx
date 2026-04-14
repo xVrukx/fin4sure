@@ -16,6 +16,7 @@ export default function ClientDashboard() {
   const [editing, setEditing] = useState(false);
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
+  const [gender, setgender] = useState("");
   const [address, setaddress] = useState("");
   const [pincode, setpincode] = useState("");
   const [district, setdistrict] = useState("");
@@ -49,6 +50,7 @@ export default function ClientDashboard() {
     setUser(data || "");
     setname(data.name || "");
     setemail(data.email || "");
+    setgender(data.gender || "");
     setnumber(data.number || "");
     setaddress(data.address || "");
     setpincode(data.pincode || "");
@@ -327,6 +329,12 @@ export default function ClientDashboard() {
                         className="mt-1 p-2 w-full rounded text-black"
                       />
                     </div>
+                    {/* gender */}
+                    <div>
+                      <label className="block text-gray-200">Gender</label>
+                      <input type="text" disabled value={gender}/>
+                    </div>
+
                     {/* address */}
                     <div>
                       <label className="block text-gray-200">Address</label>
