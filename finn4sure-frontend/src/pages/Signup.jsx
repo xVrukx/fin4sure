@@ -91,8 +91,7 @@ export default function Signup() {
   // ---------------- OTP TIMER ----------------
   const [resendTimer, setResendTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
-  const [ctoggle, setctoggle] = useState(false);
-  const [ttoggle, setttoggle] = useState(false);
+  const [ctoggle, setctoggle] = useState("client");
 
   const API_BASE = "https://fin4sure.onrender.com/api/auth";
 
@@ -248,19 +247,26 @@ export default function Signup() {
     }
   };
 
-  const client = async() => {
-    setctoggle(!ctoggle);
-  }
-  const broker = async() => {
-    setttoggle(!ttoggle);
+  const client = () => {
+    if(ctoggle === "broker") {
+    setctoggle("client");
+    };
+    return;
+  };
+
+  const broker = () => {
+    if(ctoggle === "client") {
+    setctoggle("broker");
+    };
+    return;
   }
   return (
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen flex items-center">
       
-    {(!ctoggle)&&(!ttoggle)&&(<div className="m-auto flex gap-8">
-
+  <div className="grid grid-cols-1 m-auto">
+    <div className="m-auto flex gap-3 mt-5 mb-5">
           <button className="
-            group relative px-30 py-26 rounded-2xl
+            group relative px-10 py-5 rounded-2xl
             bg-linear-to-r from-yellow-500 to-amber-400
             text-white text-lg font-semibold
             shadow-lg hover:shadow-xl
@@ -273,7 +279,7 @@ export default function Signup() {
           </button>
 
           <button className="
-            group relative px-30 py-26 rounded-2xl
+            group relative px-10 py-5 rounded-2xl
             bg-linear-to-r from-blue-700 to-indigo-600
             text-white text-lg font-semibold
             shadow-lg hover:shadow-xl
@@ -285,9 +291,9 @@ export default function Signup() {
             onClick={broker}></div>
           </button>
           
-        </div>)}
+        </div>
       
-      {(ctoggle)&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+{(ctoggle === "client")&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
           Create your <span className="text-blue-700">Finn4sure</span> account
         </h1>
@@ -619,7 +625,7 @@ export default function Signup() {
         </p>
       </div>)}
 
-      {(ttoggle)&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+      {(ctoggle === "broker")&&(<div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
               <h1 className="text-2xl font-bold text-slate-900">
                 Create your <span className="text-blue-700">Finn4sure</span> account
               </h1>
@@ -913,6 +919,7 @@ export default function Signup() {
                 </Link>
               </p>
             </div>)}
+            </div>
     </section>
   );
 }
