@@ -102,7 +102,7 @@ export default function Hero() {
 
   {/* EMI Drawer */}
   <div
-    className={`fixed top-0 right-0 h-full w-96 bg-white z-50
+    className={`fixed top-0 right-0 h-full w-xl bg-white z-50
     shadow-2xl rounded-l-2xl
     transform transition-transform duration-300 ease-in-out
     ${emiCal ? "translate-x-0" : "translate-x-full"}`}
@@ -114,7 +114,7 @@ export default function Hero() {
     </div>
 
     {/* Body */}
-        <div className="mt-4 grid grid-cols-1 lg:grid-cols-1 gap-5">
+        <div className=" mx-5 mt-4 grid grid-cols-1 lg:grid-cols-1 gap-5">
 
           {/* Inputs Card */}
           <div className="bg-white p-3 rounded-2xl border border-blue-100 shadow-sm space-y-3.5">

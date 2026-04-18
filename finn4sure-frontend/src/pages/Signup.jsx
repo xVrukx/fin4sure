@@ -256,28 +256,33 @@ export default function Signup() {
       
   <div className="grid grid-cols-1 m-auto">
     <div className="m-auto flex gap-3 mt-5 mb-5">
-          <button className={`
-    group relative px-10 py-5 rounded-2xl bg-linear-to-r from-yellow-500 to-amber-400 text-white text-lg font-semibold shadow-lg transition-all duration-300 active:scale-95
-    ${clientToggle === "client" 
-      ? "border-4 border-yellow-700 -translate-y-4 shadow-2xl" // Stays up and adds extra shadow
-      : "hover:-translate-y-1 hover:shadow-xl border-4 border-transparent"} 
-  `}>
-            <span className="relative z-10">Sign up as Client</span>
+<button 
+  className={`group relative px-10 py-5 rounded-2xl text-white text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95 ${
+              ctoggle === "client" 
+                ? 'bg-linear-to-r from-yellow-300 to-amber-200 border border-black' 
+                : 'bg-linear-to-r from-yellow-500 to-amber-400'
+            }`}
+          onClick={() =>{client("client")}}
+          >
+            <span className="relative z-10"
+            pointer-events-none>Sign up as Client</span>
             <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition" 
-            onClick={() =>{client("broker")}}></div>
+            pointer-events-none></div>
           </button>
 
-          <button className={`
-    group relative px-10 py-5 rounded-2xl bg-linear-to-r from-blue-700 to-indigo-600 text-white text-lg font-semibold shadow-lg transition-all duration-300 active:scale-95
-    ${clientToggle === "client" 
-      ? "border-4 border-blue-700 -translate-y-4 shadow-2xl" // Stays up and adds extra shadow
-      : "hover:-translate-y-1 hover:shadow-xl border-4 border-transparent"} 
-  `}>
-            <span className="relative z-10">Sign up as Partner</span>
+          <button className={`group relative px-10 py-5 rounded-2xl text-white text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95 ${
+              ctoggle === "broker" 
+                ? 'bg-linear-to-r from-blue-400 to-indigo-400 border border-black' 
+                : 'bg-linear-to-r  from-blue-700 to-indigo-600'
+            }`}
+          onClick={() =>{client("broker")}}
+          >
+            <span className="relative z-10"
+            pointer-events-none
+            >Sign up as Broker</span>
             <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition"
-            onClick={() =>{client("broker")}}></div>
+            pointer-events-none></div>
           </button>
-
           
         </div>
       
