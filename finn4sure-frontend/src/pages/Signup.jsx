@@ -279,7 +279,7 @@ export default function Signup() {
           >
             <span className="relative z-10"
             pointer-events-none
-            >Sign up as Broker</span>
+            >Sign up as Partner</span>
             <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition"
             pointer-events-none></div>
           </button>

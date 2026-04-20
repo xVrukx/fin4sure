@@ -102,7 +102,7 @@ export default function Hero() {
 
   {/* EMI Drawer */}
   <div
-    className={`fixed top-0 right-0 h-full w-xl bg-white z-50
+    className={`fixed top-0 right-0 h-full w-xl  bg-white z-50
     shadow-2xl rounded-l-2xl
     transform transition-transform duration-300 ease-in-out
     ${emiCal ? "translate-x-0" : "translate-x-full"}`}
