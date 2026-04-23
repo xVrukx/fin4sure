@@ -110,17 +110,17 @@ export default function BrokerDashboard() {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center justify-between">
+            <div>
               <h1 className="text-3xl font-bold text-gray-900">
                 Broker Dashboard, {user.name}!
               </h1>
-              <button className="border rounded-2xl bg-green-700 transition duration-1000 hover:bg-green-500 hover:shadow px-3 py-2" onClick={toggle}>Add Client</button>
               <p className="text-gray-600 mt-1">
                 Manage your clients, leads and track performance
               </p>
             </div>
 
             <div className="flex items-center gap-2">
+              <button className="border rounded-2xl bg-green-700 transition duration-1000 hover:bg-green-500 hover:shadow px-3 py-2" onClick={toggle}>Add Client</button>
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                 <CgProfile size={20} className="text-green-600" />
               </div>
