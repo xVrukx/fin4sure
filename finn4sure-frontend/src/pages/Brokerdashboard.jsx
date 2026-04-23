@@ -114,7 +114,7 @@ export default function BrokerDashboard() {
               <h1 className="text-3xl font-bold text-gray-900">
                 Broker Dashboard, {user.name}!
               </h1>
-              <button className="border-rounded-2xl bg-green-500 transition duration-1000 hover:bg-green-600 hover:shadow">Add Client</button>
+              <button className="border rounded-2xl bg-green-500 transition duration-1000 hover:bg-green-600 hover:shadow px-3 py-2">Add Client</button>
               <p className="text-gray-600 mt-1">
                 Manage your clients, leads and track performance
               </p>
