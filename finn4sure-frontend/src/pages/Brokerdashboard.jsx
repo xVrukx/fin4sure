@@ -110,11 +110,11 @@ export default function BrokerDashboard() {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="flex items-center justify-between">
               <h1 className="text-3xl font-bold text-gray-900">
                 Broker Dashboard, {user.name}!
               </h1>
-              <button className="border rounded-2xl bg-green-500 transition duration-1000 hover:bg-green-600 hover:shadow px-3 py-2">Add Client</button>
+              <button className="border rounded-2xl bg-green-700 transition duration-1000 hover:bg-green-500 hover:shadow px-3 py-2" onClick={toggle}>Add Client</button>
               <p className="text-gray-600 mt-1">
                 Manage your clients, leads and track performance
               </p>
