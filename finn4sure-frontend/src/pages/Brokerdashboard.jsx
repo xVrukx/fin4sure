@@ -120,7 +120,9 @@ export default function BrokerDashboard() {
             </div>
 
             <div className="flex items-center gap-2">
-              <button className="border rounded-2xl bg-green-700 transition duration-1000 hover:bg-green-500 hover:shadow px-3 py-2" onClick={toggle}>Add Client</button>
+              <button className="borderrounded-2xl bg-green-700 transition
+               duration-1000 hover:bg-green-500 hover:shadow px-3 py-2"
+              onClick={toggle}>Add Client</button>
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                 <CgProfile size={20} className="text-green-600" />
               </div>
@@ -132,6 +134,107 @@ export default function BrokerDashboard() {
           </div>
         </div>
       </div>
+
+{/* overlay */}
+  {bClientToggle && (
+    <div
+      onClick={() => emiCalculater}
+      className="fixed inset-0 bg-black/30 z-40"
+    />
+  )}
+  {/* Client apply Drawer */}
+  <div
+    className={`fixed top-0 right-0 h-full w-xl  bg-white z-50
+    shadow-2xl rounded-l-2xl
+    transform transition-transform duration-300 ease-in-out
+    ${bClientToggle ? "translate-x-0" : "translate-x-full"}`}
+  >
+        {/* Header */}
+    <div className="p-4 border-b flex items-center justify-between">
+      <h2 className="text-lg font-semibold">Add clients</h2>
+      <button onClick={toggle}>✕</button>
+    </div>
+    <div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+        <h1 className="text-2xl font-bold text-slate-900">
+          Add your <span className="text-blue-700">Client's</span> account
+        </h1>
+
+        {error && (
+          <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        <div className="mt-6 space-y-5">
+          {/* NAME */}
+          <input
+            type="text"
+            placeholder="Your full name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          {/* EMAIL */}
+          <input
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={validateEmail}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+           <p style={{ color: validator.isEmail(email) ? 'green' : 'red' }}>
+               {validateemail}
+           </p>
+
+          {/* GENDER */}
+            <select name="Gender" id="Gender" value={gender} onChange={(e) => {setgender(e.target.value)}}
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <option value="">---- Select a gender ----</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+
+          {/* MOBILE NUMBER */}
+          <input
+            type="tel"
+            placeholder="10-digit mobile number"
+            value={number}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, "");
+              if (val.length <= 10) setNumber(val);
+            }} 
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          {/* BROKER ID INPUT */}
+            <input
+              type="text"
+              placeholder="Enter Broker ID"
+              value={brokerId}
+              onChange={(e) => setBrokerId(e.target.value)}
+
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+
+          {/* SIGNUP BUTTON */}
+          <button
+            type="button"
+            onClick={submitFormC}
+            disabled={loading || !otpVerified || !isPasswordStrong() || password !== confirmPassword}
+            className="w-full py-3 rounded-lg font-medium text-white
+                       bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
+                       hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
+                       transition disabled:opacity-50"
+          >
+            Submit
+          </button>
+
+      </div>
+    </div>
+  </div>
+
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
