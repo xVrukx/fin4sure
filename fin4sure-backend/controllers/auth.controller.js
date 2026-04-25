@@ -72,39 +72,33 @@ export const signUpHandler = async (req, res) => {
     switch (role) {
       case "client": {
         let broker = null;
+        let broker_id = null;
 
-        // ✅ validate broker BEFORE saving client
         if (number) {
-          const Bclient = await bclient.findOne({ number: number });
+          const Bclient = await bclient.findOne({ number });
 
-          if (!Bclient) {
-            const client = new Client({
-              client_id: `cli${Date.now()}`,
-              name,
-              email: normalizedEmail,
-              gender,
-              number,
-              password,
-              ref_id: ref_id,
-              // dob: dob,
-              // address: ad
-            });
+          // If found → attach broker
+          if (Bclient) {
+            broker_id = Bclient.broker_id;
 
-            await client.save();
-            console.log(client)
+            broker = await Broker.findOne({ brokerId: broker_id }); // check field name
+
+            if (!broker) {
+              return res.status(404).json({ message: "Broker not found" });
+            }
+
+            if (broker.status !== "approved") {
+              return res.status(403).json({
+                message:
+                  broker.status === "pending"
+                    ? "Broker not approved yet"
+                    : "Broker inactive",
+              });
+            }
           }
+        }
 
-          const broker_id = Bclient.broker_id
-          broker = await Broker.findOne({brokerId:broker_id})
-
-          if (broker.status !== "approved") {
-            return res.status(403).json({
-              message:
-                broker.status === "pending"
-                  ? "Broker not approved yet"
-                  : "Broker inactive",
-            });
-          }
+        // Create client ONLY ONCE
         const client = new Client({
           client_id: `cli${Date.now()}`,
           name,
@@ -112,19 +106,13 @@ export const signUpHandler = async (req, res) => {
           gender,
           number,
           password,
-          ref_id: ref_id,
-          broker_id: broker_id,
-          // dob: dob,
-          // address: ad
+          ref_id,
+          broker_id: broker_id, // will be null if no match
         });
 
         await client.save();
-        console.log(client)
-        }
-// console.log(dob,address)
-        await client.save();
-        console.log(client)
 
+        // Only update broker if it exists
         if (broker) {
           broker.clients.push(client._id.toString());
           await broker.save();
@@ -132,7 +120,6 @@ export const signUpHandler = async (req, res) => {
 
         return res.json({ redirect: url });
       }
-
       case "broker": {
         const newBroker = new Broker({
           name,
