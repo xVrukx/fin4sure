@@ -65,6 +65,21 @@ export default function BrokerDashboard() {
     setUser(await res.json());
   }
 
+  const add_client = async() => {
+    res = fetch("https://fin4sure.onrender.com/api/broker/add_client",{
+      credentials: "include",
+      method : "POST",
+      headers : {"Content-Type" : "Application/json"},
+      body : JSON.stringify({
+        name:fullName,
+        email:email,
+        gender:gender,
+        number:number,
+        brokerId:brokerId
+      })
+    })
+  }
+
   async function fetchClients() {
     const res = await fetch(
       "https://fin4sure.onrender.com/api/broker/getRefferedClients",
@@ -240,8 +255,7 @@ export default function BrokerDashboard() {
           {/* SIGNUP BUTTON */}
           <button
             type="button"
-            onClick={submitFormC}
-            disabled={loading || !otpVerified || !isPasswordStrong() || password !== confirmPassword}
+            onClick={add_client}
             className="w-full py-3 rounded-lg font-medium text-white
                        bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                        hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
