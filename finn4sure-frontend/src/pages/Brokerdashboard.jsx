@@ -60,7 +60,7 @@ export default function BrokerDashboard() {
   }
 
   const add_client = async() => {
-    const res = await fetch("https://fin4sure.onrender.com/api/broker/add_client",{
+    const res = await fetch("https://fin4sure.onrender.com/api/broker/addClients",{
       credentials: "include",
       method : "POST",
       headers : {"Content-Type" : "Application/json"},
