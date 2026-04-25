@@ -72,7 +72,7 @@ export default function Calculator() {
                 <input
                   type="range"
                   min={50000}
-                  max={10000000}
+                  max={1000000000}
                   step={50000}
                   value={amount}
                   onChange={(e) => setAmount(Number(e.target.value))}
@@ -103,7 +103,7 @@ export default function Calculator() {
                 <input
                   type="range"
                   min={1}
-                  max={20}
+                  max={40}
                   step={0.1}
                   value={rate}
                   onChange={(e) => setRate(Number(e.target.value))}
@@ -146,7 +146,7 @@ export default function Calculator() {
               <input
                 type="range"
                 min={tenureType === "years" ? 1 : 6}
-                max={tenureType === "years" ? 30 : 360}
+                max={tenureType === "years" ? 40 : 480}
                 step={1}
                 value={tenure}
                 onChange={(e) => setTenure(Number(e.target.value))}
