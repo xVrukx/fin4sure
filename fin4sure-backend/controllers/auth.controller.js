@@ -75,9 +75,9 @@ export const signUpHandler = async (req, res) => {
 
         // ✅ validate broker BEFORE saving client
         if (number) {
-          const bclient = await bclient.findOne({ number: number });
+          const Bclient = await bclient.findOne({ number: number });
 
-          if (!bclient) {
+          if (!Bclient) {
             const client = new Client({
               client_id: `cli${Date.now()}`,
               name,
@@ -94,7 +94,7 @@ export const signUpHandler = async (req, res) => {
             console.log(client)
           }
 
-          const broker_id = bclient.broker_id
+          const broker_id = Bclient.broker_id
           broker = await Broker.findOne({brokerId:broker_id})
 
           if (broker.status !== "approved") {
@@ -120,7 +120,6 @@ export const signUpHandler = async (req, res) => {
 
         await client.save();
         console.log(client)
-
         }
 // console.log(dob,address)
         await client.save();
