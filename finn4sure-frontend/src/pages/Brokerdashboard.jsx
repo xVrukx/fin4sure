@@ -22,6 +22,25 @@ export default function BrokerDashboard() {
   const [notifications] = useState(0);
   const [bClientToggle, setBclientToggle] = useState(false)
 
+    // ---------------- FORM STATES (add client) ----------------
+  const [fullName, setFullName] = useState("");
+  const [validateemail, setvalidateemail] = useState("")
+  const [email, setEmail] = useState("");
+  const [number, setNumber] = useState("");
+  const [brokerId, setBrokerId] = useState(""); // if refBy is broker
+  const [gender, setgender] = useState("")
+
+  const validateEmail = (e) => {
+    setEmail(e.target.value);
+    if(validator.isEmail(email)) {
+      setvalidateemail("email is valid");
+    }
+    else{
+      setvalidateemail("email is invalid");
+    };
+  };
+
+
   const navigate = useNavigate();
 
   const toggle = async() => {
@@ -138,7 +157,7 @@ export default function BrokerDashboard() {
 {/* overlay */}
   {bClientToggle && (
     <div
-      onClick={() => emiCalculater}
+      onClick={() => toggle}
       className="fixed inset-0 bg-black/30 z-40"
     />
   )}
