@@ -3,6 +3,7 @@ import bcrypt from "bcrypt"
 
 const clientSchema = new mongoose.Schema(
   {
+    client_id: { type: String, required: true, trim: true },
     name: { type: String, required: true, trim: true },
     gender: {type: String, required: true},
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -19,7 +20,8 @@ const clientSchema = new mongoose.Schema(
       }
     ],                                                                                                 
     password: { type: String, required: true },
-    broker_id: {type: String,default: "self"}, // "self" or something like "BRK12345"
+    ref_id: {type: String, sparse : true},
+    broker_id: {type: String, default: "self"}, // "self" or something like "BRK12345"
     dob : {
     type : String, sparse : true
   }, address : {

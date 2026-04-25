@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------------------------------------------------------
 // imports
 import Admin from "../models/admin.model.js";
+import bclient from "../models/bclient.js";
 import Broker from "../models/broker.model.js";
 import Client from "../models/client.model.js";
 import Lead from "../models/lead.model.js";
@@ -29,7 +30,7 @@ export const signUpHandler = async (req, res) => {
       number,
       password,
       role,
-      broker_id,
+      ref_id,
       dob,
       address,
       pincode,
@@ -73,12 +74,28 @@ export const signUpHandler = async (req, res) => {
         let broker = null;
 
         // ✅ validate broker BEFORE saving client
-        if (broker_id && broker_id !== "self") {
-          broker = await Broker.findOne({ brokerId: broker_id });
+        if (number) {
+          const bclient = await bclient.findOne({ number: number });
 
-          if (!broker) {
-            return res.status(400).json({ message: "Invalid Broker ID" });
+          if (!bclient) {
+            const client = new Client({
+              client_id: `cli${Date.now()}`,
+              name,
+              email: normalizedEmail,
+              gender,
+              number,
+              password,
+              ref_id: ref_id,
+              // dob: dob,
+              // address: ad
+            });
+
+            await client.save();
+            console.log(client)
           }
+
+          const broker_id = bclient.broker_id
+          broker = await Broker.findOne({brokerId:broker_id})
 
           if (broker.status !== "approved") {
             return res.status(403).json({
@@ -88,19 +105,24 @@ export const signUpHandler = async (req, res) => {
                   : "Broker inactive",
             });
           }
-        }
-// console.log(dob,address)
         const client = new Client({
+          client_id: `cli${Date.now()}`,
           name,
           email: normalizedEmail,
           gender,
           number,
           password,
-          broker_id: broker_id || "self",
+          ref_id: ref_id,
+          broker_id: broker_id,
           // dob: dob,
           // address: ad
         });
 
+        await client.save();
+        console.log(client)
+
+        }
+// console.log(dob,address)
         await client.save();
         console.log(client)
 

@@ -72,7 +72,7 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [refBy, setRefBy] = useState("self"); // referral default
-  const [brokerId, setBrokerId] = useState(""); // if refBy is broker
+  const [ref_id, setref_id] = useState(""); // if refBy is broker
   const [gender, setgender] = useState("")
 
   
@@ -222,7 +222,7 @@ export default function Signup() {
         number,
         password,
         role: "client",
-        broker_id: refBy === "self" || !brokerId.trim() ? "self" : brokerId.trim(),
+        ref_id: !ref_id.trim() ? "self" : ref_id.trim(),
         // dob,
         // address,
         // pincode,
@@ -522,28 +522,15 @@ export default function Signup() {
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
 
-          {/* REFERRAL DROPDOWN */}
-          <select
-            value={refBy}
-            onChange={(e) => setRefBy(e.target.value)}
-            disabled={otpVerified}
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
-            <option value="self">Applying Directly</option>
-            <option value="broker">Applying Through Broker</option>
-          </select>
-
           {/* BROKER ID INPUT */}
-          {refBy === "broker" && (
             <input
               type="text"
-              placeholder="Enter Broker ID"
-              value={brokerId}
-              onChange={(e) => setBrokerId(e.target.value)}
+              placeholder="Enter Ref_id"
+              value={ref_id}
+              onChange={(e) => setref_id(e.target.value)}
               disabled={otpVerified}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
-          )}
 
           {/* SEND OTP BUTTON */}
           <button
