@@ -9,4 +9,4 @@ const  Bclient = new Schema(
     },
     { timestamps: true }
 )
-export default mongoose.model("broker", brokerschema);
+export default mongoose.model("bclient", Bclient);
