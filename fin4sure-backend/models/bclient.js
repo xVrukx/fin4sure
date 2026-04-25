@@ -4,9 +4,9 @@ const  Bclient = new Schema(
     {
     name: {type: String, required: true},
     email: {type: String, required: true, unique: true},
-    nuber: {typr: String, required: true, unique: true},
+    number: {type: String, required: true, unique: true},
     broker_id: {type: String, unique: true},
     },
-      { timestamps: true }
+    { timestamps: true }
 )
 export default mongoose.model("broker", brokerschema);
