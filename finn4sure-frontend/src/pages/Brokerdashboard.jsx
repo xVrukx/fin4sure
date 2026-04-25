@@ -149,8 +149,8 @@ export default function BrokerDashboard() {
             </div>
 
             <div className="flex items-center gap-2">
-              <button className="borderrounded-2xl bg-green-700 transition
-               duration-1000 hover:bg-green-500 hover:shadow px-3 py-2"
+              <button className="rounded-2xl bg-green-500 transition
+               duration-500 hover:bg-green-700 hover:shadow px-3 py-2"
               onClick={toggle}>Add Client</button>
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                 <CgProfile size={20} className="text-green-600" />
