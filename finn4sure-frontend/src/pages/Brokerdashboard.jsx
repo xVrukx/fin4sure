@@ -209,14 +209,14 @@ export default function BrokerDashboard() {
           />
 
           {/* BROKER ID INPUT */}
-            <input
+            {/* <input
               type="text"
               placeholder="Enter Broker ID"
               value={brokerId}
               onChange={(e) => setBrokerId(e.target.value)}
 
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
+            /> */}
 
           {/* SIGNUP BUTTON */}
           <button
