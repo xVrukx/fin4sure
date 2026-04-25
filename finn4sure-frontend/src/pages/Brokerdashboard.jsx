@@ -24,29 +24,23 @@ export default function BrokerDashboard() {
 
     // ---------------- FORM STATES (add client) ----------------
   const [fullName, setFullName] = useState("");
-  const [validateemail, setvalidateemail] = useState("")
+  const [error, setError] = useState("");
+  const [validateemail, setvalidateemail] = useState("");
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
   const [brokerId, setBrokerId] = useState(""); // if refBy is broker
   const [gender, setgender] = useState("")
 
   const validateEmail = (e) => {
-    setEmail(e.target.value);
-    if(validator.isEmail(email)) {
-      setvalidateemail("email is valid");
-    }
-    else{
-      setvalidateemail("email is invalid");
-    };
-  };
-
+  const value = e.target.value;
+  setEmail(value);
+  setvalidateemail(validator.isEmail(value) ? "email is valid" : "email is invalid");
+};
 
   const navigate = useNavigate();
 
   const toggle = async() => {
-    if (bClientToggle){
       setBclientToggle(!bClientToggle)
-    }
   }
 
   useEffect(() => {
@@ -66,7 +60,7 @@ export default function BrokerDashboard() {
   }
 
   const add_client = async() => {
-    res = fetch("https://fin4sure.onrender.com/api/broker/add_client",{
+    const res = await fetch("https://fin4sure.onrender.com/api/broker/add_client",{
       credentials: "include",
       method : "POST",
       headers : {"Content-Type" : "Application/json"},
@@ -78,6 +72,7 @@ export default function BrokerDashboard() {
         brokerId:brokerId
       })
     })
+    if (!res.ok) throw new Error("Failed to add client");
   }
 
   async function fetchClients() {
