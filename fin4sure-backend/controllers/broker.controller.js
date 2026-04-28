@@ -33,7 +33,7 @@ export const addClient = async (req, res) => {
   if(!name|| !email|| !gender|| !number|| !brokerId) {
     res.status(400).json({"message" : "error all fields are required"})
   }
-  const Bclient = bclient({name, email, gender, number, brokerId})
+  const Bclient = bclient({name, email, gender, number, broker_id:brokerId})
   await Bclient.save()
   res.json({"add_client": "client added succesfully"})
 }
