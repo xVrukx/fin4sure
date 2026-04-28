@@ -69,7 +69,7 @@ export default function BrokerDashboard() {
         email:email,
         gender:gender,
         number:number,
-        brokerId:brokerId
+        brokerId:user.brokerId
       })
     })
     if (!res.ok) throw new Error("Failed to add client");
