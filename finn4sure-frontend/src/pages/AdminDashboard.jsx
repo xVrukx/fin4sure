@@ -383,7 +383,7 @@ function BrokerModal({ broker, onClose }) {
           <h4 className="font-medium mb-2">Clients</h4>
           <ul className="list-disc ml-5 text-sm space-y-1">
             {broker.clients.map((c) => (
-              <li key={c._id}>{c.name} <br /> {c.email} <br /> {c.gender}<br /> {c.number}</li>
+              <li key={c._id}>{c.name} - {c.email} - {c.gender}- {c.number}</li>
             ))}
           </ul>
         </div>
