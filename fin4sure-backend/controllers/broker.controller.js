@@ -29,6 +29,9 @@ export const getReferredClients = async (req, res) => {
 // ----------------- ADD CLIENT(INDIVIDUAL) -----------------
 export const addClient = async (req, res) => {
   const {name, email, gender, number, brokerId} = req.body;
+  if(!name|| !email|| !gender|| !number|| !brokerId) {
+    res.status(400).json({"message" : "error all fields are required"})
+  }
   res.json({"add_client": "client added succesfully"})
 }
 
