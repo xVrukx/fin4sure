@@ -100,7 +100,7 @@ export const signUpHandler = async (req, res) => {
 
         // Create client ONLY ONCE
         const client = new Client({
-          client_id: `cli${Date.now()}`,
+          client_id: `CLI${Date.now()}`,
           name,
           email: normalizedEmail,
           gender,
