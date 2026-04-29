@@ -486,6 +486,7 @@ export const profileHandler = async (req, res) => {
   // ✅ unified response for ALL roles
   return res.json({
     role,
+    client_id: user.client_id,
     name: user.name,
     email: user.email,
     number: user.number,
