@@ -149,9 +149,9 @@ export default function BrokerDashboard() {
             </div>
 
             <div className="flex items-center gap-2">
-              <button className="rounded-2xl bg-green-500 transition
-               duration-500 hover:bg-green-700 hover:shadow px-3 py-2"
-              onClick={toggle}>Add Client</button>
+              <button className={`rounded-2xl bg-green-500 transition
+               duration-500 hover:bg-green-700 hover:shadow px-3 py-2 hover:cursor-pointer`}
+              onClick={user.status === "approved"?onclick={toggle}:alert("Approval is pending")}>Add Client</button>
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                 <CgProfile size={20} className="text-green-600" />
               </div>
@@ -167,7 +167,7 @@ export default function BrokerDashboard() {
 {/* overlay */}
   {bClientToggle && (
     <div
-      onClick={() => toggle}
+      onClick={() => toggle()}
       className="fixed inset-0 bg-black/30 z-40"
     />
   )}
@@ -181,9 +181,9 @@ export default function BrokerDashboard() {
         {/* Header */}
     <div className="p-4 border-b flex items-center justify-between">
       <h2 className="text-lg font-semibold">Add clients</h2>
-      <button onClick={toggle}>✕</button>
+      <button onClick={toggle} className="hover:cursor-pointer">✕</button>
     </div>
-    <div className="max-w-md mx-auto w-full bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+    <div className="max-w-md mx-auto w-full mt-20 bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
           Add your <span className="text-blue-700">Client's</span> account
         </h1>

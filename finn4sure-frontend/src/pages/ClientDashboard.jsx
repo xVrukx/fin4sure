@@ -221,6 +221,11 @@ export default function ClientDashboard() {
                 Manage your loan applications and profile
               </p>
             </div>
+            <div>
+              <span className="font-medium text-gray-900 hidden sm:block">
+                Refer Code: {user.client_id}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -453,10 +458,6 @@ export default function ClientDashboard() {
                     <div className="flex justify-between">
                       <span>Email:</span>
                       <span className="font-medium">{user.email}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Client Id:</span>
-                      <span className="font-medium">{user.client_id}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Phone:</span>
