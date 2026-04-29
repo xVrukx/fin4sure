@@ -21,6 +21,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchStats();
     fetchBrokers();
+    fetchclients();
     fetchLeads();
   }, [leadFilter]);
 
