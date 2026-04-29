@@ -296,7 +296,7 @@ export default function ClientDashboard() {
           <div className="space-y-6">
             <div className="bg-linear-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6">
               <div>
-                <h3 className="font-bold text-xl">{user.client_id}</h3>
+                <h3 className="font-bold text-xl">Client ID:- {user.client_id}</h3>
               </div>
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
