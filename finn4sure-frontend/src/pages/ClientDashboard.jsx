@@ -51,7 +51,6 @@ export default function ClientDashboard() {
     setname(data.name || "");
     setemail(data.email || "");
     setgender(data.gender || "");
-    setgender(data.client_id || "");
     setnumber(data.number || "");
     setaddress(data.address || "");
     setpincode(data.pincode || "");
@@ -303,9 +302,6 @@ export default function ClientDashboard() {
                   <h3 className="font-bold text-xl">{user.name}</h3>
                 </div>
               </div>
-              <div>
-                <h3 className="font-bold text-xl">Client ID:- <span className="gap-4">{user.client_id}</span></h3>
-              </div>
 
               {/* Profile form */}
               <div className="space-y-3 text-sm">
@@ -457,6 +453,10 @@ export default function ClientDashboard() {
                     <div className="flex justify-between">
                       <span>Email:</span>
                       <span className="font-medium">{user.email}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Client Id:</span>
+                      <span className="font-medium">{user.client_id}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Phone:</span>

@@ -305,7 +305,7 @@ export default function Signup() {
           {/* NAME */}
           <input
             type="text"
-            placeholder="Your full name"
+            placeholder="Your full name *"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -314,7 +314,7 @@ export default function Signup() {
           {/* EMAIL */}
           <input
             type="email"
-            placeholder="you@example.com"
+            placeholder="you@example.com *"
             value={email}
             onChange={validateEmail}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -326,9 +326,10 @@ export default function Signup() {
           {/* GENDER */}
             <select name="Gender" id="Gender" value={gender} onChange={(e) => {setgender(e.target.value)}}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-              <option value="">---- Select a gender ----</option>
+              <option value="">---- Select a gender ---- *</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
+              <option value="Female">Other</option>
             </select>
 
           {/* PASSWORD */}
@@ -339,7 +340,7 @@ export default function Signup() {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Create a password"
+                placeholder="Create a password *"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -370,7 +371,7 @@ export default function Signup() {
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
-              placeholder="Confirm password"
+              placeholder="Confirm password *"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -512,7 +513,7 @@ export default function Signup() {
           {/* MOBILE NUMBER */}
           <input
             type="tel"
-            placeholder="10-digit mobile number"
+            placeholder="10-digit mobile number *"
             value={number}
             onChange={(e) => {
               const val = e.target.value.replace(/\D/g, "");
@@ -522,10 +523,10 @@ export default function Signup() {
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
 
-          {/* BROKER ID INPUT */}
+          {/* Reffer ID INPUT */}
             <input
               type="text"
-              placeholder="Enter Ref_id"
+              placeholder="Add Ref_id if any"
               value={ref_id}
               onChange={(e) => setref_id(e.target.value)}
               disabled={otpVerified}
@@ -620,7 +621,7 @@ export default function Signup() {
                 {/* NAME */}
                 <input
                   type="text"
-                  placeholder="Your full name"
+                  placeholder="Your full name *"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -629,7 +630,7 @@ export default function Signup() {
                 {/* EMAIL */}
                 <input
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="you@example.com *"
                   value={email}
                   onChange={validateEmail}
                   className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -638,9 +639,11 @@ export default function Signup() {
                 {/* GENDER */}
                   <select name="Gender" id="Gender" value={gender} onChange={(e) => {setgender(e.target.value)}}
                     className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-                    <option value="">---- Select a gender ----</option>
+                    <option value="">---- Select a gender ---- *</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
+                    <option value="Female">Other</option>
+
                   </select>
 
                 {/* PASSWORD */}
@@ -651,7 +654,7 @@ export default function Signup() {
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
-                      placeholder="Create a password"
+                      placeholder="Create a password *"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -679,7 +682,7 @@ export default function Signup() {
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm password"
+                    placeholder="Confirm password *"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -696,6 +699,7 @@ export default function Signup() {
                 {/* dob */}
                 <input
                   type="date"
+                  placeholder="dob *"
                   value={dob}
                   onChange={(e) => setdob(e.target.value)}
                   className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -710,7 +714,7 @@ export default function Signup() {
         </label>
         <input
           type="text"
-          placeholder="Enter your address"
+          placeholder="Enter your address *"
           value={address}
           onChange={(e) => setaddress(e.target.value)}
           className="w-full px-4 py-3 border border-slate-300 rounded-lg 
@@ -732,6 +736,7 @@ export default function Signup() {
             <select
               name="state"
               id="state"
+              placeholder="*"
               value={state}
               onChange={(e) => {
                 setstate(e.target.value);
@@ -765,6 +770,7 @@ export default function Signup() {
           <div className="relative">
             <select
               name="District"
+              placeholder="*"
               id="District"
               value={district}
               disabled={!state}
@@ -799,7 +805,7 @@ export default function Signup() {
       {/* pincode */}
                 <input
                   type="text"
-                  placeholder="enter your city pincode"
+                  placeholder="enter your city pincode *"
                   maxLength={6}
                   value={pincode}
                   onChange={(e) => setpincode(e.target.value.replace(/\D/g,""))}
@@ -815,7 +821,7 @@ export default function Signup() {
                 {/* MOBILE NUMBER */}
                 <input
                   type="tel"
-                  placeholder="10-digit mobile number"
+                  placeholder="10-digit mobile number *"
                   value={number}
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, "");
