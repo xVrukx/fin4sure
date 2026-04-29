@@ -151,7 +151,7 @@ export default function BrokerDashboard() {
             <div className="flex items-center gap-2">
               <button className={`rounded-2xl bg-green-500 transition
                duration-500 hover:bg-green-700 hover:shadow px-3 py-2 hover:cursor-pointer`}
-              onClick={user.status === "approved"?onclick={toggle}:alert("Approval is pending")}>Add Client</button>
+              onClick={() => {user.status === "approved"?toggle():alert("Approval is pending")}}>Add Client</button>
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                 <CgProfile size={20} className="text-green-600" />
               </div>

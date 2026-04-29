@@ -334,7 +334,7 @@ export const Logouthandaler = async (req, res) => {
     res
       .clearCookie("AccessToken", {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: "lax",
       })
       .json({ message: "Logged out successfully" });
