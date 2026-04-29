@@ -174,7 +174,7 @@ export default function AdminDashboard() {
 
             <button
               onClick={() => exportData("leads")}
-              className="bg-blue-300 text-white px-4 py-2 rounded text-sm hover:bg-blue-700"
+              className="bg-amber-600 text-white px-4 py-2 rounded text-sm hover:bg-amber-700"
             >
               Export Leads
             </button>
