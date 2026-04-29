@@ -95,7 +95,7 @@ export default function Hero() {
   {/* Overlay */}
   {emiCal && (
     <div
-      onClick={() => emiCalculater}
+      onClick={() => emiCalculater()}
       className="fixed inset-0 bg-black/30 z-40"
     />
   )}

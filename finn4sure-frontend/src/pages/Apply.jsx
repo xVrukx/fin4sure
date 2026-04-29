@@ -173,7 +173,7 @@ export default function Apply() {
           {/* dob */}
           <input
             type="date"
-            placeholder="enter your date of birth"
+            placeholder="enter your date of birth *"
             value={dob}
             onChange={(e) => setdob(e.target.value)}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -188,7 +188,7 @@ export default function Apply() {
   </label>
   <input
     type="text"
-    placeholder="Enter your address"
+    placeholder="Enter your address *"
     value={address}
     onChange={(e) => setaddress(e.target.value)}
     className="w-full px-4 py-3 border border-slate-300 rounded-lg 
@@ -277,7 +277,7 @@ export default function Apply() {
 {/* pincode */}
           <input
             type="text"
-            placeholder="enter your city pincode"
+            placeholder="enter your city pincode *"
             maxLength={6}
             value={pincode}
             onChange={(e) => setpincode(e.target.value.replace(/\D/g,""))}
@@ -316,7 +316,7 @@ export default function Apply() {
 
               <input
                 type="text"
-                placeholder="ABCDE1234F"
+                placeholder="ABCDE1234F *"
                 value={pan}
                 onChange={(e) =>
                   setPan(e.target.value.toUpperCase())
