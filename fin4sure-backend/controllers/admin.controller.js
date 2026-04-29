@@ -3,6 +3,7 @@ import Lead from "../models/lead.model.js";
 import Broker from "../models/broker.model.js";
 import Admin from "../models/admin.model.js";
 import ExcelJS from "exceljs";
+import clientModel from "../models/client.model.js";
 
 /* -----------------------------------------------------
    ADMIN STATS
@@ -269,8 +270,8 @@ export const exportData = async (req, res) => {
     }
 
     // -------------------- client --------------------
-    if (type === "clients") {
-    const data_c = await Lead.find().lean();
+    if (type === "leads") {
+    const data_l = await Lead.find().lean();
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Report");
@@ -286,7 +287,7 @@ export const exportData = async (req, res) => {
       { header: "Created", key: "createdAt", width: 20 }
     ];
 
-    data_c.forEach((item) => {
+    data_l.forEach((item) => {
 
       const row = sheet.addRow({
         name: item.name,
@@ -330,9 +331,72 @@ export const exportData = async (req, res) => {
     await workbook.xlsx.write(res);
     res.end();
     }
-    if(type === "All") {
+
+    // -------------------- client --------------------
+    if (type === "clients") {
     const data_c = await Lead.find().lean();
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Report");
+
+    sheet.columns = [
+      { header: "Name", key: "name", width: 25 },
+      { header: "Email", key: "email", width: 30 },
+      { header: "Phone", key: "number", width: 20 },
+      { header: "dob", key: "dob", width: 15 },
+      { header: "address", key: "address", width: 20 },
+      { header: "Broker_id", key: "Broker_id", width: 20},
+      { header: "Created", key: "createdAt", width: 20 }
+    ];
+
+    data_c.forEach((item) => {
+
+      const row = sheet.addRow({
+        name: item.name,
+        email: item.email,
+        number: item.number,
+        dob: item.dob,
+        address: item.address,
+        Broker_id: item.broker_id,
+        createdAt: item.createdAt
+      });
+      const update = new Date(item.statusUpdatedAt)
+      if (update >= start && update <= end && item.statusUpdatedAt !== item.createdAt) {
+
+          if (item.status === "approved") {
+            row.getCell("status").fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: "C6EFCE" }
+            };
+          }
+
+          if (item.status === "rejected") {
+            row.getCell("status").fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: "FFC7CE" }
+            };
+          }
+      }
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=report.xlsx"
+    );
+    await workbook.xlsx.write(res);
+    res.end();
+    }
+    
+    if(type === "All") {
+    const data_l = await Lead.find().lean();
     const data_b = await Broker.find().lean();
+    const data_c = await clientModel.find().lean();
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Report");
@@ -350,15 +414,27 @@ export const exportData = async (req, res) => {
       { header: "Broker_id", key: "broker_id_b", width: 20},
       { header: "clients", key: "clients", width: 20},
       { header: "Created", key: "createdAt_b", width: 20 },
+
       { header: "        ", key: "", width: 20 },
-      { header: "Client", key: "client", width: 25 },
-      { header: "Email", key: "email_c", width: 30 },
-      { header: "Phone", key: "number_c", width: 20 },
-      { header: "Status", key: "status_c", width: 15 },
-      { header: "dob", key: "dob_c", width: 15 },
-      { header: "address", key: "address_c", width: 20 },
-      { header: "Broker_id", key: "broker_id_c", width: 20},
-      { header: "Created", key: "createdAt_c", width: 20 }
+
+      {header: "Client", key: "client",width: 25},
+      {header: "Email", key: "email_c",width: 30},
+      {header: "Phone", key: "number_c",width: 20},
+      {header: "DOB", key: "dob_c",width: 15},
+      {header: "Address", key: "address_c",width: 20},
+      {header: "Broker_id", key: "broker_id_c",width: 20},
+      {header: "Created", key: "createdAt_c",width: 20},
+      
+      { header: "        ", key: "", width: 20 },
+      
+      { header: "Leads", key: "lead", width: 25 },
+      { header: "Email", key: "email_l", width: 30 },
+      { header: "Phone", key: "number_l", width: 20 },
+      { header: "Status", key: "status_l", width: 15 },
+      { header: "DOB", key: "dob_l", width: 15 },
+      { header: "Address", key: "address_l", width: 20 },
+      { header: "Broker_id", key: "broker_id_l", width: 20},
+      { header: "Created", key: "createdAt_l", width: 20 }
     ];
 
     data_b.forEach((item) => {
@@ -399,17 +475,17 @@ export const exportData = async (req, res) => {
       }
     });
 
-    data_c.forEach((item) => {
+    data_l.forEach((item) => {
 
       const row = sheet.addRow({
-        client: item.name,
-        email_c: item.email,
-        number_c: item.number,
-        status_c: item.status,
-        dob_c: item.dob,
-        address_c: item.address,
-        broker_id_c: item.broker_id,
-        createdAt_c: item.createdAt
+        lead: item.name,
+        email_l: item.email,
+        number_l: item.number,
+        status_l: item.status,
+        dob_l: item.dob,
+        address_l: item.address,
+        broker_id_l: item.broker_id,
+        createdAt_l: item.createdAt
       });
       const update = new Date(item.statusUpdatedAt)
       if (update >= start && update <= end && item.statusUpdatedAt !== item.createdAt) {
@@ -430,6 +506,19 @@ export const exportData = async (req, res) => {
             };
           }
       }
+    });
+
+    data_c.forEach((item) => {
+
+      const row = sheet.addRow({
+        client: item.name,
+        email_c: item.email,
+        number_c: item.number,
+        dob_c: item.dob,
+        address_c: item.address,
+        broker_id_c: item.broker_id,
+        createdAt_c: item.createdAt
+      });
     });  
 
     res.setHeader(
