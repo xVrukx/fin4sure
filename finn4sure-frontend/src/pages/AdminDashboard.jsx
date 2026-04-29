@@ -455,13 +455,13 @@ function ClientModal({ client, onClose }) {
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl w-full max-w-3xl p-6 space-y-6 shadow-xl">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Clients applications</h3>
+          <h3 className="text-lg font-semibold">Client's applications</h3>
           <button onClick={onClose} className="text-slate-500 hover:text-slate-800">
             ✕
           </button>
         </div>
         <div>
-          <h4 className="font-medium mb-2">Clients</h4>
+          <h4 className="font-medium mb-2">Applications</h4>
           <ul className="list-disc ml-5 text-sm space-y-1">
             {client.product.map((c) => (
               <li key={c.product}>{c.product} - {c.status}</li>
