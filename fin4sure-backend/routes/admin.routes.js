@@ -6,7 +6,8 @@ import {
   updateBrokerStatus,
   updateLeadStatus,
   createAdmin,
-  exportData
+  exportData,
+  clientsWithFullData
 } from "../controllers/admin.controller.js";
 
 import { verifyUser, isAdmin } from "../middlewares/auth.middleware.js";
@@ -18,6 +19,9 @@ router.get("/stats", verifyUser, isAdmin, userCount);
 
 /* ---------- BROKERS (FULL DATA) ---------- */
 router.get("/brokers", verifyUser, isAdmin, brokersWithFullData);
+
+/* ---------- CLIENTS (FULL DATA) ---------- */
+router.get("/clients", verifyUser, isAdmin, clientsWithFullData);
 
 /* ---------- LEADS (FULL DATA) ---------- */
 router.get("/leads", verifyUser, isAdmin, allLeads);

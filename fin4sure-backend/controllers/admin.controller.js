@@ -66,6 +66,22 @@ export const brokersWithFullData = async (req, res) => {
 };
 
 /* -----------------------------------------------------
+   ADMIN – ALL CLIENTS WITH FULL INFO
+----------------------------------------------------- */
+export const clientsWithFullData = async (req, res) => {
+  try {
+    const client = await clientModel.find().select("-password -v");
+    if (!client) {
+      res.status(404).json({"message": "clients not found"})
+    }
+    res.json(client)
+}catch (e) {
+  console.log({"message" : "error occored while fetching all the clients from the model"})
+  res.status(500).json({"message": "error occored while fetching all the clients from the model"})
+}
+}
+
+/* -----------------------------------------------------
    ADMIN – ALL LEADS WITH FULL INFO
 ----------------------------------------------------- */
 export const allLeads = async (req, res) => {

@@ -6,9 +6,11 @@ export default function AdminDashboard() {
 
   const [stats, setStats] = useState({});
   const [brokers, setBrokers] = useState([]);
+  const [clients, setclients] = useState([]);
   const [leads, setLeads] = useState([]);
   const [leadFilter, setLeadFilter] = useState("pending");
   const [selectedLead, setSelectedLead] = useState(null);
+  const [selectedClient, setSelectedclient] = useState(null);
   const [selectedBroker, setSelectedBroker] = useState(null);
 
   /* NEW STATES FOR EXPORT */
@@ -35,6 +37,13 @@ export default function AdminDashboard() {
       credentials: "include",
     });
     if (res.ok) setBrokers(await res.json());
+  }
+
+  async function fetchclients() {
+    const res = await fetch("https://fin4sure.onrender.com/api/admin/clients", {
+      credentials: "include",
+    });
+    if (res.ok) setclients(await res.json());
   }
 
   async function fetchLeads() {
@@ -238,6 +247,35 @@ export default function AdminDashboard() {
   </div>
 </Section>
 
+<section title="Total Clients">
+  <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
+    <table className="min-w-full text-left text-sm divide-y divide-slate-200">
+      <thead className="bg-linear-to-r from-blue-100 via-blue-50 to-white text-slate-700">
+        <tr>
+          <th className="p-3 text-left">Client</th>
+          <th className="p-3 hidden sm:table-cell">CLient ID</th>
+          <th className="p-3 hidden md:table-cell">Email</th>
+          <th className="p-3 hidden md:table-cell">Number</th>
+        </tr>        
+      </thead>
+      <tbody className="bg-white divide-y divide-slate-200">
+        {clients.map((c) => (
+          <tr key={c. client_id} className="hover:bg-blue-50 transition">
+            <td className="p-3 font-medium text-slate-800">{c.name}</td>
+            <td className="p-3 hidden sm:table-cell">{c.client_id}</td>
+            <td className="p-3 hidden md:table-cell">{c.email}</td>
+            <td className="p-3 hidden md:table-cell">{c.number}</td>
+            <td className="p-3 hidden md:table-cell">{c.gender}</td>
+            <td className="p-3 text-right space-x-2 flex justify-end">
+              <ActionBtn onClick={() => setSelectedclient(c)}>Applied Products</ActionBtn>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
+
 {/* Leads */}
 <Section
   title="Lead Applications"
@@ -298,6 +336,9 @@ export default function AdminDashboard() {
 
         {selectedBroker && (
           <BrokerModal broker={selectedBroker} onClose={() => setSelectedBroker(null)} />
+        )}
+        {selectedClient && (
+          <ClientModal client={selectedclient} onClose={() => setSelectedclient(null)} />
         )}
         {selectedLead && (
         <LeadModal lead={selectedLead} onClose={() => setSelectedLead(null)}/>
@@ -400,6 +441,29 @@ function BrokerModal({ broker, onClose }) {
           <ul className="list-disc ml-5 text-sm space-y-1">
             {broker.leads.map((l) => (
               <li key={l._id}>{l.name} - {l.product} - {l.status}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ClientModal({ client, onClose }) {
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl w-full max-w-3xl p-6 space-y-6 shadow-xl">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Clients applications</h3>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-800">
+            ✕
+          </button>
+        </div>
+        <div>
+          <h4 className="font-medium mb-2">Clients</h4>
+          <ul className="list-disc ml-5 text-sm space-y-1">
+            {client.product.map((c) => (
+              <li key={c.product}>{c.product} - {c.status}</li>
             ))}
           </ul>
         </div>
