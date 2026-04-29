@@ -10,7 +10,7 @@ export default function AdminDashboard() {
   const [leads, setLeads] = useState([]);
   const [leadFilter, setLeadFilter] = useState("pending");
   const [selectedLead, setSelectedLead] = useState(null);
-  const [selectedClient, setSelectedclient] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(null);
   const [selectedBroker, setSelectedBroker] = useState(null);
 
   /* NEW STATES FOR EXPORT */
@@ -268,7 +268,7 @@ export default function AdminDashboard() {
             <td className="p-3 hidden md:table-cell">{c.number}</td>
             <td className="p-3 hidden md:table-cell">{c.gender}</td>
             <td className="p-3 text-right space-x-2 flex justify-end">
-              <ActionBtn onClick={() => setSelectedclient(c)}>Applied Products</ActionBtn>
+              <ActionBtn onClick={() => setSelectedClient(c)}>Applied Products</ActionBtn>
             </td>
           </tr>
         ))}
@@ -339,7 +339,7 @@ export default function AdminDashboard() {
           <BrokerModal broker={selectedBroker} onClose={() => setSelectedBroker(null)} />
         )}
         {selectedClient && (
-          <ClientModal client={selectedclient} onClose={() => setSelectedclient(null)} />
+          <ClientModal client={selectedClient} onClose={() => setSelectedClient(null)} />
         )}
         {selectedLead && (
         <LeadModal lead={selectedLead} onClose={() => setSelectedLead(null)}/>
