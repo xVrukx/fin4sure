@@ -84,7 +84,7 @@ export default function Hero() {
             <button
               className="px-7 py-3 rounded-lg font-medium
                          border border-[#d9a93d] text-[#d9a93d]
-                         hover:bg-[#d9a93d]/10
+                         hover:bg-[#d9a93d]/10 hover:cursor-pointer
                          transition duration-300"
               onClick={emiCalculater}
             >
@@ -110,7 +110,7 @@ export default function Hero() {
     {/* Header */}
     <div className="p-4 border-b flex items-center justify-between">
       <h2 className="text-lg font-semibold">EMI Calculator</h2>
-      <button onClick={emiCalculater}>✕</button>
+      <button onClick={emiCalculater} className="hover:cursor-pointer">✕</button>
     </div>
 
     {/* Body */}
