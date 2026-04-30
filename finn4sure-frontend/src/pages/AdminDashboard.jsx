@@ -130,13 +130,20 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
 
         {/* Header */}
-        <div>
+        <div className="flex justify-center gap-4">
+          <div>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900">
             Admin Dashboard
           </h1>
           <p className="text-lg text-slate-600 mt-2">
             Overview of platform performance and pending approvals
           </p>
+          </div>
+
+          <button className="from-bg-green-500 via-bg-green-550 to-bg-green-700 p-4 rounded-lg
+          hover:from-bg-green-600 hover:via-bg-green-650 hover:to-bg-green-750"
+          >Edit Rates</button>
+
         </div>
 
         {/* EXPORT SECTION (NEW) */}
