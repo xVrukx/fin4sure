@@ -130,7 +130,7 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
 
         {/* Header */}
-        <div className="flex justify-between gap-4">
+        <div className="flex justify-around gap-4">
           <div>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900">
             Admin Dashboard
