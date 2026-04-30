@@ -28,6 +28,16 @@ export function encryptPAN(pan) {
   return iv.toString("hex") + ":" + encrypted;
 }
 
+export const dcryptPAN = (encrypedted) => {
+  const key = getKey();
+  const [unfiltred_iv, encryptval] = encrypedted.split(":")
+  const iv = Buffer.from(unfiltred_iv, "hex");
+  const decipher = crypto.Decipheriv(ALGO, key, iv);
+  let decryptval = decipher.update(encryptval, "hex", "utf8");
+  decryptval += decipher.final("utf8");
+  return decryptval;
+}
+
 // 🔍 deterministic hash for duplicate detection
 export function hashPAN(pan) {
   return crypto

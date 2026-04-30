@@ -3,6 +3,7 @@ import Lead from "../models/lead.model.js";
 import Broker from "../models/broker.model.js";
 import Admin from "../models/admin.model.js";
 import ExcelJS from "exceljs";
+import { dcryptPAN } from "../utils/pan.crypto.js";
 import clientModel from "../models/client.model.js";
 
 /* -----------------------------------------------------
@@ -102,11 +103,12 @@ export const allLeads = async (req, res) => {
       leads = await Lead.find(filter)
       .sort({ createdAt: -1 })
       .lean();
-    }
+     }
+
     const enrichedLeads = await Promise.all(
       leads.map(async (lead) => {
         let broker = null;
-
+        const dPan = dcryptPAN(lead.pan_encrypted);
         if (lead.broker_id !== "self") {
           broker = await Broker.findOne(
             { brokerId: lead.broker_id },
@@ -117,7 +119,8 @@ export const allLeads = async (req, res) => {
         return {
           ...lead,
           source: lead.broker_id === "self" ? "direct" : "broker",
-          broker
+          broker,
+          dPan
         };
       })
     );
