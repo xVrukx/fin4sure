@@ -140,7 +140,7 @@ export default function AdminDashboard() {
           </p>
           </div>
 
-          <button className="bg-linear-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600
+          <button className="bg-linear-to-r from-green-500 duration-500 transition via-green-600 to-green-700 hover:from-green-600
            hover:via-green-700 hover:to-green-800 text-white p-4 rounded-lg transition-all duration-200"
           >Edit Rates</button>
 
