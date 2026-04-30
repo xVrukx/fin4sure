@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
+  const [Loan, setLoan] = useState("");
+  const [Bank, setBank] = useState("");
+  const [Intrest, setIntrest] = useState("");
   const [stats, setStats] = useState({});
   const [brokers, setBrokers] = useState([]);
   const [clients, setclients] = useState([]);
@@ -140,11 +143,93 @@ export default function AdminDashboard() {
           </p>
           </div>
 
-          <button className="bg-linear-to-r from-green-500 duration-500 transition via-green-600 to-green-700 hover:from-green-600
-           hover:via-green-700 hover:to-green-800 text-white px-4 py-2 rounded-lg transition-all duration-200"
+          <button className="bg-linear-to-r from-green-500 duration-500 via-green-600 to-green-700 hover:from-green-600
+           hover:via-green-700 hover:to-green-800 text-white px-4 py-1 rounded-lg transition-all "
           >Edit Rates</button>
 
         </div>
+
+
+{/* overlay */}
+  {editToggle && (
+    <div
+      onClick={() => toggle()}
+      className="fixed inset-0 bg-black/30 z-40"
+    />
+  )}
+  {/* Client apply Drawer */}
+  <div
+    className={`fixed top-0 right-0 h-full w-xl  bg-white z-50
+    shadow-2xl rounded-l-2xl
+    transform transition-transform duration-300 ease-in-out
+    ${editToggle ? "translate-x-0" : "translate-x-full"}`}
+  >
+        {/* Header */}
+    <div className="p-4 border-b flex items-center justify-between">
+      <h2 className="text-lg font-semibold">Add clients</h2>
+      <button onClick={toggle} className="hover:cursor-pointer">✕</button>
+    </div>
+    <div className="max-w-md mx-auto w-full mt-20 bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+        <h1 className="text-2xl font-bold text-slate-900">
+          Edit <span className="text-blue-700">Intrest</span> Rate
+        </h1>
+
+        {error && (
+          <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        <div className="mt-6 space-y-5">
+          {/* BANK */}
+            <select name="Bank" id="Bank" value={Bank} onChange={(e) => {setBank(e.target.value)}}
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <option value="">---- Select a Bank ----</option>
+              <option value="SBI">SBI</option>
+              <option value="Axis">Axis</option>
+              <option value="ICICI">ICICI</option>
+              <option value="HDFC">HDFC</option>
+              <option value="PNB">PNB</option>
+              <option value="Kotak">Kotak</option>
+              <option value="BOB">BOB</option>
+              <option value="YES">YES</option>
+            </select>
+
+          {/* Loan */}
+            <select name="Loan" id="bench_rate" value={Loan} onChange={(e) => {setLoan(e.target.value)}}
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <option value="">---- Select a Bench Rate ----</option>
+              <option value="RepoRate">Home loan</option>
+              <option value="SDF">Personal loan</option>
+              <option value="MSF">Car loan</option>
+            </select>
+
+
+          {/* Intrest Rate */}
+          <input
+            type="text"
+            placeholder="enter Standard"
+            value={Intrest}
+            onChange={(e) => setIntrest(e.target.value)}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          {/* Add */}
+          <button
+            type="button"
+            className="w-full py-3 rounded-lg font-medium text-white
+                       bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
+                       hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
+                       transition disabled:opacity-50"
+          >
+            Submit
+          </button>
+
+      </div>
+    </div>
+  </div>
+
+
 
         {/* EXPORT SECTION (NEW) */}
         <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
