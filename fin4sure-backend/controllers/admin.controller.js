@@ -88,6 +88,7 @@ export const allLeads = async (req, res) => {
   try {
     const { status } = req.query;
     const filter = {};
+    filter.status = status;
     let leads
     if (!status) {
       res.status(404).json({"message" : "leads not found"})
@@ -97,11 +98,11 @@ export const allLeads = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
     }
-    filter.status = status;
-
-    leads = await Lead.find(filter)
+    else {
+      leads = await Lead.find(filter)
       .sort({ createdAt: -1 })
       .lean();
+    }
     const enrichedLeads = await Promise.all(
       leads.map(async (lead) => {
         let broker = null;
