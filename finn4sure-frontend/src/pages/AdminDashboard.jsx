@@ -130,7 +130,7 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
 
         {/* Header */}
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-beween gap-4">
           <div>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900">
             Admin Dashboard
@@ -140,8 +140,8 @@ export default function AdminDashboard() {
           </p>
           </div>
 
-          <button className="bg-linear-to-r from-green-500 via-green-550 to-green-700 p-4 rounded-lg
-          hover:from-green-600 hover:via-green-650 hover:to-green-750"
+          <button className="bg-linear-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600
+           hover:via-green-700 hover:to-green-800 text-white p-4 rounded-lg transition-all duration-200"
           >Edit Rates</button>
 
         </div>
