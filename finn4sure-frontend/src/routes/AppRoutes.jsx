@@ -27,6 +27,7 @@ export default function AppRoutes() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/EMI-calculator" element={<Calculator />} />
         <Route path="/broker-register" element={<BrokerRegistration />} />
+        <Route path="/AboutCareersSection" element={<AboutCareersSection />}/>
 
         {/* Protected dashboard routes */}
         <Route
@@ -50,15 +51,6 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute allowedRole="client">
               <ClientDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/AboutCareersSection"
-          element={
-            <ProtectedRoute allowedRole="client">
-              <AboutCareersSection />
             </ProtectedRoute>
           }
         />

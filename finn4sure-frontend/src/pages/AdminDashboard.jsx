@@ -150,7 +150,7 @@ export default function AdminDashboard() {
           </div>
 
           <button className="bg-linear-to-r from-green-500 duration-500 via-green-600 to-green-700 hover:from-green-600
-           hover:via-green-700 hover:to-green-800 text-white px-4 py-1 rounded-lg transition-all "
+           hover:via-green-700 hover:to-green-800 text-white px-4 py-1 rounded-lg transition-all " onClick={toggle}
           >Edit Rates</button>
 
         </div>
