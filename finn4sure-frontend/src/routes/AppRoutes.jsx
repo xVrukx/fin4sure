@@ -12,6 +12,7 @@ import BrokerDashboard  from "../pages/Brokerdashboard";
 import AdminDashboard from "../pages/AdminDashboard";  // You'll create this
 import ClientDashboard from "../pages/ClientDashboard"; // You'll create this
 import ProtectedRoute from "../components/ProtectedRoute";
+import { AboutCareersSection } from "../pages/Aboutcareerssection ";
 
 export default function AppRoutes() {
   return (
@@ -49,6 +50,15 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute allowedRole="client">
               <ClientDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/AboutCareersSection"
+          element={
+            <ProtectedRoute allowedRole="client">
+              <AboutCareersSection />
             </ProtectedRoute>
           }
         />
