@@ -8,6 +8,7 @@ export default function AdminDashboard() {
   const [Bank, setBank] = useState("");
   const [Intrest, setIntrest] = useState("");
   const [stats, setStats] = useState({});
+  const [error, setError] = useState("");
   const [brokers, setBrokers] = useState([]);
   const [clients, setclients] = useState([]);
   const [leads, setLeads] = useState([]);
@@ -15,6 +16,7 @@ export default function AdminDashboard() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedBroker, setSelectedBroker] = useState(null);
+  const [editToggle, seteditToggle] = useState(false);
 
   /* NEW STATES FOR EXPORT */
   const [exportFilter, setExportFilter] = useState("today");
@@ -42,6 +44,10 @@ export default function AdminDashboard() {
     });
     if (res.ok) setBrokers(await res.json());
   }
+
+  const toggle = async() => {
+    seteditToggle(!editToggle);
+  };
 
   async function fetchclients() {
     const res = await fetch("https://fin4sure.onrender.com/api/admin/clients", {
