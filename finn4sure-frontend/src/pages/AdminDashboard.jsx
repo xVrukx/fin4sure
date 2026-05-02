@@ -172,13 +172,12 @@ export default function AdminDashboard() {
   >
         {/* Header */}
     <div className="p-4 border-b flex items-center justify-between">
-      <h2 className="text-lg font-semibold">Add clients</h2>
-      <button onClick={toggle} className="hover:cursor-pointer">✕</button>
-    </div>
-    <div className="max-w-md mx-auto w-full mt-20 bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
           Edit <span className="text-blue-700">Intrest</span> Rate
         </h1>
+      <button onClick={toggle} className="hover:cursor-pointer">✕</button>
+    </div>
+    <div className="max-w-md mx-auto w-full mt-20 bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
 
         {error && (
           <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
@@ -204,7 +203,7 @@ export default function AdminDashboard() {
           {/* Loan */}
             <select name="Loan" id="bench_rate" value={Loan} onChange={(e) => {setLoan(e.target.value)}}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-              <option value="">---- Select a Bench Rate ----</option>
+              <option value="">---- Select a Loan ----</option>
               <option value="RepoRate">Home loan</option>
               <option value="SDF">Personal loan</option>
               <option value="MSF">Car loan</option>
@@ -214,7 +213,7 @@ export default function AdminDashboard() {
           {/* Intrest Rate */}
           <input
             type="text"
-            placeholder="enter Standard"
+            placeholder="Enter Intrest rate"
             value={Intrest}
             onChange={(e) => setIntrest(e.target.value)}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"

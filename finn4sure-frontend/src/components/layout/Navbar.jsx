@@ -25,7 +25,7 @@ export default function Navbar() {
       <Link className="nav-link" to="/">Home</Link>
       <Link className="nav-link" to="/products">Loans</Link>
       <Link className="nav-link" to="/EMI-calculator">EMI Calculator</Link>
-      <Link className="nav-link" to="/AboutCareersSection">Career</Link>
+
       {/* <Link className="nav-link" to="/broker-register">Become a Partner</Link> */}
     </>
   );
@@ -49,7 +49,7 @@ export default function Navbar() {
               <Link className="nav-link" to="/">Home</Link>
               {/* <Link className="nav-link" to="/products">Products</Link> */}
               <Link className="nav-link" to="/EMI-calculator">EMI Calculator</Link>
-              <Link className="nav-link" to="/AboutCareersSection">Career</Link>
+        
             </>
           )}
 
@@ -59,7 +59,7 @@ export default function Navbar() {
               <Link className="nav-link" to="/">Home</Link>
               <Link className="nav-link" to="/products">Products</Link>
               <Link className="nav-link" to="/EMI-calculator">EMI Calculator</Link>
-              <Link className="nav-link" to="/AboutCareersSection">Career</Link>
+        
             </>
           )}
 
@@ -69,7 +69,7 @@ export default function Navbar() {
               <Link className="nav-link" to="/">Home</Link>
               <Link className="nav-link" to="/products">Products</Link>
               <Link className="nav-link" to="/EMI-calculator">EMI Calculator</Link>
-              <Link className="nav-link" to="/AboutCareersSection">Career</Link>
+        
             </>
           )}
         </nav>
@@ -181,9 +181,6 @@ export default function Navbar() {
           <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/EMI-calculator">
             <CiCalculator2 /> EMI Calculator
           </Link>
-          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/AboutCareersSection">
-          <AiFillHdd />Career
-          </Link>
 
           <button
             onClick={handleLogout}
@@ -206,9 +203,6 @@ export default function Navbar() {
           </Link>
           <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/EMI-calculator">
             <CiCalculator2 />EMI Calculator
-          </Link>
-          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/AboutCareersSection">
-          <AiFillHdd />Career
           </Link>
 
           <button
@@ -236,10 +230,6 @@ export default function Navbar() {
           <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/EMI-calculator">
             <CiCalculator2 />EMI Calculator
           </Link>
-          <Link className="mobile-link flex items-center gap-2 text-gray-700 hover:text-blue-600 transition" to="/AboutCareersSection">
-          <AiFillHdd />Career
-          </Link>
-
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 text-red-600 hover:text-red-800 font-medium cursor-pointer mt-auto transition"

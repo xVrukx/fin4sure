@@ -27,7 +27,6 @@ export default function AppRoutes() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/EMI-calculator" element={<Calculator />} />
         <Route path="/broker-register" element={<BrokerRegistration />} />
-        <Route path="/AboutCareersSection" element={<AboutCareersSection />}/>
 
         {/* Protected dashboard routes */}
         <Route
@@ -54,7 +53,6 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
         {/* Redirect unauthorized to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
