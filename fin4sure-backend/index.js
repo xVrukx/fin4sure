@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import connectDB from "./config/db.js";
+import path from "path"
 import authRouter from "./routes/auth.routes.js"; // ADD THIS
 import adminRouter from "./routes/admin.routes.js";
 import brokerRouter from "./routes/broker.routes.js";
@@ -20,6 +21,9 @@ app.use(
   })
 );
 
+app.get('*', (_,res)=> {
+  res.sendFile(path.resolve(_dirname,"finn4sure-frontend","dist","index.html" ))
+})
 app.use(express.json());
 app.use(cookieParser());
 
