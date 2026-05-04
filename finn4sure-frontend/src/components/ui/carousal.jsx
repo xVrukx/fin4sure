@@ -1,117 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 
-const banks = [
-  {
-    id: 1,
-    name: "State Bank of India",
-    abbr: "SBI",
-    logo: "🏦",
-    color: "#1a3c6e",
-    accent: "#e8f0ff",
-    personalLoan: "10.30%",
-    homeLoan: "8.50%",
-    carLoan: "8.75%",
-    badge: "Most Popular",
-    badgeColor: "bg-blue-100 text-blue-700",
-  },
-  {
-    id: 2,
-    name: "HDFC Bank",
-    abbr: "HDFC",
-    logo: "🏛️",
-    color: "#004C8F",
-    accent: "#e6f0ff",
-    personalLoan: "10.50%",
-    homeLoan: "8.70%",
-    carLoan: "8.90%",
-    badge: "Fastest Approval",
-    badgeColor: "bg-teal-100 text-teal-700",
-  },
-  {
-    id: 3,
-    name: "ICICI Bank",
-    abbr: "ICICI",
-    logo: "🏢",
-    color: "#B02A2A",
-    accent: "#fff0f0",
-    personalLoan: "10.75%",
-    homeLoan: "8.75%",
-    carLoan: "9.10%",
-    badge: "Digital-First",
-    badgeColor: "bg-red-100 text-red-700",
-  },
-  {
-    id: 4,
-    name: "Axis Bank",
-    abbr: "AXIS",
-    logo: "🏗️",
-    color: "#97144D",
-    accent: "#fff0f8",
-    personalLoan: "10.49%",
-    homeLoan: "8.75%",
-    carLoan: "8.85%",
-    badge: "Low Processing Fee",
-    badgeColor: "bg-pink-100 text-pink-700",
-  },
-  {
-    id: 5,
-    name: "Punjab National Bank",
-    abbr: "PNB",
-    logo: "🏠",
-    color: "#004225",
-    accent: "#e8fff4",
-    personalLoan: "11.25%",
-    homeLoan: "8.45%",
-    carLoan: "8.70%",
-    badge: "Best Home Loan",
-    badgeColor: "bg-green-100 text-green-700",
-  },
-  {
-    id: 6,
-    name: "Kotak Mahindra",
-    abbr: "KOTAK",
-    logo: "💼",
-    color: "#ED1C24",
-    accent: "#fff5f5",
-    personalLoan: "10.99%",
-    homeLoan: "8.85%",
-    carLoan: "8.99%",
-    badge: "Zero Foreclosure",
-    badgeColor: "bg-orange-100 text-orange-700",
-  },
-  {
-    id: 7,
-    name: "Bank of Baroda",
-    abbr: "BOB",
-    logo: "🌐",
-    color: "#F47920",
-    accent: "#fff8ee",
-    personalLoan: "11.05%",
-    homeLoan: "8.40%",
-    carLoan: "8.65%",
-    badge: "Lowest Home Rate",
-    badgeColor: "bg-amber-100 text-amber-700",
-  },
-  {
-    id: 8,
-    name: "Yes Bank",
-    abbr: "YES",
-    logo: "✅",
-    color: "#00529B",
-    accent: "#eef4ff",
-    personalLoan: "10.99%",
-    homeLoan: "9.00%",
-    carLoan: "9.25%",
-    badge: "Flexi EMI",
-    badgeColor: "bg-indigo-100 text-indigo-700",
-  },
-];
+
 
 const CARD_WIDTH = 300;
 const GAP = 24;
 const CARD_TOTAL = CARD_WIDTH + GAP;
 
 export default function BankCarousel() {
+  const [banks,setbanks] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [activeTab, setActiveTab] = useState("personalLoan");
@@ -121,6 +17,21 @@ export default function BankCarousel() {
   const autoPlayRef = useRef(null);
   const trackRef = useRef(null);
 
+  const bankRates = async () => {
+    const res = await fetch("https://fin4sure.onrender.com/api/admin/bank",{
+      method:"GET",
+      headers:{"Content-type":"application/json"},
+      credentials:"include"
+    })
+    if(!res.ok){
+      throw new console.error();
+      
+    }
+    const data = await res.json();
+
+    setbanks(data)
+  }
+  
   const tabLabels = {
     personalLoan: "Personal Loan",
     homeLoan: "Home Loan",
@@ -134,6 +45,11 @@ export default function BankCarousel() {
     setActiveIndex(Math.max(0, Math.min(index, maxIndex)));
   };
 
+  useEffect(() =>{
+    bankRates()
+  },[banks = null])
+
+  
   useEffect(() => {
     if (!isAutoPlaying) return;
     autoPlayRef.current = setInterval(() => {
