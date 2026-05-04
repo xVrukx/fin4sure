@@ -7,7 +7,9 @@ import {
   updateLeadStatus,
   createAdmin,
   exportData,
-  clientsWithFullData
+  clientsWithFullData,
+  bankRatesDisplay,
+  bankRates
 } from "../controllers/admin.controller.js";
 
 import { verifyUser, isAdmin } from "../middlewares/auth.middleware.js";
@@ -34,5 +36,9 @@ router.post("/lead-status", verifyUser, isAdmin, updateLeadStatus);
 router.post("/create-admin", createAdmin);
 
 router.get("/export", verifyUser, isAdmin, exportData);
+
+router.get("/bank", bankRatesDisplay);
+
+router.post("/addrates",verifyUser,isAdmin, bankRates)
 
 export default router;

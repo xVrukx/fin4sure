@@ -28,4 +28,5 @@ authRouter.post("/update-number-otp", verifyUser, sendUpdateNumberOTP); // Send 
 authRouter.post("/verify-update-number-otp", verifyUser, verifyUpdateNumberOTP); // Verify OTP for number update
 authRouter.patch("/profileupdate",verifyUser,profileUpdateHandeler)
 
+
 export default authRouter;

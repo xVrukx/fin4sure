@@ -5,6 +5,7 @@ import Admin from "../models/admin.model.js";
 import ExcelJS from "exceljs";
 import { dcryptPAN } from "../utils/pan.crypto.js";
 import clientModel from "../models/client.model.js";
+import bankModel from "../models/bank.model.js";
 
 /* -----------------------------------------------------
    ADMIN STATS
@@ -560,3 +561,24 @@ export const exportData = async (req, res) => {
     res.end();
     }
 };
+
+export const bankRates = async (req,res) => {
+  const {name,loan,intrest_rate} = req.body;
+  if(!name || !loan || !intrest_rate){
+    console.log({"message":"all fields are required"});
+    res.status(400).json({"message":"all fields are required"});
+    return ;
+  }
+  const bankrates = bankModel({name,loan,intrest_rate});
+  await bankrates.save();
+
+}
+
+export const bankRatesDisplay = async (req,res) => {
+  const bankRates = await bankModel.find();
+  if(!bankRates){
+    console.log({"message":"No bank rates to show yet"});
+    res.status(404).json({"message":"No bank rates to show yet"})
+  }
+  res.json(bankRates)
+}

@@ -6,7 +6,8 @@ const bankSchema = new Schema (
             product: [
                 {
                     name : {type : String, required : true, unique : true},
-                    intrest_rate : {type : Boolean, required : true, unique : true}
+                    intrest_rate : {type : Boolean, required : true, unique : true},
+                    loan : {type : String, default: "loan", required: true}
                 }
             ]
     },
