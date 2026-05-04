@@ -7,7 +7,7 @@ const GAP = 24;
 const CARD_TOTAL = CARD_WIDTH + GAP;
 
 export default function BankCarousel() {
-  const [banks,setbanks] = useState(null);
+  const [banks,setbanks] = useState([{}]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [activeTab, setActiveTab] = useState("personalLoan");
@@ -47,7 +47,7 @@ export default function BankCarousel() {
 
   useEffect(() =>{
     bankRates()
-  },[banks = null])
+  },[banks = [{}]])
 
   
   useEffect(() => {
