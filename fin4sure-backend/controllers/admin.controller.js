@@ -569,6 +569,14 @@ export const bankRates = async (req,res) => {
     res.status(400).json({"message":"all fields are required"});
     return ;
   }
+  const checkBankrates = await bankModel.findOne({name,lone})
+  if(checkBankrates) {
+    const updateBrokerrates = await bankModel.findByIdAndUpdate(
+      {_id:checkBankrates._id},
+      {intrest_rate:intrest_rate},
+      {new:true}
+    );
+  };
   const bankrates = bankModel({name,loan,intrest_rate});
   await bankrates.save();
 
