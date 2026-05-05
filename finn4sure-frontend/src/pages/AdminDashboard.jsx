@@ -24,7 +24,7 @@ export default function AdminDashboard() {
   const [customTo, setCustomTo] = useState("");
 
   const addRates = async () => {
-    const res = await fetch("https://fin4sure.onrender.com/api/admin/addRates",{
+    const res = await fetch("https://fin4sure.onrender.com/api/admin/addrates",{
       method:"POST",
       hearder:{"Content-type":"Application/json"},
       credentials:"include",
