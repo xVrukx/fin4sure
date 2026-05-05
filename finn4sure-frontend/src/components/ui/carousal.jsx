@@ -23,10 +23,9 @@ export default function BankCarousel() {
       headers:{"Content-type":"application/json"},
       credentials:"include"
     })
-    if(!res.ok){
-      throw new console.error();
-      
-    }
+      if (!res.ok) {
+        throw new Error("details not found");
+      }
     const data = await res.json();
 
     setbanks(data)
