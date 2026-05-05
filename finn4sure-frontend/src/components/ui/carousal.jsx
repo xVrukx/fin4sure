@@ -47,7 +47,7 @@ export default function BankCarousel() {
 
   useEffect(() =>{
     bankRates()
-  },[banks = [{}]])
+  },[banks = []])
 
   
   useEffect(() => {
