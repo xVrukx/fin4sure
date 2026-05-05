@@ -26,7 +26,7 @@ export default function AdminDashboard() {
   const addRates = async () => {
     const res = await fetch("https://fin4sure.onrender.com/api/admin/addrates",{
       method:"POST",
-      hearder:{"Content-type":"Application/json"},
+      hearder:{"Content-Type":"application/json"},
       credentials:"include",
       body:JSON.stringify({name:Bank,loan:Loan,intrest_rate:Intrest})
     })

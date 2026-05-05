@@ -20,7 +20,7 @@ export default function BankCarousel() {
   const bankRates = async () => {
     const res = await fetch("https://fin4sure.onrender.com/api/admin/bank",{
       method:"GET",
-      headers:{"Content-type":"application/json"},
+      headers:{"Content-Type":"application/json"},
       credentials:"include"
     })
       if (!res.ok) {
