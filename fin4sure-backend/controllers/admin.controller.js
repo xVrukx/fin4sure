@@ -563,7 +563,7 @@ export const exportData = async (req, res) => {
 };
 
 export const bankRates = async (req,res) => {
-  const {name,loan,intrest_rate} = req.body;
+  const {name, loan, intrest_rate } = req.body;
   if(!name || !loan || !intrest_rate){
     console.log({"message":"all fields are required"});
     res.status(400).json({"message":"all fields are required"});
