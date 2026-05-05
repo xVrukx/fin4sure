@@ -23,6 +23,18 @@ export default function AdminDashboard() {
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
 
+  const addRates = async () => {
+    const res = await fetch("https://fin4sure.onrender.com/api/admin/addRates",{
+      method:"POST",
+      hearder:{"Content-type":"Application/json"},
+      credentials:"include",
+      body:JSON.stringify({name:Bank,loan:Loan,intrest_rate:Intrest})
+    })
+    if(!res.ok){
+      throw new error("Not able to add rates")
+    }
+  }
+
   useEffect(() => {
     fetchStats();
     fetchBrokers();
@@ -225,7 +237,7 @@ export default function AdminDashboard() {
             className="w-full py-3 rounded-lg font-medium text-white
                        bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                        hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                       transition disabled:opacity-50"
+                       transition disabled:opacity-50" onClick={alert("Rate updated")}
           >
             Submit
           </button>

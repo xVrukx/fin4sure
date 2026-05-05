@@ -21,9 +21,6 @@ app.use(
   })
 );
 
-app.get('*', (_,res)=> {
-  res.sendFile(path.resolve(_dirname,"finn4sure-frontend","dist","index.html" ))
-})
 app.use(express.json());
 app.use(cookieParser());
 
