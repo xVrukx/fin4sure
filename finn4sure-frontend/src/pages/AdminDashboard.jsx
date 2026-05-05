@@ -237,7 +237,9 @@ export default function AdminDashboard() {
             className="w-full py-3 rounded-lg font-medium text-white
                        bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                        hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                       transition disabled:opacity-50" onClick={() => {alert("Rate updated")}}
+                       transition disabled:opacity-50" onClick={() => { 
+                        addRates()
+                        alert("Rate updated")}}
           >
             Submit
           </button>
