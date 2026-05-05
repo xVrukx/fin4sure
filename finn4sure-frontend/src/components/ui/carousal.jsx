@@ -46,7 +46,7 @@ export default function BankCarousel() {
   };
 
   useEffect(() =>{
-    if (banks.length() == 0) {
+    if (banks.length == 0) {
       bankRates();
     };
   },[banks])
