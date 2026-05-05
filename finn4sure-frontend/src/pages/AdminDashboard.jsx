@@ -31,7 +31,7 @@ export default function AdminDashboard() {
       body:JSON.stringify({name:Bank,loan:Loan,intrest_rate:Intrest})
     })
     if(!res.ok){
-      throw new error("Not able to add rates")
+      throw new Error("Not able to add rates")
     }
     alert("Rate updated")
   }
