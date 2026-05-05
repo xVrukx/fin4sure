@@ -571,7 +571,7 @@ export const bankRates = async (req,res) => {
   }
   const checkBankrates = await bankModel.findOne({name,lone})
   if(checkBankrates) {
-    const updateBrokerrates = await bankModel.findByIdAndUpdate(
+    const updateBankrates = await bankModel.findByIdAndUpdate(
       {_id:checkBankrates._id},
       {intrest_rate:intrest_rate},
       {new:true}
