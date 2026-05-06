@@ -358,11 +358,11 @@ function BankCard({ bank, activeTab, tabLabels, isCenter, accentClass }) {
         <button
           className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border-2 cursor-pointer"
           style={{
-            borderColor: "greenyellow",
-            color: "greenyellow",
+            borderColor: "green",
+            color: "green",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "greenyellow";
+            e.currentTarget.style.background = "green";
             e.currentTarget.style.color = "#fff";
           }}
           onMouseLeave={(e) => {
