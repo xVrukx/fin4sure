@@ -32,6 +32,7 @@ export default function AdminDashboard() {
     })
     if(!res.ok){
       throw new Error("Not able to add rates")
+      alert("Not able to add rates");
     }
     const data = await res.json();
     alert(data.message);
