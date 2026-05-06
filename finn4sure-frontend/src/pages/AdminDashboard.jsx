@@ -219,9 +219,9 @@ export default function AdminDashboard() {
             <select name="Loan" id="bench_rate" value={Loan} onChange={(e) => {setLoan(e.target.value)}}
               className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
               <option value="">---- Select a Loan ----</option>
-              <option value="RepoRate">Home loan</option>
-              <option value="SDF">Personal loan</option>
-              <option value="MSF">Car loan</option>
+              <option value="Home Loan">Home loan</option>
+              <option value="Personal Loan">Personal loan</option>
+              <option value="Car loan">Car loan</option>
             </select>
 
 
