@@ -173,7 +173,7 @@ export default function BankCarousel() {
           >
             {banks.map((bank, i) => (
               <BankCard
-                key={bank.id}
+                key={bank._id}
                 bank={bank}
                 activeTab={activeTab}
                 tabLabels={tabLabels}
@@ -246,16 +246,13 @@ function BankCard({ bank, activeTab, tabLabels, isCenter }) {
         {/* Bank Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div
+            {/* <div
               className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-sm"
               style={{ background: bank.accent }}
             >
               {bank.logo}
-            </div>
+            </div> */}
             <div>
-              <div className="text-xs text-gray-400 font-medium uppercase tracking-wider">
-                {bank.abbr}
-              </div>
               <div className="text-sm font-bold text-gray-800 leading-tight max-w-35">
                 {bank.name}
               </div>
@@ -263,10 +260,10 @@ function BankCard({ bank, activeTab, tabLabels, isCenter }) {
           </div>
         </div>
 
-        {/* Badge */}
+        {/* Badge
         <span className={`inline-block text-xs font-semibold px-2.5 py-1 rounded-lg mb-4 ${bank.badgeColor}`}>
           {bank.badge}
-        </span>
+        </span> */}
 
         {/* Highlighted Rate */}
         <div className={`rounded-xl border bg-linear-to-br ${getRateBg(rateNum)} p-4 mb-4`}>
