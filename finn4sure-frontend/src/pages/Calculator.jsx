@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Calculator() {
   const [amount, setAmount] = useState(500000);
@@ -169,14 +170,14 @@ export default function Calculator() {
               </div>
             </div>
 
-            <a
-              href="/apply"
+            <Link
               className="mt-5 block text-center px-6 py-4 rounded-xl font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:scale-[1.02] transition"
+              to="/apply"
             >
               Apply for this Loan
-            </a>
+            </Link>
           </div>
         </div>
       </div>

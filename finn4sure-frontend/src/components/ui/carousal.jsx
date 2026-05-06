@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const CARD_WIDTH = 300;
 const GAP = 24;
@@ -10,6 +11,10 @@ const tabLabels = {
   carLoan: "Car Loan",
 };
 
+const navigate = useNavigate();
+const apply = async() => {
+    navigate("/apply")
+  }
 const loanToTabKey = (loan = "") => {
   const normalized = loan.toLowerCase().replace(/\s+/g, " ").trim();
 
@@ -362,6 +367,7 @@ function BankCard({ bank, activeTab, tabLabels, isCenter, accentClass }) {
             border-green-700 text-green-700
             hover:bg-green-700 hover:text-white
           "
+          onClick={apply}
         >
           Apply Now →
         </button>
