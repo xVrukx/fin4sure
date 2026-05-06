@@ -1,11 +1,16 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 export default function Calculator() {
   const [amount, setAmount] = useState(500000);
   const [rate, setRate] = useState(9);
   const [tenure, setTenure] = useState(20);
   const [tenureType, setTenureType] = useState("years");
 
+  const navigate = useNavigate();
+
+  const apply = async() => {
+    navigate("/apply");
+  };
   function calculateEMI(P, R, tenureValue, type) {
     const months = type === "years" ? tenureValue * 12 : tenureValue;
     const monthlyRate = R / 12 / 100;
@@ -169,14 +174,13 @@ export default function Calculator() {
               </div>
             </div>
 
-            <a
-              href="/apply"
+            <button
               className="mt-5 block text-center px-6 py-4 rounded-xl font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
-                         hover:scale-[1.02] transition"
+                         hover:scale-[1.02] transition" onClick={apply}
             >
               Apply for this Loan
-            </a>
+            </button>
           </div>
         </div>
       </div>

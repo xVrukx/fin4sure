@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
+  const navigate = useNavigate()
   const [emiCal, setemiCal] = useState(false);
   const [amount, setAmount] = useState(500000);
   const [rate, setRate] = useState(9);
@@ -37,6 +39,10 @@ export default function Hero() {
     setemiCal(!emiCal);
   };
 
+  const explore = async() => {
+    navigate("/products")
+  }
+
   return (
     <section className="relative overflow-hidden bg-linear-to-b from-blue-50 via-white to-white">
       {/* Decorative Background Glow */}
@@ -70,16 +76,14 @@ export default function Hero() {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
-            <a
-              href="/products"
+            <button
               className="px-7 py-3 rounded-lg font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                         shadow-md hover:shadow-lg
-                         transition duration-300"
+                         shadow-md hover:shadow-lg transition duration-300" onClick={explore}
             >
               Explore Loans
-            </a>
+            </button>
 
             <button
               className="px-7 py-3 rounded-lg font-medium
