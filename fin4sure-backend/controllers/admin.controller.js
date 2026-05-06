@@ -568,7 +568,7 @@ export const bankRates = async (req,res) => {
   if(!name || !loan || !intrest_rate){
     console.log({"message":"all fields are required"});
     res.status(400).json({"message":"all fields are required"});
-    return ;
+    return;
   }
   const checkBankrates = await bankModel.findOne({name,loan})
   if(checkBankrates) {
@@ -577,12 +577,12 @@ export const bankRates = async (req,res) => {
       {intrest_rate:intrest_rate},
       {new:true}
     );
-    res.json({"message" : "Intrest rate updated"})
+    res.json({"message" : "Intrest rate updated"});
+    return;
   };
   const bankrates = bankModel({name,loan,intrest_rate});
   await bankrates.save();
-  res.json({"message" : "Intrest rate added"})
-
+  res.json({"message" : "Intrest rate added"});
 }
 
 export const bankRatesDisplay = async (req,res) => {
