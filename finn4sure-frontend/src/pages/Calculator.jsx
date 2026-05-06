@@ -170,14 +170,13 @@ export default function Calculator() {
               </div>
             </div>
 
-            <Link
+            <button
               className="mt-5 block text-center px-6 py-4 rounded-xl font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:scale-[1.02] transition"
-              to="/apply"
             >
               Apply for this Loan
-            </Link>
+            </button>
           </div>
         </div>
       </div>
