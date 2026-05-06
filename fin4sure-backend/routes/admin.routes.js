@@ -39,6 +39,6 @@ router.get("/export", verifyUser, isAdmin, exportData);
 
 router.get("/bank", bankRatesDisplay);
 
-router.post("/addrates",verifyUser,isAdmin, bankRates)
+router.post("/addrates", verifyUser, isAdmin, bankRates)
 
 export default router;
