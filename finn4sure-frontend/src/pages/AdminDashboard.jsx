@@ -24,7 +24,6 @@ export default function AdminDashboard() {
   const [customTo, setCustomTo] = useState("");
 
   const addRates = async () => {
-    console.log(Bank,Loan, Intrest)
     const res = await fetch("https://fin4sure.onrender.com/api/admin/addrates",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -35,7 +34,7 @@ export default function AdminDashboard() {
       throw new Error("Not able to add rates")
     }
     const data = await res.json();
-    alert(data);
+    alert(data.message);
   }
 
   useEffect(() => {
