@@ -34,7 +34,8 @@ export default function AdminDashboard() {
     if(!res.ok){
       throw new Error("Not able to add rates")
     }
-    alert("Rate updated")
+    const data = await res.json();
+    alert(data);
   }
 
   useEffect(() => {
