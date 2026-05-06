@@ -359,8 +359,8 @@ function BankCard({ bank, activeTab, tabLabels, isCenter, accentClass }) {
           className="
             w-full py-2.5 rounded-xl text-sm font-semibold
             transition-all duration-200 border-2 cursor-pointer
-            border-green-600 text-green-600
-            hover:bg-green-600 hover:text-white
+            border-green-700 text-green-700
+            hover:bg-green-700 hover:text-white
           "
         >
           Apply Now →
