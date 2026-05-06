@@ -367,7 +367,7 @@ function BankCard({ bank, activeTab, tabLabels, isCenter, accentClass }) {
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "greenyellow";
+            e.currentTarget.style.color = "green";
           }}
         >
           Apply Now →
