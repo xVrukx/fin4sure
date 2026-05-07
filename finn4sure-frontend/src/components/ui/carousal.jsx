@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 const CARD_WIDTH = 300;
 const GAP = 24;
@@ -12,9 +11,7 @@ const tabLabels = {
 };
 
 const navigate = useNavigate();
-const apply = async() => {
-    navigate("/apply")
-  }
+
 const loanToTabKey = (loan = "") => {
   const normalized = loan.toLowerCase().replace(/\s+/g, " ").trim();
 
