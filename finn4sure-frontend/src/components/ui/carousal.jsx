@@ -362,7 +362,6 @@ function BankCard({ bank, activeTab, tabLabels, isCenter, accentClass }) {
             border-green-700 text-green-700
             hover:bg-green-700 hover:text-white
           "
-          onClick={apply}
         >
           Apply Now →
         </button>
