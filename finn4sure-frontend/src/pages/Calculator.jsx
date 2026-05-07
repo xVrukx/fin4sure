@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Calculator() {
   const navigate = useNavigate();
+  const {isAuthenticated, user} = useAuth();
   const apply = async() => {
     if(!isAuthenticated){
       navigate("/login");
@@ -12,7 +13,6 @@ export default function Calculator() {
       navigate("/apply");
     };
   }
-  const {isAuthenticated, user} = useAuth();
   const [amount, setAmount] = useState(500000);
   const [rate, setRate] = useState(9);
   const [tenure, setTenure] = useState(20);
@@ -181,7 +181,8 @@ export default function Calculator() {
               </div>
             </div>
 
-            <button onClick={() => {apply}}
+            <button
+              onClick={() => {apply()}}
               className="mt-5 block text-center px-6 py-4 rounded-xl font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:scale-[1.02] transition"
