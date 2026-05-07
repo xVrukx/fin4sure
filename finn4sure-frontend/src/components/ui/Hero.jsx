@@ -8,8 +8,7 @@ export default function Hero() {
   const [tenure, setTenure] = useState(20);
   const [tenureType, setTenureType] = useState("years");
   
-    const navigate = useNavigate();
-  const {isAuthenticated, user} = useAuth();
+  const navigate = useNavigate();
   const explore = async() => {
       navigate("/products");
   }
