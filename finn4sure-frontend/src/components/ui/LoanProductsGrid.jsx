@@ -187,7 +187,7 @@ export default function LoanProductsGrid() {
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                   /> */}
                   <div className="bg-white w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-></div>
+>
                 </div>
 
                 {/* Multi-layer overlay */}
@@ -235,7 +235,8 @@ export default function LoanProductsGrid() {
                     </Link>
                   </div>
                 </div>
-              </article>
+              </div>
+            </article>
             );
           })}
         </div>
