@@ -105,7 +105,6 @@ export default function Apply() {
   },[user])
 
   return (
-    <BrowserRouter>
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-screen">
       <div className="max-w-3xl mx-auto px-6 py-16">
 
@@ -353,7 +352,6 @@ export default function Apply() {
         )}
       </div>
     </section>
-    </BrowserRouter>
   );
 }
 

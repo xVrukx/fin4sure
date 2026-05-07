@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate,BrowserRouter } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Calculator() {
   const [amount, setAmount] = useState(500000);
@@ -40,7 +40,6 @@ export default function Calculator() {
   );
 
   return (
-    <BrowserRouter>
     <section className="bg-linear-to-b from-blue-50 via-white to-white min-h-2/3">
       <div className="max-w-5xl mx-auto px-6 pt-4 pb-5">
         <h1 className="text-4xl font-bold text-slate-900">
@@ -187,7 +186,6 @@ export default function Calculator() {
         </div>
       </div>
     </section>
-    </BrowserRouter>
   );
 }
 

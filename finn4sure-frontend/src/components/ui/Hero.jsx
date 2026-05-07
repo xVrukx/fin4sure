@@ -44,7 +44,6 @@ export default function Hero() {
   }
 
   return (
-    <BrowserRouter>
     <section className="relative overflow-hidden bg-linear-to-b from-blue-50 via-white to-white">
       {/* Decorative Background Glow */}
       <div
@@ -265,7 +264,7 @@ export default function Hero() {
         </div>
       </div>
     </section>
-    </BrowserRouter>
+
   );
 }
 
