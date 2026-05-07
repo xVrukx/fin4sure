@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
   const [emiCal, setemiCal] = useState(false);
@@ -6,6 +7,12 @@ export default function Hero() {
   const [rate, setRate] = useState(9);
   const [tenure, setTenure] = useState(20);
   const [tenureType, setTenureType] = useState("years");
+  
+    const navigate = useNavigate();
+  const {isAuthenticated, user} = useAuth();
+  const explore = async() => {
+      navigate("/products");
+  }
 
   function calculateEMI(P, R, tenureValue, type) {
     const months = type === "years" ? tenureValue * 12 : tenureValue;
@@ -71,6 +78,7 @@ export default function Hero() {
 
           <div className="mt-8 flex flex-wrap gap-4">
             <button
+              onClick={() => {explore()}}
               className="px-7 py-3 rounded-lg font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600

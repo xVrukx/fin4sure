@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 const CARD_WIDTH = 300;
 const GAP = 24;
 const CARD_TOTAL = CARD_WIDTH + GAP;
@@ -41,6 +42,16 @@ export default function BankCarousel() {
   const autoPlayRef = useRef(null);
   const pauseTimerRef = useRef(null);
 
+  const navigate = useNavigate();
+  const {isAuthenticated, user} = useAuth();
+  const apply = async() => {
+    if(!isAuthenticated){
+      navigate("/login");
+    }
+    else{
+      navigate("/apply");
+    };
+  }
   const bankRates = async () => {
     const res = await fetch("https://fin4sure.onrender.com/api/admin/bank", {
       method: "GET",
@@ -356,6 +367,7 @@ function BankCard({ bank, activeTab, tabLabels, isCenter, accentClass }) {
         </div>
 
         <button
+          onClick={() => {apply()}}
           className="
             w-full py-2.5 rounded-xl text-sm font-semibold
             transition-all duration-200 border-2 cursor-pointer
