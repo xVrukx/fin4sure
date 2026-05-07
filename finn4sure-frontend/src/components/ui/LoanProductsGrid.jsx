@@ -191,7 +191,7 @@ export default function LoanProductsGrid() {
                 </div>
 
                 {/* Multi-layer overlay */}
-                <div/>
+                <div className="absolute inset-0 bg-linear-to-t from-slate-900/90 via-slate-900/40 to-slate-900/10 group-hover:from-slate-900/95 group-hover:via-slate-900/50 transition-all duration-300" />
 
                 {/* Teal accent line at bottom - slides up on hover */}
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-teal-400 to-teal-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
