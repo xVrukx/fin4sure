@@ -108,7 +108,7 @@ export const AboutCareersSection = () => {
               </p>
 
               <Link
-                to="/careers"
+                to="/login"
                 className="group/btn inline-flex items-center gap-3 bg-white text-amber-700 font-bold text-sm
                            px-6 py-3 rounded-2xl shadow-lg shadow-amber-900/20
                            hover:bg-amber-50 hover:shadow-xl transition-all duration-300"
