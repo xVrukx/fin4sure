@@ -74,7 +74,8 @@ export default function Hero() {
               className="px-7 py-3 rounded-lg font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                         shadow-md hover:shadow-lg transition duration-300"
+                         shadow-md hover:shadow-lg
+                         transition duration-300"
             >
               Explore Loans
             </button>
@@ -258,7 +259,6 @@ export default function Hero() {
         </div>
       </div>
     </section>
-
   );
 }
 

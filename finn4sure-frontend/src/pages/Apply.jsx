@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { LOAN_PRODUCTS } from "../utils/constants";
 import { useAuth } from "../context/AuthContext";
 import { states } from "../components/Statedata";
 import { districtsByState } from "../components/Statedata";
+
 
 export default function Apply() {
   const [searchParams] = useSearchParams();
@@ -128,14 +129,15 @@ export default function Apply() {
               You must be logged in to submit a loan application.
             </div>
 
-            <button
+            <a
+              href="/login"
               className="mt-4 inline-block px-5 py-2 rounded-lg font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
                          transition"
             >
               Login to Continue
-            </button>
+            </a>
           </div>
         ) : (
 
