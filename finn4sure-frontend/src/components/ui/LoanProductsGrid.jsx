@@ -181,11 +181,13 @@ export default function LoanProductsGrid() {
               >
                 {/* Image */}
                 <div className="absolute inset-0">
-                  <img
+                  {/* <img
                     src={PRODUCT_IMAGES[product.id]}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                  />
+                  /> */}
+                  <div className="bg-white w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+></div>
                 </div>
 
                 {/* Multi-layer overlay */}
