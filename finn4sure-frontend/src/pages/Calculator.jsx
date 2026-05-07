@@ -176,7 +176,7 @@ export default function Calculator() {
               </div>
             </div>
 
-            <button onClick={!isAuthenticated?navigate("/login"):navigate("/apply")}
+            <button onClick={() => {!isAuthenticated?navigate("/login"):navigate("/apply")}}
               className="mt-5 block text-center px-6 py-4 rounded-xl font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:scale-[1.02] transition"
