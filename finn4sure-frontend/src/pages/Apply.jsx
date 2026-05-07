@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { LOAN_PRODUCTS } from "../utils/constants";
 import { useAuth } from "../context/AuthContext";
 import { states } from "../components/Statedata";
@@ -7,6 +7,7 @@ import { districtsByState } from "../components/Statedata";
 
 
 export default function Apply() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("product");
 
@@ -130,10 +131,11 @@ export default function Apply() {
             </div>
 
             <button
+              onClick={() => navigate("/login")}
               className="mt-4 inline-block px-5 py-2 rounded-lg font-medium text-white
-                         bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
-                         hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
-                         transition"
+                        bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
+                        hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
+                        transition"
             >
               Login to Continue
             </button>

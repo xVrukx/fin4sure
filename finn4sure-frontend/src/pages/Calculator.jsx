@@ -1,6 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Calculator() {
+  const navigate = useNavigate();
+  const apply = async() => {
+    navigate("")
+  }
   const [amount, setAmount] = useState(500000);
   const [rate, setRate] = useState(9);
   const [tenure, setTenure] = useState(20);
