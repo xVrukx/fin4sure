@@ -10,8 +10,6 @@ const tabLabels = {
   carLoan: "Car Loan",
 };
 
-const navigate = useNavigate();
-
 const loanToTabKey = (loan = "") => {
   const normalized = loan.toLowerCase().replace(/\s+/g, " ").trim();
 
