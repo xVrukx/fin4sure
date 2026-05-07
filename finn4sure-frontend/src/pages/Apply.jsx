@@ -4,7 +4,7 @@ import { LOAN_PRODUCTS } from "../utils/constants";
 import { useAuth } from "../context/AuthContext";
 import { states } from "../components/Statedata";
 import { districtsByState } from "../components/Statedata";
-import { Link } from "react-router-dom";
+
 
 export default function Apply() {
   const [searchParams] = useSearchParams();
@@ -130,7 +130,7 @@ export default function Apply() {
             </div>
 
           <Link
-            to={`/login`}
+            to={'/login'}
             className="mt-4 inline-block px-5 py-2 rounded-lg font-medium text-white
             bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
             hover:from-blue-800 hover:via-teal-700 hover:to-emerald-600
