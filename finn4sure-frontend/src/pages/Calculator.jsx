@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Calculator() {
   const navigate = useNavigate();
   const apply = async() => {
     navigate("")
   }
+  const {isAuthenticated, user} = useAuth();
   const [amount, setAmount] = useState(500000);
   const [rate, setRate] = useState(9);
   const [tenure, setTenure] = useState(20);
@@ -174,12 +176,12 @@ export default function Calculator() {
               </div>
             </div>
 
-            <button
+            <button onClick={!isAuthenticated?navigate("/login"):navigate("/apply")}
               className="mt-5 block text-center px-6 py-4 rounded-xl font-medium text-white
                          bg-linear-to-r from-blue-700 via-teal-600 to-emerald-500
                          hover:scale-[1.02] transition"
             >
-              Apply for this Loan
+              Apply for a laon
             </button>
           </div>
         </div>
