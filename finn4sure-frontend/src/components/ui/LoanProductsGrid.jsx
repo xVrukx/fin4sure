@@ -176,7 +176,9 @@ export default function LoanProductsGrid() {
             return (
               <article
                 key={product.id}
-                className="group relative overflow-hidden rounded-2xl cursor-pointer"
+                className="group relative overflow-hidden rounded-2xl
+                cursor-pointer border shadow-sm hover:shadow-xl transition
+                duration-500"
                 style={{ animationDelay: `${index * 60}ms` }}
               >
                   <div className="absolute inset-0 bg-white"/>
@@ -192,12 +194,15 @@ export default function LoanProductsGrid() {
                   <div className="flex items-center justify-between mb-auto">
                     {/* Icon badge */}
                     <div className="w-9 h-9 rounded-xl
-                     bg-black/10 backdrop-blur-sm border border-black/20 flex items-center justify-center text-black group-hover:bg-teal-500/30 group-hover:border-teal-400/40 transition-all duration-300">
+                     bg-teal-500/30 backdrop-blur-sm border border-teal-400/40
+                     flex items-center justify-center text-black group-hover:bg-teal-600/30
+                     group-hover:border-teal-500/40 transition-all duration-300">
                       {icon}
                     </div>
 
                     {/* Category tag */}
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border backdrop-blur-sm ${tagStyle}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-widest
+                      px-2.5 py-1 rounded-full border backdrop-blur-sm ${tagStyle}`}>
                       {tag}
                     </span>
                   </div>
@@ -205,7 +210,7 @@ export default function LoanProductsGrid() {
                   {/* Bottom content */}
                   <div className="mt-10">
                     <h3 className="text-[17px] font-bold
-                     text-black leading-snug mb-1.5 group-hover:text-teal-200
+                     text-teal-500 leading-snug mb-1.5 group-hover:text-teal-700
                       transition-colors duration-300">
                       {product.name}
                     </h3>
@@ -218,13 +223,13 @@ export default function LoanProductsGrid() {
                     <Link
                       to={`/products/${product.id}`}
                       className="inline-flex items-center gap-2 text-xs
-                       font-semibold text-black group-hover:text-amber-300
+                       font-semibold text-amber-300 group-hover:text-amber-500
                         transition-colors duration-200"
                     >
                       Check Eligibility
                       <span className="inline-flex items-center justify-center w-5
-                       h-5 rounded-full bg-white/10 group-hover:bg-amber-400/20
-                        border border-white/20 group-hover:border-amber-400/40
+                       h-5 rounded-full bg-amber-400/10 group-hover:bg-amber-400/20
+                        border border-amber-400/20 group-hover:border-amber-400/40
                          transition-all duration-300 group-hover:translate-x-0.5">
                         <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24"
                          stroke="currentColor" strokeWidth={2.5}>
