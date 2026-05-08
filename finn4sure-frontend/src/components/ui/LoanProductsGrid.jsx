@@ -99,11 +99,11 @@ const PRODUCT_TAGS = {
 };
 
 const TAG_STYLES = {
-  Retail: "bg-teal-500/20 text-teal-200 border-teal-400/30",
-  Secured: "bg-amber-500/20 text-amber-200 border-amber-400/30",
-  SME: "bg-blue-500/20 text-blue-200 border-blue-400/30",
-  Commercial: "bg-purple-500/20 text-purple-200 border-purple-400/30",
-  Corporate: "bg-rose-500/20 text-rose-200 border-rose-400/30",
+  Retail: "bg-teal-700/20 text-teal-200 border-teal-400/30",
+  Secured: "bg-amber-700/20 text-amber-200 border-amber-400/30",
+  SME: "bg-blue-700/20 text-blue-200 border-blue-400/30",
+  Commercial: "bg-purple-700/20 text-purple-200 border-purple-400/30",
+  Corporate: "bg-rose-700/20 text-rose-200 border-rose-400/30",
 };
 
 export default function LoanProductsGrid() {
