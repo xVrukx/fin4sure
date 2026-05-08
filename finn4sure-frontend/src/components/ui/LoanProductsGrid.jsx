@@ -177,7 +177,8 @@ export default function LoanProductsGrid() {
               <article
                 key={product.id}
                 className="group relative overflow-hidden rounded-2xl
-                cursor-pointer border shadow-sm hover:shadow-xl transition
+                cursor-pointer border-t-4 border-green-600 shadow-xl hover:shadow-2xl
+                hover:translate-y-1 transition-all
                 duration-500"
                 style={{ animationDelay: `${index * 60}ms` }}
               >
