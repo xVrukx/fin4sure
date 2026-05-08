@@ -179,24 +179,20 @@ export default function LoanProductsGrid() {
                 className="group relative overflow-hidden rounded-2xl cursor-pointer"
                 style={{ animationDelay: `${index * 60}ms` }}
               >
-                {/* Image */}
-                <div className="absolute inset-0">
-                  {/* <img
-                    src={PRODUCT_IMAGES[product.id]}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                  /> */}
-                  <div className="bg-white w-full h-full">
-
+                  <div className="absolute inset-0 bg-white"/>
                 {/* Teal accent line at bottom - slides up on hover */}
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-teal-400 to-teal-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                <div className="absolute bottom-0 left-0 right-0 h-0.5
+                 bg-linear-to-r from-teal-400 to-teal-600 transform 
+                 scale-x-0 group-hover:scale-x-100 transition-transform 
+                 duration-500 origin-left" />
 
                 {/* Content */}
                 <div className="relative z-10 p-5 flex flex-col h-full min-h-55">
                   {/* Top row */}
                   <div className="flex items-center justify-between mb-auto">
                     {/* Icon badge */}
-                    <div className="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white group-hover:bg-teal-500/30 group-hover:border-teal-400/40 transition-all duration-300">
+                    <div className="w-9 h-9 rounded-xl
+                     bg-black/10 backdrop-blur-sm border border-black/20 flex items-center justify-center text-black group-hover:bg-teal-500/30 group-hover:border-teal-400/40 transition-all duration-300">
                       {icon}
                     </div>
 
@@ -208,30 +204,36 @@ export default function LoanProductsGrid() {
 
                   {/* Bottom content */}
                   <div className="mt-10">
-                    <h3 className="text-[17px] font-bold text-white leading-snug mb-1.5 group-hover:text-teal-200 transition-colors duration-300">
+                    <h3 className="text-[17px] font-bold
+                     text-black leading-snug mb-1.5 group-hover:text-teal-200
+                      transition-colors duration-300">
                       {product.name}
                     </h3>
 
-                    <p className="text-white/70 text-xs leading-relaxed line-clamp-2 mb-4">
+                    <p className="text-black/70 text-xs leading-relaxed line-clamp-2 mb-4">
                       {product.description}
                     </p>
 
                     {/* CTA */}
                     <Link
                       to={`/products/${product.id}`}
-                      className="inline-flex items-center gap-2 text-xs font-semibold text-white group-hover:text-amber-300 transition-colors duration-200"
+                      className="inline-flex items-center gap-2 text-xs
+                       font-semibold text-black group-hover:text-amber-300
+                        transition-colors duration-200"
                     >
                       Check Eligibility
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/10 group-hover:bg-amber-400/20 border border-white/20 group-hover:border-amber-400/40 transition-all duration-300 group-hover:translate-x-0.5">
-                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <span className="inline-flex items-center justify-center w-5
+                       h-5 rounded-full bg-white/10 group-hover:bg-amber-400/20
+                        border border-white/20 group-hover:border-amber-400/40
+                         transition-all duration-300 group-hover:translate-x-0.5">
+                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
                       </span>
                     </Link>
                   </div>
                 </div>
-               </div>
-              </div>
               </article>
             );
           })}
