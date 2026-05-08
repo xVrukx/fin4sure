@@ -2,7 +2,13 @@ export const LOAN_PRODUCTS = [
   {
     id: "home-loan",
     name: "Home Loan",
-    description: "Affordable home loans with competitive interest rates.",
+    description:
+      "Home loans are designed to help you buy, build, or renovate your dream home with ease. They offer long repayment tenures that make monthly installments more manageable. Competitive interest rates help reduce the overall borrowing cost. With flexible options and tax benefits, home loans remain one of the most reliable ways to finance property ownership.",
+    highlights: [
+      "Buy, build, or renovate your home",
+      "Long repayment tenure with easy EMIs",
+      "Tax benefits under applicable laws",
+    ],
     longDescription:
       "Home loans help you purchase or construct your dream home with flexible repayment options and competitive interest rates.",
 
@@ -56,7 +62,13 @@ export const LOAN_PRODUCTS = [
   {
     id: "loan-against-property",
     name: "Loan Against Property",
-    description: "Unlock the value of your property for large funding needs.",
+    description:
+      "A loan against property lets you unlock the financial value of property you already own. It is a secured loan option that usually comes with lower interest rates than unsecured borrowing. The loan amount can be used for personal or business needs. This makes it a practical solution for large funding requirements.",
+    highlights: [
+      "Borrow against residential or commercial property",
+      "Lower interest rates than many unsecured loans",
+      "Useful for large personal or business expenses",
+    ],
     longDescription:
       "Leverage your residential or commercial property to raise funds at lower interest rates.",
 
@@ -105,7 +117,13 @@ export const LOAN_PRODUCTS = [
   {
     id: "personal-loan",
     name: "Personal Loan",
-    description: "Instant personal loans for your everyday needs.",
+    description:
+      "Personal loans are unsecured loans that offer quick access to funds without the need for collateral. They are ideal for urgent expenses, debt consolidation, travel, weddings, or medical needs. The approval process is usually fast and documentation is minimal. This makes personal loans a flexible choice for everyday financial requirements.",
+    highlights: [
+      "No collateral required",
+      "Fast approval and simple documentation",
+      "Flexible use for personal expenses",
+    ],
     longDescription:
       "Personal loans are unsecured loans designed for urgent financial needs.",
 
@@ -158,7 +176,13 @@ export const LOAN_PRODUCTS = [
   {
     id: "business-loan",
     name: "Business Loan",
-    description: "Fuel your business growth with flexible financing.",
+    description:
+      "Business loans provide financial support to help enterprises manage operations and grow efficiently. They can be used for working capital, expansion, equipment, inventory, or infrastructure. Flexible repayment options make them easier to manage for business owners. This makes business loans a strong funding solution for both small and growing companies.",
+    highlights: [
+      "Supports business growth and expansion",
+      "Can be used for working capital or inventory",
+      "Flexible repayment for business stability",
+    ],
     longDescription:
       "Business loans provide working capital and expansion funding.",
 
@@ -207,7 +231,13 @@ export const LOAN_PRODUCTS = [
   {
     id: "car-loan",
     name: "Car Loan",
-    description: "Drive your dream car with easy EMI options.",
+    description:
+      "Car loans make it easier to own your dream vehicle without putting pressure on your savings. They allow you to spread the cost across affordable monthly EMIs. Many lenders offer quick approvals and flexible repayment periods. This makes car loans a convenient way to finance a new or used vehicle.",
+    highlights: [
+      "Finance new or used vehicles",
+      "Affordable EMI options",
+      "Quick approval and flexible tenure",
+    ],
     longDescription:
       "Car loans help you purchase vehicles with affordable EMIs.",
 
@@ -256,7 +286,13 @@ export const LOAN_PRODUCTS = [
   {
     id: "education-loan",
     name: "Education Loan",
-    description: "Invest in your future with education financing.",
+    description:
+      "Education loans help students and families cover the cost of higher studies with less financial stress. They can be used for tuition fees, living expenses, books, and other academic needs. Many education loans also provide a moratorium period before repayment begins. This makes them a valuable investment in future learning and career growth.",
+    highlights: [
+      "Covers tuition and education-related expenses",
+      "Moratorium period may be available",
+      "Supports domestic and international studies",
+    ],
     longDescription:
       "Education loans cover tuition fees and study-related costs.",
 
@@ -305,7 +341,13 @@ export const LOAN_PRODUCTS = [
   {
     id: "gold-loan",
     name: "Gold Loan",
-    description: "Quick funds using your gold as security.",
+    description:
+      "Gold loans are one of the fastest ways to access funds when you need money urgently. By pledging gold ornaments as security, borrowers can get quick approval with minimal documentation. Interest rates are often competitive because the loan is backed by an asset. This makes gold loans a simple and efficient short-term financing option.",
+    highlights: [
+      "Quick funds against gold ornaments",
+      "Minimal documentation and fast approval",
+      "Suitable for short-term borrowing needs",
+    ],
     longDescription:
       "Gold loans provide instant funds by pledging gold.",
 
@@ -349,7 +391,13 @@ export const LOAN_PRODUCTS = [
   {
     id: "working-capital",
     name: "Working Capital Loans",
-    description: "Maintain cash flow for smooth operations.",
+    description:
+      "Working capital loans help businesses maintain smooth day-to-day operations and manage short-term cash flow needs. They are useful for paying salaries, vendors, inventory costs, and other operational expenses. These loans are designed to support business liquidity without affecting long-term plans. That makes them essential for steady business operations.",
+    highlights: [
+      "Manage daily business expenses",
+      "Improve short-term cash flow",
+      "Support salaries, vendors, and inventory",
+    ],
     longDescription:
       "Helps businesses manage daily operational expenses.",
 

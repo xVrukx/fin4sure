@@ -179,7 +179,7 @@ export default function LoanProductsGrid() {
                 className="group relative overflow-hidden rounded-2xl
                 cursor-pointer border-t-4 border-green-600 shadow-xl hover:shadow-2xl
                 hover:translate-y-1 transition-all
-                duration-500"
+                duration-500 min-h-auto"
                 style={{ animationDelay: `${index * 60}ms` }}
               >
                   <div className="absolute inset-0 bg-white"/>
@@ -217,7 +217,10 @@ export default function LoanProductsGrid() {
                     </h3>
 
                     <p className="text-black/70 text-xs leading-relaxed line-clamp-2 mb-4">
-                      {product.description}
+                      {product.description} <br />
+                      {product.highlights.map((i) => {
+                        {i} <br />
+                      })}
                     </p>
 
                     {/* CTA */}
