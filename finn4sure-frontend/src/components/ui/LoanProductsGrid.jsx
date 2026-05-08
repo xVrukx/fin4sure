@@ -167,7 +167,7 @@ export default function LoanProductsGrid() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
           {LOAN_PRODUCTS.map((product, index) => {
             const tag = PRODUCT_TAGS[product.id] || "Retail";
             const tagStyle = TAG_STYLES[tag] || TAG_STYLES.Retail;
