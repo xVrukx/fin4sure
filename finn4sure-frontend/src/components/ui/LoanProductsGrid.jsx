@@ -179,7 +179,7 @@ export default function LoanProductsGrid() {
                 className="group relative rounded-2xl
                 cursor-pointer border-t-4 border-green-600 shadow-xl hover:shadow-2xl
                 hover:translate-y-1 transition-all
-                duration-500 min-h-auto"
+                duration-500 h-1/4"
                 style={{ animationDelay: `${index * 60}ms` }}
               >
                   <div className="absolute inset-0 bg-white"/>
