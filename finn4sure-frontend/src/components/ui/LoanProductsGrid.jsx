@@ -218,11 +218,11 @@ export default function LoanProductsGrid() {
 
                     <p className="text-black/70 text-xs leading-relaxed mb-4">
                       {product.description} <br />
-                      {product.highlights.map((i, index) => {
+                      {product.highlights.map((i, index) => (
                         <div key={index}>
                           • {i}
                         </div>
-                      })}
+                      ))}
                     </p>
 
                     {/* CTA */}
