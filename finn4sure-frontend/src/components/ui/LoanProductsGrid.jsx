@@ -176,7 +176,7 @@ export default function LoanProductsGrid() {
             return (
               <article
                 key={product.id}
-                className="group relative overflow-hidden rounded-2xl
+                className="group relative rounded-2xl
                 cursor-pointer border-t-4 border-green-600 shadow-xl hover:shadow-2xl
                 hover:translate-y-1 transition-all
                 duration-500 min-h-auto"
