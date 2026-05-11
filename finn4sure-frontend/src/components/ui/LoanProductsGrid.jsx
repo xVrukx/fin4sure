@@ -167,9 +167,9 @@ export default function LoanProductsGrid() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {LOAN_PRODUCTS.map((product, index) => {
-            if(index<5){
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
+          {LOAN_PRODUCT.slice(0,5).map((product, index) => {
+
             const tag = PRODUCT_TAGS[product.id] || "Retail";
             const tagStyle = TAG_STYLES[tag] || TAG_STYLES.Retail;
             const icon = PRODUCT_ICONS[product.id];
@@ -217,14 +217,15 @@ export default function LoanProductsGrid() {
                       {product.name}
                     </h3>
 
-                    <p className="text-black/70 text-xs leading-relaxed mb-4">
-                      {product.description} <br />
+                    <div className="text-black/70 text-xs leading-relaxed mb-4">
+                      {product.description} <br /> <br />
                       {product.highlights.map((i, index) => (
                         <div key={index}>
                           • {i}
+                          <br />
                         </div>
                       ))}
-                    </p>
+                    </div>
 
                     {/* CTA */}
                     <Link
@@ -247,8 +248,33 @@ export default function LoanProductsGrid() {
                   </div>
                 </div>
               </article>
-            );}
-          })}
+            );
+          }
+          )}
+          <article
+            className="group relative rounded-2xl border-2 border-dashed
+            border-teal-400 bg-teal-50/40 hover:bg-teal-100/60
+            transition-all duration-300 flex items-center justify-center
+            min-h-80 cursor-pointer hover:-translate-y-1"
+          >
+            <Link
+              to="/products"
+              className="flex flex-col items-center text-teal-700"
+            >
+              <div className="w-14 h-14 rounded-full bg-teal-500 text-white
+              flex items-center justify-center text-2xl mb-4">
+                +
+              </div>
+
+              <h3 className="font-bold text-lg">
+                View All Products
+              </h3>
+
+              <p className="text-sm text-center mt-2 text-teal-600">
+                Explore all available loan solutions
+              </p>
+            </Link>
+          </article>
         </div>
 
         {/* Bottom stats bar */}
