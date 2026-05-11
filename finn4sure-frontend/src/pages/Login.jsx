@@ -85,7 +85,7 @@ export default function Login() {
           onClick={() =>{client("client")}}
           >
             <span className="relative z-10"
-            pointer-events-none>{ctoggle =="client"? `Login as Client${<TiTick />}`:"Login as Client"}</span>
+            pointer-events-none>{(ctoggle =="client")&&<TiTick/>}</span>
             <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition" 
             pointer-events-none></div>
           </button>
@@ -96,7 +96,8 @@ export default function Login() {
                 : 'bg-linear-to-r  from-blue-700 to-indigo-600'
             }`}
           onClick={() =>{client("broker")}}
-          > {ctoggle =="broker"? `Login as Partner${<TiTick />}`:"Login as Partner"}
+          > `Login as Partner`
+          {(ctoggle =="broker")&&<TiTick/>}
           </button>
 
         </div>
