@@ -84,7 +84,7 @@ export default function Login() {
             }`}
           onClick={() =>{client("client")}}
           >Login as Client<span className="absolute top-2 right-2
-          text-white text-sm">{(ctoggle =="client")&&<TiTick className="text-black"/>}</span>
+          text-white text-sm">{(ctoggle =="client")&&<TiTick/>}</span>
           </button>
 
           <button className={`group relative px-10 py-5 rounded-2xl text-white text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95 ${
