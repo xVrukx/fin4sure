@@ -169,6 +169,7 @@ export default function LoanProductsGrid() {
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {LOAN_PRODUCTS.map((product, index) => {
+            if(index<5){
             const tag = PRODUCT_TAGS[product.id] || "Retail";
             const tagStyle = TAG_STYLES[tag] || TAG_STYLES.Retail;
             const icon = PRODUCT_ICONS[product.id];
@@ -246,7 +247,7 @@ export default function LoanProductsGrid() {
                   </div>
                 </div>
               </article>
-            );
+            );}
           })}
         </div>
 
