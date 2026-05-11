@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { TiTick } from "react-icons/ti";
 
 export default function Login() {
   const { login, fetchProfile } = useAuth();
@@ -84,7 +85,7 @@ export default function Login() {
           onClick={() =>{client("client")}}
           >
             <span className="relative z-10"
-            pointer-events-none>Login as Client</span>
+            pointer-events-none>{ctoggle =="client"? `Login as Client${<TiTick />}`:"Login as Client"}</span>
             <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition" 
             pointer-events-none></div>
           </button>
@@ -95,7 +96,7 @@ export default function Login() {
                 : 'bg-linear-to-r  from-blue-700 to-indigo-600'
             }`}
           onClick={() =>{client("broker")}}
-          > Login as Partner
+          > {ctoggle =="broker"? `Login as Partner${<TiTick />}`:"Login as Partner"}
           </button>
 
         </div>
