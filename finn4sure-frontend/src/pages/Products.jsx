@@ -108,6 +108,7 @@ const TAG_STYLES = {
 
 export default function Products() {
   return (
+    <>
     <section className="relative bg-linear-to-b from-slate-50 via-white to-slate-50 py-24 px-4 overflow-hidden">
       {/* Subtle background pattern */}
       <div
@@ -269,5 +270,6 @@ export default function Products() {
         </div>
       </div>
     </section>
+    </>
   );
 }
