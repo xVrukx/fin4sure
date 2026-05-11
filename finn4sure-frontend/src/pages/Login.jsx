@@ -83,11 +83,8 @@ export default function Login() {
                 : 'bg-linear-to-r from-yellow-500 to-amber-400'
             }`}
           onClick={() =>{client("client")}}
-          >
-            <span className="relative z-10"
-            pointer-events-none> Login as Client {(ctoggle =="client")&&<TiTick/>}</span>
-            <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-10 transition" 
-            pointer-events-none></div>
+          >Login as Client<span className="absolute top-2 right-2
+          text-white text-sm">{(ctoggle =="client")&&<TiTick/>}</span>
           </button>
 
           <button className={`group relative px-10 py-5 rounded-2xl text-white text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 active:scale-95 ${
@@ -96,7 +93,8 @@ export default function Login() {
                 : 'bg-linear-to-r  from-blue-700 to-indigo-600'
             }`}
           onClick={() =>{client("broker")}}
-          >Login as Partner {(ctoggle =="broker")&&<TiTick/>}
+          >Login as Partner<span className="absolute top-2 right-2
+          text-white text-sm">{(ctoggle =="broker")&&<TiTick/>}</span>
           </button>
 
         </div>
