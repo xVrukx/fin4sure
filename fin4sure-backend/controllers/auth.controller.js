@@ -266,7 +266,7 @@ export const verifyOTP = async (req, res) => {
 
 // ----------------------------------------------------------------------------------------------------------------------
 // login handler
-export const loginHandler = async (req, res) => {
+export const loginHandlerc = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -278,22 +278,68 @@ export const loginHandler = async (req, res) => {
 
     let user = await Client.findOne({ email: Email });
     let role = "client";
-
+    
     if (!user) {
-      user = await Broker.findOne({ email: Email });
-      role = "broker";
-    }
-
-    if (!user) {
-      user = await Admin.findOne({ email: Email });
+      user = await Admin.findOne({ email:Email });
       role = "admin";
-    }
-
+    };
+    
     if (!user) {
+      res.status(401).json("Could not find your account, Try with another account / login")
+    }
+    
+    const isMatch = await user.isPasswordCorrect(password);
+    if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    const accessToken = signAccessToken({
+      _id: user._id,
+      role,
+    });
+
+    return res
+      .cookie("AccessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role,
+      });
+  } catch (err) {
+    console.error("Login error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const loginHandlerb = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password required" });
+    }
+
+    const Email = email.toLowerCase().trim();
+
+    let user = await Broker.findOne({ email: Email });
+    let role = "broker";
+
+    if (!user) {
+      user = await Admin.findOne({ email:Email });
+      role = "admin";
+    };
+    
+    if (!user) {
+      res.status(401).json("Could not find your account, Try with another account / login")
+    }
     const isMatch = await user.isPasswordCorrect(password);
+    
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }

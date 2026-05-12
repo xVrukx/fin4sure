@@ -5,10 +5,11 @@ import {
   verifyOTP,
   loginHandler,
   profileHandler,
-  Logouthandaler,
   sendUpdateNumberOTP,
   verifyUpdateNumberOTP,
   profileUpdateHandeler,
+  loginHandlerc,
+  loginHandlerb,
 } from "../controllers/auth.controller.js";
 import { verifyUser } from "../middlewares/auth.middleware.js"; // protects routes
 
@@ -19,7 +20,8 @@ const authRouter = express.Router();
 authRouter.post("/signup", signUpHandler);       // Signup
 authRouter.post("/send-otp", SendOTP);          // Send OTP for signup
 authRouter.post("/verify-otp", verifyOTP);      // Verify OTP for signup/login
-authRouter.post("/login", loginHandler);        // Login
+authRouter.post("/loginc", loginHandlerc);        // Login
+authRouter.post("/loginb", loginHandlerb);        // Login
 
 // Protected routes (require login)
 authRouter.post("/logout", verifyUser, Logouthandaler);            // Logout
